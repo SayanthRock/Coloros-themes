@@ -1,0 +1,28 @@
+plugins {
+    id 'com.android.application'
+}
+
+android {
+    namespace 'com.sayanthrock.colorosthemes.lsposed'
+    compileSdk 35
+
+    defaultConfig {
+        applicationId 'com.sayanthrock.colorosthemes.lsposed'
+        minSdk 26
+        targetSdk 35
+        versionCode 1
+        versionName '0.1.0'
+    }
+
+    buildFeatures {
+        buildConfig true
+    }
+
+    defaultConfig {
+        buildConfigField 'boolean', 'DEBUG_SAFE_HOOKS', 'false'
+    }
+}
+
+dependencies {
+    compileOnly 'de.robv.android.xposed:api:82'
+}
