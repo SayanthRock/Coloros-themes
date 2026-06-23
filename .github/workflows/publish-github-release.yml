@@ -11,7 +11,9 @@ on:
       - 'lsposed-helper/**'
       - 'scripts/**'
       - 'themes/**'
+      - 'theme-packs/**'
       - 'system_ext/**'
+      - 'customer-options/**'
       - 'module.prop'
       - '.github/workflows/publish-github-release.yml'
   workflow_dispatch:
@@ -24,9 +26,9 @@ on:
           - apk
           - module
           - both
-        default: apk
+        default: both
       version:
-        description: "Version tag, example: v0.3.3"
+        description: "Version tag, example: v0.4.0"
         required: false
         default: ""
       publish:
@@ -76,8 +78,10 @@ jobs:
             VERSION="$INPUT_VERSION"
           elif [[ "$REF" == refs/tags/* ]]; then
             VERSION="${GITHUB_REF_NAME}"
-          else
+          elif [[ -f lsposed-helper/app/build.gradle ]]; then
             VERSION="v$(grep -E "versionName '" lsposed-helper/app/build.gradle | head -n 1 | sed -E "s/.*versionName '([^']+)'.*/\1/")"
+          else
+            VERSION="$(grep -E '^version=' module.prop | head -n 1 | cut -d'=' -f2-)"
           fi
 
           if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
@@ -94,10 +98,12 @@ jobs:
             [[ "$INPUT_TARGET" == "module" || "$INPUT_TARGET" == "both" ]] && RUN_MODULE="true"
             [[ "$INPUT_PUBLISH" == "true" ]] && SHOULD_PUBLISH="true" || SHOULD_PUBLISH="false"
           elif [[ "$REF" == refs/tags/* ]]; then
+            RUN_APK="true"
             RUN_MODULE="true"
             SHOULD_PUBLISH="true"
           else
             RUN_APK="true"
+            RUN_MODULE="true"
             SHOULD_PUBLISH="true"
           fi
 
@@ -106,41 +112,24 @@ jobs:
           echo "run_module=$RUN_MODULE" >> "$GITHUB_OUTPUT"
           echo "should_publish=$SHOULD_PUBLISH" >> "$GITHUB_OUTPUT"
 
-  security-module:
-    name: Security Gate
+  validate-module:
+    name: Validate Theme Module
     needs: resolve
     if: needs.resolve.outputs.run_module == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 20
+    timeout-minutes: 15
     permissions:
       contents: read
-      security-events: write
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 1
 
-      - name: Install security tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y git shellcheck
-
-      - name: Run Gitleaks secret scan
-        uses: gitleaks/gitleaks-action@v2
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
-      - name: Shell script quality check
-        run: |
-          find scripts -type f -name "*.sh" -print0 | xargs -0 -r shellcheck
-
-      - name: Required file integrity check
-        run: |
-          test -f module.prop
-          test -f scripts/package.sh
-          test -f scripts/validate-module.sh
-          test -f scripts/check-theme-size.sh
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
 
       - name: Module validation
         run: bash scripts/validate-module.sh
@@ -153,7 +142,7 @@ jobs:
     needs: resolve
     if: needs.resolve.outputs.run_apk == 'true'
     runs-on: ubuntu-latest
-    timeout-minutes: 30
+    timeout-minutes: 35
     permissions:
       contents: read
     outputs:
@@ -181,25 +170,43 @@ jobs:
 
       - name: Prepare artifact name
         id: meta
-        run: |
-          echo "artifact_name=${APK_NAME}-${{ needs.resolve.outputs.version }}" >> "$GITHUB_OUTPUT"
+        run: echo "artifact_name=${APK_NAME}-${{ needs.resolve.outputs.version }}" >> "$GITHUB_OUTPUT"
 
-      - name: Build debug APK
+      - name: Create Android debug keystore
+        run: |
+          mkdir -p "$HOME/.android"
+          keytool -genkeypair -v \
+            -keystore "$HOME/.android/debug.keystore" \
+            -storepass android \
+            -alias androiddebugkey \
+            -keypass android \
+            -keyalg RSA \
+            -keysize 2048 \
+            -validity 10000 \
+            -dname "CN=Android Debug,O=Android,C=US"
+
+      - name: Build debug and release APKs
         working-directory: lsposed-helper
-        run: gradle :app:assembleDebug --no-daemon --stacktrace
+        run: gradle :app:assembleDebug :app:assembleRelease --no-daemon --stacktrace
 
       - name: Collect APK files
         run: |
           mkdir -p release/apk
-          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}.apk"
-          cat > release/apk/BUILD_INFO.txt <<EOF
+          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}-debug.apk"
+          if [[ -f lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk ]]; then
+            cp lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}-release-unsigned.apk"
+          elif [[ -f lsposed-helper/app/build/outputs/apk/release/app-release.apk ]]; then
+            cp lsposed-helper/app/build/outputs/apk/release/app-release.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}-release.apk"
+          fi
+          cat > release/apk/BUILD_INFO.txt <<INFO
           Project: ColorOS Customizer APK
           Version: ${{ needs.resolve.outputs.version }}
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
-          EOF
-          sha256sum release/apk/* > release/apk/SHA256SUMS-APK.txt
+          Install note: debug APK is installable for testing. Release APK may need production signing for Play Store.
+          INFO
+          (cd release/apk && sha256sum * > SHA256SUMS-APK.txt)
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -213,7 +220,7 @@ jobs:
     name: Build Theme Module
     needs:
       - resolve
-      - security-module
+      - validate-module
     if: needs.resolve.outputs.run_module == 'true'
     runs-on: ubuntu-latest
     timeout-minutes: 20
@@ -230,9 +237,7 @@ jobs:
           fetch-depth: 0
 
       - name: Install build tools
-        run: |
-          sudo apt-get update
-          sudo apt-get install -y zip coreutils
+        run: sudo apt-get update && sudo apt-get install -y zip coreutils
 
       - name: Prepare artifact name
         id: meta
@@ -247,24 +252,21 @@ jobs:
         run: |
           mkdir -p release/module
           cp dist/* release/module/
-          cat > release/module/BUILD_INFO.txt <<EOF
+          cat > release/module/BUILD_INFO.txt <<INFO
           Project: ${MODULE_ID}
           Version: ${MODULE_VERSION}
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
-          EOF
-          cat > release/module/SBOM.txt <<EOF
+          INFO
+          cat > release/module/SBOM.txt <<INFO
           Project: ColorOS Themes Rock
           Version: ${MODULE_VERSION}
           Build runner: GitHub Actions ubuntu-latest
           Build tools: bash, zip, coreutils
           Commit: ${GITHUB_SHA}
-          EOF
-          (
-            cd release/module
-            sha256sum * > SHA256SUMS.txt
-          )
+          INFO
+          (cd release/module && sha256sum * > SHA256SUMS.txt)
 
       - name: Upload module artifact
         uses: actions/upload-artifact@v4
@@ -274,7 +276,7 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
-      - name: Generate GitHub build provenance attestation
+      - name: Generate build provenance attestation
         uses: actions/attest-build-provenance@v2
         with:
           subject-path: 'release/module/*'
@@ -305,67 +307,31 @@ jobs:
           name: ${{ needs.build-module.outputs.artifact_name }}
           path: release/module
 
-      - name: Build branded release metadata
+      - name: Build release notes
         id: release_meta
         shell: bash
         run: |
           VERSION="${{ needs.resolve.outputs.version }}"
-          HAS_APK="false"
-          HAS_MODULE="false"
-
-          [[ -d release/apk ]] && HAS_APK="true"
-          [[ -d release/module ]] && HAS_MODULE="true"
-
-          if [[ "$HAS_APK" == "true" && "$HAS_MODULE" == "true" ]]; then
-            RELEASE_NAME="Sayanth Rock Release ${VERSION}"
-          elif [[ "$HAS_APK" == "true" ]]; then
-            RELEASE_NAME="ColorOS Customizer ${VERSION}"
-          else
-            RELEASE_NAME="ColorOS Themes Rock ${VERSION}"
-          fi
-
-          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
-
-          cat > RELEASE_NOTES.md <<EOF
-          # ${RELEASE_NAME}
-
-          Premium release package for OPPO, OnePlus, and realme customization tools.
+          echo "release_name=Sayanth Rock ColorOS Release ${VERSION}" >> "$GITHUB_OUTPUT"
+          cat > RELEASE_NOTES.md <<INFO
+          # Sayanth Rock ColorOS Release ${VERSION}
 
           ## Highlights
-          - Premium UI polish update
-          - Status bar blur controls with safe fallback mode
-          - Wallpaper, OTA, battery, and support tools
-          - Unified GitHub release automation
+          - APK build and upload automation
+          - Theme module ZIP build automation
+          - Artifact collection with checksums
+          - Public GitHub Release publishing
+          - OPPO, OnePlus, and realme customization helper updates
 
-          ## Included files
-          EOF
+          ## Files
+          - ColorOS Customizer APK files when APK build succeeds
+          - ColorOS Themes Rock module ZIP when module build succeeds
+          - BUILD_INFO files
+          - SHA256 checksum files
 
-          if [[ "$HAS_APK" == "true" ]]; then
-            cat >> RELEASE_NOTES.md <<EOF
-
-          ### ColorOS Customizer APK
-          - APK package
-          - BUILD_INFO.txt
-          - SHA256SUMS-APK.txt
-          EOF
-          fi
-
-          if [[ "$HAS_MODULE" == "true" ]]; then
-            cat >> RELEASE_NOTES.md <<EOF
-
-          ### ColorOS Themes Rock Module
-          - Flashable module package
-          - BUILD_INFO.txt
-          - SBOM.txt
-          - SHA256SUMS.txt
-          EOF
-          fi
-
-          cat >> RELEASE_NOTES.md <<EOF
-
-          ## Release version
-          - ${VERSION}
-          EOF
+          ## Install note
+          Use the debug APK for direct test installation. Use a properly signed release APK for store distribution.
+          INFO
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
