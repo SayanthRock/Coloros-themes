@@ -1,0 +1,146 @@
+name: Build Battery Helper APK
+
+on:
+  push:
+    branches: [ main ]
+    paths:
+      - 'lsposed-helper/**'
+      - '.github/workflows/build-helper-apk.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: "Manual version name, example: v0.2.0"
+        required: false
+        default: ""
+      publish:
+        description: "Publish APK to GitHub Release"
+        required: true
+        type: boolean
+        default: false
+  release:
+    types: [ published ]
+
+concurrency:
+  group: battery-helper-apk-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  APK_NAME: ColorOS-Battery-Helper
+
+jobs:
+  build-apk:
+    name: Build Android APK
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    outputs:
+      version: ${{ steps.version.outputs.version }}
+      artifact_name: ${{ steps.version.outputs.artifact_name }}
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+
+      - name: Resolve APK version
+        id: version
+        shell: bash
+        run: |
+          INPUT_VERSION="${{ inputs.version }}"
+          if [[ -n "$INPUT_VERSION" ]]; then
+            VERSION="$INPUT_VERSION"
+          elif [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF_NAME}"
+          elif [[ "${{ github.event_name }}" == "release" ]]; then
+            VERSION="${{ github.event.release.tag_name }}"
+          else
+            VERSION="v$(grep -E "versionName '" lsposed-helper/app/build.gradle | head -n 1 | sed -E "s/.*versionName '([^']+)'.*/\1/")"
+          fi
+
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
+
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${APK_NAME}-${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Build debug APK
+        working-directory: lsposed-helper
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Collect APK
+        run: |
+          mkdir -p dist
+          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "dist/${APK_NAME}-${{ steps.version.outputs.version }}.apk"
+          sha256sum dist/*.apk > dist/SHA256SUMS-APK.txt
+
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.version.outputs.artifact_name }}
+          path: dist/*
+          if-no-files-found: error
+          retention-days: 30
+
+  release-apk:
+    name: Publish APK Release Asset
+    needs: build-apk
+    runs-on: ubuntu-latest
+    if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish == true)
+    permissions:
+      contents: write
+
+    steps:
+      - name: Download APK artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build-apk.outputs.artifact_name }}
+          path: dist
+
+      - name: Create APK release notes
+        run: |
+          cat > APK_RELEASE_NOTES.md <<EOF
+          # ColorOS Battery Helper APK ${{ needs.build-apk.outputs.version }}
+
+          ## Battery optimization improvements
+          - Added safe battery status dashboard
+          - Added OPPO, OnePlus, and realme device detection
+          - Added public Android battery settings shortcuts
+          - Added support report copy button
+          - Added safe LSPosed entry class
+          - Avoids aggressive task killers, hidden tracking, and unsafe root hacks
+
+          ## Build files
+          - APK artifact
+          - SHA256 checksum file
+          EOF
+
+      - name: Publish APK to GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build-apk.outputs.version }}
+          name: ColorOS Battery Helper ${{ needs.build-apk.outputs.version }}
+          body_path: APK_RELEASE_NOTES.md
+          files: dist/*
+          draft: false
+          prerelease: ${{ contains(needs.build-apk.outputs.version, 'beta') }}
