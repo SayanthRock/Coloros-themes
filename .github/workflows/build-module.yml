@@ -3,10 +3,25 @@ name: Build Theme Module
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   workflow_dispatch:
+    inputs:
+      release_version:
+        description: 'Release version, example: v0.1.1'
+        required: false
+        default: ''
+      publish_release:
+        description: 'Create a public GitHub Release'
+        required: true
+        default: false
+        type: boolean
 
 permissions:
-  contents: read
+  contents: write
+
+env:
+  MODULE_ID: ColorOS-Themes-Rock
 
 jobs:
   build:
@@ -20,6 +35,31 @@ jobs:
       - name: Install zip
         run: sudo apt-get update && sudo apt-get install -y zip
 
+      - name: Resolve release version
+        shell: bash
+        run: |
+          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
+            VERSION="${GITHUB_REF_NAME}"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.release_version }}" ]]; then
+            VERSION="${{ inputs.release_version }}"
+          else
+            VERSION="$(grep -E '^version=' module.prop | head -n 1 | cut -d'=' -f2-)"
+          fi
+
+          if [[ -z "$VERSION" ]]; then
+            echo "Release version is empty" >&2
+            exit 1
+          fi
+
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release version must look like v0.1.0" >&2
+            exit 1
+          fi
+
+          echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "ZIP_NAME=${MODULE_ID}-${VERSION}.zip" >> "$GITHUB_ENV"
+          echo "Resolved version: $VERSION"
+
       - name: Validate module
         run: bash scripts/validate-module.sh
 
@@ -32,6 +72,51 @@ jobs:
       - name: Upload module artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ColorOS-Themes-Rock
+          name: ColorOS-Themes-Rock-${{ env.MODULE_VERSION }}
           path: dist/*.zip
           if-no-files-found: error
+          retention-days: 30
+
+      - name: Generate release notes
+        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+        shell: bash
+        run: |
+          cat > RELEASE_NOTES.md <<EOF
+          # ColorOS Themes Rock ${MODULE_VERSION}
+
+          Public module release for OPPO, OnePlus, and realme devices.
+
+          ## Included
+          - Flashable module ZIP: ${ZIP_NAME}
+          - OPPO / OnePlus / realme support structure
+          - Theme asset folder support
+          - Lock screen, home screen, wallpaper, and UI asset structure
+          - Module validation before packaging
+          - GitHub Actions automatic release build
+
+          ## Safety
+          This module is for legal theme customization only. It does not bypass paid themes, DRM, protected OEM systems, or region locks.
+
+          ## Install
+          1. Download the ZIP from this release.
+          2. Open Magisk, KernelSU, or APatch.
+          3. Flash the module ZIP.
+          4. Reboot.
+          5. Test on one device first.
+
+          ## Build info
+          - Commit: ${GITHUB_SHA}
+          - Branch or tag: ${GITHUB_REF_NAME}
+          EOF
+
+      - name: Publish public GitHub Release
+        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ env.MODULE_VERSION }}
+          name: ColorOS Themes Rock ${{ env.MODULE_VERSION }}
+          body_path: RELEASE_NOTES.md
+          files: dist/*.zip
+          draft: false
+          prerelease: false
+          fail_on_unmatched_files: true
