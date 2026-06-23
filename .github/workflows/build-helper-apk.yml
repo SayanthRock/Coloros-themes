@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Manual version name, example: v0.3.0"
+        description: "Manual version name, example: v0.3.1"
         required: false
         default: ""
       publish:
@@ -122,17 +122,12 @@ jobs:
           cat > APK_RELEASE_NOTES.md <<EOF
           # ColorOS Customizer APK ${{ needs.build-apk.outputs.version }}
 
-          ## Customization improvements
-          - Added image picker open option
-          - Added selected image preview
-          - Added Home screen wallpaper button
-          - Added Lock screen wallpaper button
-          - Added Home + Lock wallpaper button
-          - Added About phone helper label
-          - Added OTA display name option with Sayanth Rock default
-          - Added OTA name on/off toggle
-          - Added OTA background toggle using the selected image
-          - Added full support report copy
+          ## UI update
+          - Added new header layout
+          - Added cleaner section spacing
+          - Added improved cards and buttons
+          - Added refined inputs for customization options
+          - Kept wallpaper, OTA, and battery tools
 
           ## Build files
           - APK artifact
