@@ -16,6 +16,7 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 - Adds local About phone helper label and OTA-style name/background switches.
 - Adds a GitHub Actions workflow to build and upload the APK.
 - Publishes public GitHub Releases from tags or manual workflow runs.
+- Includes refreshed workflow automation for the latest module and APK release flow.
 
 ## Supported targets
 
