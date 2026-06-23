@@ -1,11 +1,11 @@
 {
-  "version": "0.5.3",
+  "version": "0.5.4",
   "project": "ColorOS Themes Rock",
   "product_model": "free_first",
-  "architecture": "hook_overlay_safe",
+  "architecture": "professional_modular_hook_overlay",
   "ui_style": "sliding_liquid_glass",
   "startup_mode": "fast_lightweight",
-  "safety_rule": "Use reversible settings, owned assets, tested UI-only behavior, and clear customer warnings.",
+  "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, and clear customer warnings.",
   "free_mode": {
     "enabled": true,
     "label": "Free Mode",
@@ -20,6 +20,13 @@
     "swipe_enabled": true,
     "bottom_slider_enabled": true
   },
+  "modules": {
+    "theme_engine": {"enabled": true, "mode": "owned_assets_overlay", "risk": "low"},
+    "ui_tweaks": {"enabled": false, "mode": "optional_ui_only_after_test", "risk": "medium"},
+    "system_helper": {"enabled": true, "mode": "settings_shortcuts_and_reports", "risk": "low"},
+    "ota_guard": {"enabled": true, "mode": "warn_and_disable_before_updates", "risk": "low"},
+    "log_export": {"enabled": true, "mode": "customer_support_report", "risk": "low"}
+  },
   "hook_overlay": {
     "enabled": true,
     "default_mode": "safe",
@@ -32,15 +39,20 @@
   "package_strategy": [
     {"area": "system_ui", "strategy": "ui_only_after_device_testing", "risk": "medium"},
     {"area": "theme_app", "strategy": "owned_assets_and_customer_guidance", "risk": "low"},
-    {"area": "ota_app", "strategy": "no_update_integrity_changes", "risk": "high"},
+    {"area": "ota_app", "strategy": "warn_customer_and_do_not_change_update_integrity", "risk": "high"},
     {"area": "battery_app", "strategy": "guidance_and_labels_only", "risk": "medium"},
     {"area": "wallpaper_picker", "strategy": "standard_wallpaper_api_and_owned_assets", "risk": "low"}
   ],
   "items": [
     {"id": "free_mode", "name": "Free Mode", "status": "enabled", "risk": "low"},
+    {"id": "professional_modularity", "name": "Professional Modular Architecture", "status": "ready", "risk": "low"},
     {"id": "hook_overlay_architecture", "name": "Hook and Overlay Architecture", "status": "ready", "risk": "medium"},
     {"id": "device_profile", "name": "Device Profile Detection", "status": "ready", "risk": "low"},
+    {"id": "device_validation", "name": "Device Validation", "status": "ready", "risk": "low"},
     {"id": "safe_disable", "name": "Safe Disable Mode", "status": "required", "risk": "low"},
+    {"id": "ota_safe_mode", "name": "OTA Safe Mode", "status": "required", "risk": "low"},
+    {"id": "log_export", "name": "Log Export", "status": "ready", "risk": "low"},
+    {"id": "easy_updates", "name": "Update Check Plan", "status": "planned", "risk": "low"},
     {"id": "sliding_app", "name": "Sliding App Navigation", "status": "ready", "risk": "low"},
     {"id": "liquid_glass_ui", "name": "Transparent Liquid Glass UI", "status": "ready", "risk": "low"},
     {"id": "startup_performance", "name": "Fast Startup UI", "status": "ready", "risk": "low"},
@@ -59,5 +71,5 @@
     {"id": "backup_restore", "name": "Backup and restore", "status": "required_before_risky_changes", "risk": "low"},
     {"id": "support_report", "name": "Customer support report", "status": "safe", "risk": "low"}
   ],
-  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens", "unsafe_file_replacement"]
+  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens", "unsafe_file_replacement", "ota_integrity_changes"]
 }
