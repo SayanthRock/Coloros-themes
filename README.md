@@ -1,22 +1,17 @@
 # ColorOS Themes Rock
 
-Customer-safe theme module and **ColorOS Customizer APK** starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI on Android 15, Android 16, and Android 17.
+Customer-safe theme module and **ColorOS Customizer APK** starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI.
 
-This repo is built for legal theme customization, wallpaper packs, device compatibility checks, safe battery guidance, image-based customization, and support reports. It does **not** convert protected Theme Store assets or make fake performance claims.
+This project is for legal customization using assets that you created, own, or have permission to share.
 
-## What this project does
+## What this project builds
 
-- Provides a Magisk/KernelSU/APatch-style module structure.
-- Adds a systemless overlay target for `/system_ext/media/themeInner/`.
-- Gives a clean place to package your own lock screen, home screen, wallpaper, and UI assets.
-- Adds install-time device checks for OPPO, OnePlus, and realme.
-- Adds a GitHub Actions workflow to build a flashable module ZIP.
-- Adds a ColorOS Customizer APK for wallpaper, lock screen, home screen, battery, and support options.
-- Adds an open image picker so customers can choose any image they like.
-- Adds local About phone helper label and OTA-style name/background switches.
-- Adds a GitHub Actions workflow to build and upload the APK.
-- Publishes public GitHub Releases from tags or manual workflow runs.
-- Includes refreshed workflow automation for the latest module and APK release flow.
+- A flashable Magisk / KernelSU / APatch-style theme module ZIP.
+- A safe theme inspection pipeline for ColorOS/OPlus/realme `.theme` files.
+- A systemless overlay target for `/system_ext/media/themeInner/`.
+- A clean customization structure for wallpapers, icons, fonts, sounds, previews, customer support, and rollback notes.
+- A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, and safe toggles.
+- GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 
 ## Supported targets
 
@@ -27,39 +22,18 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 | realme | realme UI | Starter support |
 | Android 15 | Modern supported target | Planned testing |
 | Android 16 | Modern supported target | Planned testing |
-| Android 17 | Latest target | Needs device-by-device testing |
+| Android 17 | Latest target | Device-by-device testing required |
 
-## Included ColorOS Customizer APK
+## Uploaded theme package metadata
 
-The APK is in:
+The uploaded packages were inspected as ZIP-based theme archives with `themeInfo.xml` metadata.
 
-```text
-lsposed-helper/
-```
+| File | Detected theme root | Main contents | Resolution from metadata |
+|---|---|---|---|
+| `aquatic_design.theme` | `OplusSmartPhoneThemeInfo` | launcher, icons, picture, wallpaper | 2400x1080 |
+| `1-Simplicity.theme` | `OppoSmartPhoneThemeInfo` | OPPO launcher, wallpaper, previews | 2340x1080 |
 
-APK features:
-
-- Device status dashboard
-- Battery optimization status message
-- Open image picker option
-- Selected image preview
-- Apply image to Home screen wallpaper
-- Apply image to Lock screen wallpaper
-- Apply image to Home + Lock screen wallpaper
-- About phone helper label
-- OTA display name option with `Sayanth Rock` default
-- OTA name on/off switch
-- OTA background on/off switch using the selected image
-- Customer support report copy button
-- Safe LSPosed entry class
-
-## What it cannot safely do
-
-- It cannot silently change lock screen or home screen on non-root phones without user action.
-- It cannot guarantee every OEM Theme Store package will accept external theme files.
-- It cannot convert paid or protected Theme Store assets.
-- It cannot honestly promise magical performance boosts.
-- It does not directly spoof system identity by default.
+Use these only when sharing rights are clear.
 
 ## Folder structure
 
@@ -71,34 +45,57 @@ APK features:
 ├── service.sh
 ├── uninstall.sh
 ├── system_ext/media/themeInner/
-├── themes/sample/theme.json
+├── themes/default/
+├── themes/theme-pack-catalog.json
+├── theme-packs/
+├── customer-options/options.json
+├── scripts/
+│   ├── package.sh
+│   ├── validate-module.sh
+│   ├── check-theme-size.sh
+│   └── inspect-theme-package.py
 ├── docs/
-│   ├── BATTERY_GUIDE.md
-│   ├── CUSTOMIZATION_CENTER.md
-│   ├── COMPATIBILITY.md
-│   ├── CUSTOMER_SUPPORT.md
-│   └── ROADMAP.md
+│   ├── THEME_MODULE_BUILDER.md
+│   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
+│   ├── UI_DESIGN_SYSTEM.md
+│   ├── LAG_FIX_GUIDE.md
+│   └── PROBLEM_SOLVER_MATRIX.md
 ├── lsposed-helper/
 └── .github/workflows/
-    ├── build-module.yml
-    └── build-helper-apk.yml
+    ├── build-theme-module.yml
+    └── publish-github-release.yml
 ```
 
-## Build module ZIP
+## Build Theme Module
 
-The module ZIP workflow builds automatically on every push to `main`.
-
-Manual local build:
+Inspect a theme package:
 
 ```bash
+python3 scripts/inspect-theme-package.py /path/to/theme.theme --pretty
+```
+
+Validate and build:
+
+```bash
+bash scripts/validate-module.sh
 bash scripts/package.sh
 ```
 
 Output:
 
 ```text
-dist/ColorOS-Themes-Rock-v0.3.0.zip
+dist/ColorOS-Themes-Rock-v0.4.0.zip
 ```
+
+## Build from GitHub Actions
+
+1. Open **Actions**.
+2. Select **Build Theme Module**.
+3. Tap **Run workflow**.
+4. Enter a version like `v0.4.0`.
+5. Keep release publishing enabled to upload the module ZIP to a public GitHub Release.
+
+The workflow also runs on pushes that change module, theme, script, or workflow files.
 
 ## Build ColorOS Customizer APK
 
@@ -115,71 +112,34 @@ Output:
 lsposed-helper/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-GitHub build:
-
-1. Open **Actions**.
-2. Select **Build ColorOS Customizer APK**.
-3. Tap **Run workflow**.
-4. Use version `v0.3.0` or newer.
-5. Enable release publishing only when you want the APK uploaded to a public GitHub Release.
-
-## Public releases
-
-Public GitHub Releases are automated through:
+APK and combined release automation is handled by:
 
 ```text
-.github/workflows/build-module.yml
-.github/workflows/build-helper-apk.yml
+.github/workflows/publish-github-release.yml
 ```
 
-### Release from a tag
+## Customer customization matrix
 
-```bash
-git tag v0.3.0
-git push origin v0.3.0
-```
-
-### Release from GitHub Actions
-
-1. Open **Actions**.
-2. Select the build workflow.
-3. Tap **Run workflow**.
-4. Enter a version like `v0.3.0`.
-5. Enable public release publishing.
-6. Run the workflow.
+| Area | Supported approach | Safety status |
+|---|---|---|
+| Wallpaper | User-selected image or owned theme package | Safe |
+| Home screen | Wallpaper API or OEM theme package | Device testing required |
+| Lock screen | Wallpaper API or OEM theme package | Device testing required |
+| Icons | Theme icon asset or launcher icon pack | Device testing required |
+| Fonts | Owned font/theme asset | Device testing required |
+| Sounds | Owned ringtone/UI sound asset | Device testing required |
+| Preview images | Catalog previews and screenshots | Ready |
+| Battery/performance | Diagnostics, shortcuts, lag-fix guide | Safe, no fake booster claims |
+| Rollback | Uninstall script and customer guide | Documented |
 
 ## Install module ZIP
 
-1. Open the latest GitHub Release.
-2. Download the module ZIP.
-3. Open Magisk, KernelSU, or APatch.
-4. Flash the module ZIP.
-5. Reboot.
-6. Test on one device first before giving it to customers.
+1. Download the latest module ZIP artifact or GitHub Release asset.
+2. Open Magisk, KernelSU, or APatch.
+3. Flash the module ZIP.
+4. Reboot.
+5. Test on one device before sharing with customers.
 
-## Install helper APK
+## Safety rule
 
-1. Download the APK artifact or release APK.
-2. Install it on the test phone.
-3. Open **ColorOS Customizer**.
-4. Tap **Open image picker** and choose any image.
-5. Apply it to Home screen, Lock screen, or both.
-6. Configure About phone helper label and OTA-style options.
-7. Copy the support report if testing or reporting problems.
-
-## Customer-safe feature plan
-
-| Feature | Safe approach |
-|---|---|
-| Lock screen | User-selected wallpaper through Android public API |
-| Home screen | User-selected wallpaper through Android public API |
-| Wallpapers | Open image picker and selected image preview |
-| About phone | Helper label and support report first |
-| OTA name | Local `Sayanth Rock` display option with on/off switch |
-| OTA background | Local selected-image background option with on/off switch |
-| Battery | Diagnostics, settings shortcuts, support report, no fake booster claims |
-| Customer support | Device report template, compatibility table, rollback steps |
-
-## Legal and safety rule
-
-Only distribute themes, wallpapers, fonts, icons, sounds, and UI files that you created, own, or have permission to redistribute. Keep the project clean so customers can trust it.
+Only distribute themes, wallpapers, fonts, icons, sounds, previews, and UI files that you created, own, or have permission to share.
