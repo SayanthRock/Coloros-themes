@@ -14,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
+import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
 import android.widget.CompoundButton;
@@ -28,7 +29,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 /**
- * Free-first premium dark glass customer dashboard for ColorOS Themes Rock.
+ * Free-first transparent liquid-glass sliding dashboard for ColorOS Themes Rock.
  */
 public class MainActivity extends Activity {
 
@@ -39,16 +40,19 @@ public class MainActivity extends Activity {
     private static final int TAB_TOOLS = 2;
     private static final int TAB_SUPPORT = 3;
     private static final int TAB_SETTINGS = 4;
+    private static final int TAB_COUNT = 5;
 
     private static final int COLOR_BG = 0xFF0F0F10;
-    private static final int COLOR_NAV_BG = 0xFF151517;
-    private static final int COLOR_CARD = 0xFF1A1A1D;
-    private static final int COLOR_CARD_SOFT = 0xFF242429;
+    private static final int COLOR_NAV_BG = 0xE6151517;
+    private static final int COLOR_CARD = 0xB81A1A1D;
+    private static final int COLOR_CARD_SOFT = 0xAA242429;
+    private static final int COLOR_GLASS = 0x66FFFFFF;
     private static final int COLOR_ACCENT = 0xFFE2B884;
     private static final int COLOR_ACCENT_SOFT = 0xFFF0D2A8;
+    private static final int COLOR_ACCENT_GLOW = 0x44E2B884;
     private static final int COLOR_TEXT = 0xFFF5F2EA;
     private static final int COLOR_MUTED = 0xFFB9B1A3;
-    private static final int COLOR_BORDER = 0x33FFFFFF;
+    private static final int COLOR_BORDER = 0x4DFFFFFF;
     private static final int COLOR_SUCCESS = 0xFF8FD694;
     private static final int COLOR_WARNING = 0xFFFFCC66;
     private static final int COLOR_DANGER = 0xFFFF7A7A;
@@ -57,6 +61,8 @@ public class MainActivity extends Activity {
 
     private LinearLayout root;
     private int currentTab = TAB_DASHBOARD;
+    private float touchStartX;
+    private float touchStartY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -89,11 +95,12 @@ public class MainActivity extends Activity {
     private void render() {
         LinearLayout app = new LinearLayout(this);
         app.setOrientation(LinearLayout.VERTICAL);
-        app.setBackgroundColor(COLOR_BG);
+        app.setBackground(rounded(COLOR_BG, 0, COLOR_BG));
 
         ScrollView scrollView = new ScrollView(this);
         scrollView.setFillViewport(true);
         scrollView.setBackgroundColor(COLOR_BG);
+        installSlideGesture(scrollView);
 
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -104,6 +111,7 @@ public class MainActivity extends Activity {
         ));
 
         addTopBar();
+        addSlideIndicator();
         renderCurrentPage();
 
         app.addView(scrollView, new LinearLayout.LayoutParams(
@@ -111,8 +119,31 @@ public class MainActivity extends Activity {
                 0,
                 1f
         ));
-        addBottomNavigation(app);
+        addSlidingNavigation(app);
         setContentView(app);
+    }
+
+    private void installSlideGesture(View view) {
+        view.setOnTouchListener(new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View touched, MotionEvent event) {
+                if (event.getAction() == MotionEvent.ACTION_DOWN) {
+                    touchStartX = event.getX();
+                    touchStartY = event.getY();
+                } else if (event.getAction() == MotionEvent.ACTION_UP) {
+                    float dx = event.getX() - touchStartX;
+                    float dy = event.getY() - touchStartY;
+                    if (Math.abs(dx) > dp(90) && Math.abs(dx) > Math.abs(dy) * 1.4f) {
+                        if (dx < 0) {
+                            nextPage();
+                        } else {
+                            previousPage();
+                        }
+                    }
+                }
+                return false;
+            }
+        });
     }
 
     private void renderCurrentPage() {
@@ -133,7 +164,7 @@ public class MainActivity extends Activity {
         LinearLayout bar = new LinearLayout(this);
         bar.setOrientation(LinearLayout.HORIZONTAL);
         bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(0, dp(4), 0, dp(22));
+        bar.setPadding(0, dp(4), 0, dp(14));
 
         LinearLayout titleBox = new LinearLayout(this);
         titleBox.setOrientation(LinearLayout.VERTICAL);
@@ -157,40 +188,40 @@ public class MainActivity extends Activity {
     }
 
     private String titleForTab() {
-        if (currentTab == TAB_THEME) return "Theme Setup";
-        if (currentTab == TAB_TOOLS) return "Tools";
+        if (currentTab == TAB_THEME) return "Theme Layers";
+        if (currentTab == TAB_TOOLS) return "Performance";
         if (currentTab == TAB_SUPPORT) return "Support";
-        if (currentTab == TAB_SETTINGS) return "Settings";
+        if (currentTab == TAB_SETTINGS) return "More";
         return "ColorOS Rock";
     }
 
     private String subtitleForTab() {
-        if (currentTab == TAB_THEME) return "Wallpaper, lock screen, and icons";
-        if (currentTab == TAB_TOOLS) return "Display, performance, and shortcuts";
+        if (currentTab == TAB_THEME) return "Liquid layer customization";
+        if (currentTab == TAB_TOOLS) return "Startup, display, and quick entries";
         if (currentTab == TAB_SUPPORT) return "Report, backup, and rollback help";
-        if (currentTab == TAB_SETTINGS) return "Free mode and local preferences";
-        return "Free-first premium customization dashboard";
+        if (currentTab == TAB_SETTINGS) return "Free mode and UI preferences";
+        return "Sliding liquid-glass customization dashboard";
     }
 
     private void renderDashboardPage() {
-        addHeroCard();
+        addLiquidHeroCard();
         addFreeModeCard();
-        addSectionTitle("Customer options", "Every feature shows a clear support status");
-        addFeatureCard("Theme Setup", "Default theme, wallpaper, lock screen, and icon guidance.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
+        addSectionTitle("Sliding pages", "Swipe left or right, or use the bottom slider");
+        addFeatureCard("Theme Layers", "Wallpaper, lock screen, icons, and visual layers.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentTab = TAB_THEME;
                 render();
             }
         });
-        addFeatureCard("Performance", "Display controls, animation settings, and lag-fix checklist.", "Needs test", COLOR_WARNING, new View.OnClickListener() {
+        addFeatureCard("Performance", "Startup-focused layout, display shortcuts, and lag checklist.", "Fast", COLOR_ACCENT, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentTab = TAB_TOOLS;
                 render();
             }
         });
-        addFeatureCard("Safety", "Backup, restore, support report, and rollback guidance.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
+        addFeatureCard("Safety", "Backup, restore, reports, and rollback guidance.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentTab = TAB_SUPPORT;
@@ -220,7 +251,7 @@ public class MainActivity extends Activity {
                 applySelectedWallpaper(WallpaperManager.FLAG_LOCK);
             }
         });
-        addActionButton("Open Android wallpaper settings", false, new View.OnClickListener() {
+        addActionButton("Open wallpaper settings", false, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openSettings(new Intent("android.settings.WALLPAPER_SETTINGS"));
@@ -228,18 +259,21 @@ public class MainActivity extends Activity {
         });
         addSelectedImagePreview();
 
-        addSectionTitle("Theme and icons", "Device support may vary by ColorOS, OxygenOS, and realme UI version");
-        addFeatureCard("Default Rock Premium Theme", "Use owned theme assets and previews only.", "Safe", COLOR_SUCCESS, toastClick("Default theme guide ready"));
-        addFeatureCard("Icon Pack Apply", "Use launcher-supported icon options where available.", "Needs test", COLOR_WARNING, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_HOME_SETTINGS));
-            }
-        });
-        addFeatureCard("Lock Screen Style", "Wallpaper and lock screen behavior depends on the device skin.", "Needs test", COLOR_WARNING, toastClick("Lock screen support requires device testing"));
+        addSectionTitle("Layer customization", "Every layer has a status label and clean fallback");
+        addLayerCard("Base Layer", "Dark transparent surface, liquid glass background, and premium spacing.", "Ready", COLOR_SUCCESS);
+        addLayerCard("Wallpaper Layer", "Home and lock wallpaper picker with preview.", "Safe", COLOR_SUCCESS);
+        addLayerCard("Icon Layer", "Launcher-supported icon options where available.", "Needs test", COLOR_WARNING);
+        addLayerCard("Lock Layer", "Lock screen behavior depends on the device software.", "Needs test", COLOR_WARNING);
+        addLayerCard("Status Layer", "Clear badges for Safe, Needs test, Required, and Not supported.", "Ready", COLOR_SUCCESS);
+        addLayerCard("Support Layer", "Reports, backup notes, and rollback path stay visible.", "Ready", COLOR_SUCCESS);
     }
 
     private void renderToolsPage() {
+        addSectionTitle("Startup performance", "Fast launch, light effects, and no heavy background animation");
+        addFeatureCard("Lightweight Liquid Glass", "Transparent cards use simple drawables for smooth startup.", "Fast", COLOR_ACCENT, toastClick("Liquid glass mode is lightweight"));
+        addFeatureCard("No troll/demo options", "Customer pages use real tools, status labels, and support actions only.", "Clean", COLOR_SUCCESS, toastClick("Troll/demo options removed"));
+        addFeatureCard("Minimal Motion", "Sliding page changes avoid heavy animation and keep the app responsive.", "Fast", COLOR_ACCENT, toastClick("Minimal motion enabled"));
+
         addSectionTitle("Display controls", "Use safe shortcuts first");
         addFeatureCard("Refresh Rate", "Open display settings for Auto, High, or Standard refresh rate options.", "Needs test", COLOR_WARNING, new View.OnClickListener() {
             @Override
@@ -247,13 +281,13 @@ public class MainActivity extends Activity {
                 openSettings(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
             }
         });
-        addFeatureCard("Animation Speed", "Use system developer animation options only when the user enables them.", "Needs permission", COLOR_WARNING, new View.OnClickListener() {
+        addFeatureCard("Animation Speed", "Open developer animation settings only when the user wants it.", "Needs permission", COLOR_WARNING, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openSettings(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
             }
         });
-        addFeatureCard("Battery Help", "Use honest guidance, no fake booster claims.", "Safe", COLOR_SUCCESS, toastClick("Battery checklist ready"));
+        addFeatureCard("Battery Help", "Use honest guidance and avoid fake booster claims.", "Safe", COLOR_SUCCESS, toastClick("Battery checklist ready"));
 
         addSectionTitle("Quick entries", "Useful settings shortcuts for customers");
         addSmallCard("System settings", "Open Android Settings", new View.OnClickListener() {
@@ -305,10 +339,11 @@ public class MainActivity extends Activity {
         addSwitchRow("Show status badges", "Display Safe, Needs test, Experimental, or Not supported", "status_badges", true);
 
         addDivider();
-        addSectionTitle("UI style", "New model premium dark glass");
-        addSwitchRow("Soft glass cards", "Use rounded dark cards with subtle borders", "soft_glass", true);
-        addSwitchRow("Minimal motion", "Use short transitions only", "minimal_motion", true);
-        addSwitchRow("Compact dashboard", "Keep the home screen focused", "compact_dashboard", true);
+        addSectionTitle("Liquid glass style", "Transparent layer effect without startup lag");
+        addSwitchRow("Transparent glass cards", "Use rounded translucent cards with subtle borders", "transparent_glass", true);
+        addSwitchRow("Blur-style depth", "Use lightweight depth effect instead of heavy live blur", "blur_style_depth", true);
+        addSwitchRow("Sliding app mode", "Use swipe pages and bottom slider navigation", "sliding_app", true);
+        addSwitchRow("Compact startup", "Keep first screen fast and focused", "compact_startup", true);
 
         addDivider();
         addSectionTitle("Customization preview", "Safe local labels for reports and previews");
@@ -316,15 +351,15 @@ public class MainActivity extends Activity {
         addAboutAndOtaCard();
     }
 
-    private void addHeroCard() {
+    private void addLiquidHeroCard() {
         LinearLayout card = card(true);
         card.setPadding(dp(22), dp(22), dp(22), dp(22));
-        card.addView(badge("Free Mode Enabled", COLOR_SUCCESS));
-        TextView title = text("New Model Premium UI", 27, COLOR_TEXT, true);
+        card.addView(badge("Free Liquid Glass", COLOR_SUCCESS));
+        TextView title = text("Sliding App Model", 28, COLOR_TEXT, true);
         title.setPadding(0, dp(14), 0, dp(6));
         card.addView(title);
-        card.addView(text("Dark glass dashboard for OPPO, OnePlus, and realme customization. Built for free customer tools, clear status labels, and safe rollback guidance.", 16, COLOR_MUTED, false));
-        card.addView(cardButton("Open Theme Setup", true, new View.OnClickListener() {
+        card.addView(text("Transparent liquid-glass dashboard for OPPO, OnePlus, and realme customization. Built for free customer tools, smooth startup, clean layers, and reliable support.", 16, COLOR_MUTED, false));
+        card.addView(cardButton("Open Theme Layers", true, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 currentTab = TAB_THEME;
@@ -411,6 +446,10 @@ public class MainActivity extends Activity {
         root.addView(card, cardParams());
     }
 
+    private void addLayerCard(String title, String subtitle, String status, int statusColor) {
+        addFeatureCard(title, subtitle, status, statusColor, toastClick(title + " ready"));
+    }
+
     private void addFeatureCard(String title, String subtitle, String status, int statusColor, View.OnClickListener listener) {
         LinearLayout card = card(false);
         card.setOnClickListener(listener);
@@ -481,7 +520,7 @@ public class MainActivity extends Activity {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(18), dp(18), dp(18), dp(18));
-        card.setBackground(rounded(elevated ? COLOR_CARD_SOFT : COLOR_CARD, dp(24), COLOR_BORDER));
+        card.setBackground(rounded(elevated ? COLOR_CARD_SOFT : COLOR_CARD, dp(26), elevated ? COLOR_ACCENT_GLOW : COLOR_BORDER));
         return card;
     }
 
@@ -524,22 +563,40 @@ public class MainActivity extends Activity {
         return input;
     }
 
-    private void addBottomNavigation(LinearLayout app) {
-        LinearLayout nav = new LinearLayout(this);
-        nav.setOrientation(LinearLayout.HORIZONTAL);
-        nav.setGravity(Gravity.CENTER);
-        nav.setPadding(dp(8), dp(8), dp(8), dp(8));
-        nav.setBackgroundColor(COLOR_NAV_BG);
+    private void addSlidingNavigation(LinearLayout app) {
+        LinearLayout dock = new LinearLayout(this);
+        dock.setOrientation(LinearLayout.VERTICAL);
+        dock.setPadding(dp(10), dp(8), dp(10), dp(8));
+        dock.setBackgroundColor(COLOR_NAV_BG);
 
-        addNavItem(nav, TAB_DASHBOARD, "⌂", "Home");
-        addNavItem(nav, TAB_THEME, "◈", "Theme");
-        addNavItem(nav, TAB_TOOLS, "⚙", "Tools");
-        addNavItem(nav, TAB_SUPPORT, "▣", "Support");
-        addNavItem(nav, TAB_SETTINGS, "●", "More");
+        LinearLayout arrows = new LinearLayout(this);
+        arrows.setOrientation(LinearLayout.HORIZONTAL);
+        arrows.setGravity(Gravity.CENTER_VERTICAL);
+        addSliderButton(arrows, "‹", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                previousPage();
+            }
+        });
+        addNavItem(arrows, TAB_DASHBOARD, "⌂", "Home");
+        addNavItem(arrows, TAB_THEME, "◈", "Layers");
+        addNavItem(arrows, TAB_TOOLS, "⚙", "Speed");
+        addNavItem(arrows, TAB_SUPPORT, "▣", "Help");
+        addNavItem(arrows, TAB_SETTINGS, "●", "More");
+        addSliderButton(arrows, "›", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                nextPage();
+            }
+        });
 
-        app.addView(nav, new LinearLayout.LayoutParams(
+        dock.addView(arrows, new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(96)
+                dp(74)
+        ));
+        app.addView(dock, new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                dp(90)
         ));
     }
 
@@ -548,8 +605,8 @@ public class MainActivity extends Activity {
         LinearLayout item = new LinearLayout(this);
         item.setOrientation(LinearLayout.VERTICAL);
         item.setGravity(Gravity.CENTER);
-        item.setPadding(dp(4), dp(4), dp(4), dp(4));
-        item.setBackground(selected ? rounded(COLOR_CARD_SOFT, dp(28), COLOR_BORDER) : null);
+        item.setPadding(dp(3), dp(3), dp(3), dp(3));
+        item.setBackground(selected ? rounded(COLOR_CARD_SOFT, dp(28), COLOR_ACCENT_GLOW) : null);
         item.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -558,16 +615,50 @@ public class MainActivity extends Activity {
             }
         });
 
-        TextView iconView = text(icon, 24, selected ? COLOR_ACCENT : COLOR_MUTED, true);
+        TextView iconView = text(icon, 22, selected ? COLOR_ACCENT : COLOR_MUTED, true);
         iconView.setGravity(Gravity.CENTER);
-        TextView labelView = text(label, 12, selected ? COLOR_TEXT : COLOR_MUTED, true);
+        TextView labelView = text(label, 11, selected ? COLOR_TEXT : COLOR_MUTED, true);
         labelView.setGravity(Gravity.CENTER);
         item.addView(iconView);
         item.addView(labelView);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-        params.setMargins(dp(2), 0, dp(2), 0);
+        params.setMargins(dp(1), 0, dp(1), 0);
         nav.addView(item, params);
+    }
+
+    private void addSliderButton(LinearLayout nav, String label, View.OnClickListener listener) {
+        TextView button = text(label, 26, COLOR_ACCENT, true);
+        button.setGravity(Gravity.CENTER);
+        button.setBackground(rounded(COLOR_CARD, dp(24), COLOR_BORDER));
+        button.setOnClickListener(listener);
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(34), dp(54));
+        params.setMargins(dp(2), dp(10), dp(2), dp(10));
+        nav.addView(button, params);
+    }
+
+    private void addSlideIndicator() {
+        LinearLayout dots = new LinearLayout(this);
+        dots.setOrientation(LinearLayout.HORIZONTAL);
+        dots.setGravity(Gravity.CENTER);
+        dots.setPadding(0, 0, 0, dp(16));
+        for (int i = 0; i < TAB_COUNT; i++) {
+            TextView dot = new TextView(this);
+            dot.setText(currentTab == i ? "━━━━" : "━━");
+            dot.setTextSize(12);
+            dot.setTextColor(currentTab == i ? COLOR_ACCENT : COLOR_BORDER);
+            dot.setGravity(Gravity.CENTER);
+            final int target = i;
+            dot.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View view) {
+                    currentTab = target;
+                    render();
+                }
+            });
+            dots.addView(dot, new LinearLayout.LayoutParams(dp(currentTab == i ? 38 : 24), dp(20)));
+        }
+        root.addView(dots, matchWrap());
     }
 
     private void addHeaderPill(LinearLayout bar, String label, int color, View.OnClickListener listener) {
@@ -579,6 +670,16 @@ public class MainActivity extends Activity {
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(label.length() > 2 ? dp(62) : dp(44), dp(36));
         params.setMargins(dp(8), 0, 0, 0);
         bar.addView(action, params);
+    }
+
+    private void nextPage() {
+        currentTab = (currentTab + 1) % TAB_COUNT;
+        render();
+    }
+
+    private void previousPage() {
+        currentTab = (currentTab - 1 + TAB_COUNT) % TAB_COUNT;
+        render();
     }
 
     private View.OnClickListener refreshClick() {
