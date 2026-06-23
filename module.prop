@@ -1,6 +1,6 @@
 id=coloros_themes_rock
 name=ColorOS Themes Rock
-version=v0.5.0
-versionCode=5
+version=v0.5.1
+versionCode=6
 author=Sayanth Rock
-description=Systemless ColorOS/realme UI/OxygenOS customization module with Magisk root support, LSPosed-ready architecture, safe backup/restore planning, theme options, wallpaper controls, performance toggles, and customer rollback guidance.
+description=Free-first ColorOS/realme UI/OxygenOS customization module with premium dark glass UI, customer options, safe backup/restore planning, wallpaper controls, performance guidance, and rollback support.
