@@ -1,9 +1,11 @@
 #!/system/bin/sh
 # ColorOS Themes Rock late-boot service.
-# Safe rule: apply only small, reversible settings. Do not replace real /system files here.
+# Safe rule: apply only small, reversible settings. Do not replace real system files here.
 
 MODDIR=${0%/*}
 CONFIG="$MODDIR/config/settings.conf"
+PROFILE="$MODDIR/config/device-profile.conf"
+SAFE_DISABLE_FILE="$MODDIR/disable"
 LOG_DIR="/data/local/tmp/coloros-themes-rock"
 LOG_FILE="$LOG_DIR/service.log"
 
@@ -21,6 +23,18 @@ log_msg "ColorOS Themes Rock service started"
 log_msg "Brand: $(getprop ro.product.brand)"
 log_msg "Model: $(getprop ro.product.model)"
 log_msg "Android: $(getprop ro.build.version.release)"
+log_msg "OPlus version: $(getprop ro.build.version.oplus)"
+
+if [ -f "$SAFE_DISABLE_FILE" ]; then
+  log_msg "Safe-disable flag detected. Service exiting without applying options."
+  exit 0
+fi
+
+if [ -f "$PROFILE" ]; then
+  log_msg "Loaded device profile from $PROFILE"
+else
+  log_msg "No device profile found. Continuing with safe defaults only."
+fi
 
 # Defaults. The module stays conservative unless the user enables options.
 REFRESH_RATE="auto"
