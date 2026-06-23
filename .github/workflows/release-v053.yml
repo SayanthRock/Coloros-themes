@@ -1,0 +1,151 @@
+name: Release v0.5.3
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: 'Publish GitHub Release'
+        required: true
+        type: boolean
+        default: true
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+concurrency:
+  group: release-v053-${{ github.ref }}
+  cancel-in-progress: true
+
+env:
+  APK_NAME: ColorOS-Customizer
+  MODULE_ID: ColorOS-Themes-Rock
+
+jobs:
+  release:
+    name: Build and Upload
+    runs-on: ubuntu-latest
+    timeout-minutes: 45
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+
+      - name: Resolve version
+        id: meta
+        shell: bash
+        run: |
+          VERSION="$(grep -E '^version=' module.prop | head -n 1 | cut -d'=' -f2-)"
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+
+      - name: Validate module
+        run: bash scripts/validate-module.sh
+
+      - name: Check theme assets
+        run: bash scripts/check-theme-size.sh
+
+      - name: Build APK
+        working-directory: lsposed-helper
+        run: gradle :app:assembleDebug :app:assembleRelease --no-daemon --stacktrace
+
+      - name: Build module ZIP
+        run: bash scripts/package.sh
+
+      - name: Collect release files
+        shell: bash
+        run: |
+          set -euo pipefail
+          VERSION="${{ steps.meta.outputs.version }}"
+          mkdir -p release/files
+          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/files/${APK_NAME}-${VERSION}-debug.apk"
+          if [[ -f lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk ]]; then
+            cp lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk "release/files/${APK_NAME}-${VERSION}-release-unsigned.apk"
+          elif [[ -f lsposed-helper/app/build/outputs/apk/release/app-release.apk ]]; then
+            cp lsposed-helper/app/build/outputs/apk/release/app-release.apk "release/files/${APK_NAME}-${VERSION}-release.apk"
+          fi
+          cp dist/*.zip release/files/
+          cat > release/files/BUILD_INFO.txt <<INFO
+          Project: ColorOS Themes Rock
+          Version: ${VERSION}
+          Commit: ${GITHUB_SHA}
+          Workflow: ${GITHUB_WORKFLOW}
+          Run ID: ${GITHUB_RUN_ID}
+          INFO
+          (cd release/files && sha256sum * > SHA256SUMS.txt)
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ColorOS-Themes-Rock-${{ steps.meta.outputs.version }}
+          path: release/files/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Attest build files
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'release/files/*'
+
+      - name: Create release notes
+        run: |
+          VERSION="${{ steps.meta.outputs.version }}"
+          cat > RELEASE_NOTES.md <<INFO
+          # ColorOS Themes Rock ${VERSION}
+
+          ## Included files
+          - Helper APK
+          - Module ZIP
+          - BUILD_INFO.txt
+          - SHA256SUMS.txt
+
+          ## Highlights
+          - Sliding liquid-glass UI
+          - Device profile detection
+          - Safe-disable support
+          - Customer options and support report flow
+
+          ## Test note
+          Test on an OPPO, OnePlus, or realme phone before public sharing.
+          INFO
+
+      - name: Publish release
+        if: inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(release/files/*)
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No files to upload"
+            exit 1
+          fi
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release edit "$VERSION" --title "ColorOS Themes Rock ${VERSION}" --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$VERSION" --target "$GITHUB_SHA" --title "ColorOS Themes Rock ${VERSION}" --notes-file RELEASE_NOTES.md
+          fi
+          gh release upload "$VERSION" "${files[@]}" --clobber
