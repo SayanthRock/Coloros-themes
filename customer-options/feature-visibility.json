@@ -1,0 +1,67 @@
+{
+  "version": "0.4.2",
+  "project": "ColorOS Themes Rock",
+  "screen": "Permission Center",
+  "visibilityRules": [
+    {
+      "state": "no_root",
+      "title": "No Root permission",
+      "message": "Root permission is not detected, some functions will not be available!",
+      "primaryAction": "OK",
+      "showFeatures": [
+        "Wallpaper setup",
+        "Recommended apps selector",
+        "Permission report",
+        "Android settings shortcuts",
+        "Theme preview",
+        "Safe compatibility mode",
+        "Rollback notes"
+      ],
+      "lockFeatures": [
+        "Advanced theme mode",
+        "System theme path helper",
+        "System backup before apply",
+        "System file apply"
+      ]
+    },
+    {
+      "state": "storage_permission_granted",
+      "title": "File access ready",
+      "message": "Customer-owned theme, wallpaper, and backup files can be imported.",
+      "showFeatures": [
+        "Theme package import",
+        "Wallpaper import",
+        "Backup file picker",
+        "Support report export"
+      ]
+    },
+    {
+      "state": "install_permission_granted",
+      "title": "Install source ready",
+      "message": "Customer-approved APK installs can be started from this source.",
+      "showFeatures": [
+        "APK update install",
+        "Helper APK install guide"
+      ]
+    },
+    {
+      "state": "root_detected",
+      "title": "Root permission detected",
+      "message": "Advanced options can be enabled after customer confirmation and rollback check.",
+      "showFeatures": [
+        "Advanced theme mode",
+        "System theme path helper",
+        "System backup before apply",
+        "Rollback mode",
+        "Compatibility guard"
+      ],
+      "requiredCustomerSteps": [
+        "Confirm device model",
+        "Confirm Android version",
+        "Confirm backup plan",
+        "Confirm rollback steps",
+        "Apply one feature at a time"
+      ]
+    }
+  ]
+}
