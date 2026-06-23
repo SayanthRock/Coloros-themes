@@ -3,19 +3,6 @@ name: Build Theme Module
 on:
   push:
     branches: [ main ]
-    tags:
-      - 'v*'
-  workflow_dispatch:
-    inputs:
-      release_version:
-        description: 'Release version, example: v0.1.1'
-        required: false
-        default: ''
-      publish_release:
-        description: 'Create a public GitHub Release'
-        required: true
-        default: true
-        type: boolean
 
 permissions:
   contents: write
@@ -25,40 +12,45 @@ env:
 
 jobs:
   build:
-    name: Build module ZIP
+    name: Auto Version + Build + Release
     runs-on: ubuntu-latest
 
     steps:
       - name: Checkout
         uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install zip
         run: sudo apt-get update && sudo apt-get install -y zip
 
-      - name: Resolve release version
-        shell: bash
+      - name: Get latest tag
+        id: tag
         run: |
-          if [[ "${GITHUB_REF_TYPE}" == "tag" ]]; then
-            VERSION="${GITHUB_REF_NAME}"
-          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && -n "${{ inputs.release_version }}" ]]; then
-            VERSION="${{ inputs.release_version }}"
-          else
-            VERSION="$(grep -E '^version=' module.prop | head -n 1 | cut -d'=' -f2-)"
+          git fetch --tags
+          LATEST=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1 || true)
+          if [ -z "$LATEST" ]; then
+            LATEST="v0.0.0"
           fi
+          echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-          if [[ -z "$VERSION" ]]; then
-            echo "Release version is empty" >&2
-            exit 1
-          fi
+      - name: Compute next version
+        id: version
+        run: |
+          LATEST=${{ steps.tag.outputs.latest }}
+          VERSION_NUM=${LATEST#v}
+          IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
+          PATCH=$((PATCH+1))
+          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+          echo "MODULE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
-          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
-            echo "Release version must look like v0.1.0" >&2
-            exit 1
-          fi
-
-          echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
-          echo "ZIP_NAME=${MODULE_ID}-${VERSION}.zip" >> "$GITHUB_ENV"
-          echo "Resolved version: $VERSION"
+      - name: Create Git tag
+        run: |
+          git config user.name "github-actions"
+          git config user.email "github-actions@github.com"
+          git tag $MODULE_VERSION
+          git push origin $MODULE_VERSION
 
       - name: Validate module
         run: bash scripts/validate-module.sh
@@ -69,48 +61,30 @@ jobs:
       - name: Package module
         run: bash scripts/package.sh
 
-      - name: Upload module artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ColorOS-Themes-Rock-${{ env.MODULE_VERSION }}
           path: dist/*.zip
-          if-no-files-found: error
-          retention-days: 30
 
       - name: Generate release notes
-        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
-        shell: bash
         run: |
           cat > RELEASE_NOTES.md <<EOF
-          # ColorOS Themes Rock ${MODULE_VERSION}
+# ColorOS Themes Rock ${MODULE_VERSION}
 
-          Public module release for OPPO, OnePlus, and realme devices.
+Automated release.
 
-          ## Included
-          - Flashable module ZIP: ${ZIP_NAME}
-          - OPPO / OnePlus / realme support structure
-          - Theme asset folder support
-          - Lock screen, home screen, wallpaper, and UI asset structure
-          - Module validation before packaging
-          - GitHub Actions automatic release build
+## Included
+- Flashable module ZIP
+- OPPO / OnePlus / realme support
+- Theme assets structure
+- CI automated build
 
-          ## Safety
-          This module is for legal theme customization only. It does not bypass paid themes, DRM, protected OEM systems, or region locks.
+## Install
+Flash via Magisk / KernelSU / APatch
+EOF
 
-          ## Install
-          1. Download the ZIP from this release.
-          2. Open Magisk, KernelSU, or APatch.
-          3. Flash the module ZIP.
-          4. Reboot.
-          5. Test on one device first.
-
-          ## Build info
-          - Commit: ${GITHUB_SHA}
-          - Branch or tag: ${GITHUB_REF_NAME}
-          EOF
-
-      - name: Publish public GitHub Release
-        if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish_release)
+      - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.MODULE_VERSION }}
@@ -119,4 +93,3 @@ jobs:
           files: dist/*.zip
           draft: false
           prerelease: false
-          fail_on_unmatched_files: true
