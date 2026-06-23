@@ -1,0 +1,157 @@
+name: Build App Bundle Release
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+    paths:
+      - 'lsposed-helper/**'
+      - '.github/workflows/build-playstore-release.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Release tag, example: v0.4.1'
+        required: false
+        default: ''
+      publish:
+        description: 'Publish GitHub Release'
+        required: true
+        type: boolean
+        default: true
+
+concurrency:
+  group: build-app-bundle-release-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+
+env:
+  APP_NAME: ColorOS-Customizer
+
+jobs:
+  build:
+    name: Build APK and AAB
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      artifact_name: ${{ steps.meta.outputs.artifact_name }}
+      should_publish: ${{ steps.meta.outputs.should_publish }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+
+      - name: Resolve release metadata
+        id: meta
+        shell: bash
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ -z "$VERSION" && "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION="$GITHUB_REF_NAME"
+          fi
+          if [[ -z "$VERSION" ]]; then
+            VERSION="v$(grep -E "versionName '" lsposed-helper/app/build.gradle | head -n 1 | sed -E "s/.*versionName '([^']+)'.*/\1/")"
+          fi
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${APP_NAME}-${VERSION}-bundle-release" >> "$GITHUB_OUTPUT"
+          if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
+            echo "should_publish=${{ inputs.publish }}" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Build debug APK and release bundle
+        working-directory: lsposed-helper
+        run: gradle :app:assembleDebug :app:bundleRelease --no-daemon --stacktrace
+
+      - name: Collect outputs
+        run: |
+          mkdir -p release/app
+          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/app/${APP_NAME}-${{ steps.meta.outputs.version }}-debug.apk"
+          cp lsposed-helper/app/build/outputs/bundle/release/app-release.aab "release/app/${APP_NAME}-${{ steps.meta.outputs.version }}-release.aab"
+          cat > release/app/BUILD_INFO.txt <<INFO
+          Project: ColorOS Customizer
+          Version: ${{ steps.meta.outputs.version }}
+          Commit: ${GITHUB_SHA}
+          Workflow: ${GITHUB_WORKFLOW}
+          Run ID: ${GITHUB_RUN_ID}
+          Outputs: debug APK for direct testing, release AAB for marketplace upload after final signing/checks.
+          INFO
+          (cd release/app && sha256sum * > SHA256SUMS-APP.txt)
+
+      - name: Upload app artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: release/app/*
+          if-no-files-found: error
+          retention-days: 30
+
+  publish:
+    name: Publish GitHub Release
+    needs: build
+    if: needs.build.outputs.should_publish == 'true'
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download app artifacts
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: release/app
+
+      - name: Write release notes
+        run: |
+          cat > RELEASE_NOTES.md <<INFO
+          # ColorOS Customizer ${{ needs.build.outputs.version }}
+
+          ## Included files
+          - Debug APK for direct device testing
+          - Release AAB for marketplace upload after final signing/checks
+          - BUILD_INFO.txt
+          - SHA256SUMS-APP.txt
+
+          ## Release checklist
+          - Test on at least one OPPO, OnePlus, or realme phone
+          - Confirm no-root warning works correctly
+          - Confirm Permission Center status cards work correctly
+          - Confirm wallpaper and settings shortcuts work correctly
+          - Upload the AAB to the app marketplace after policy review
+          INFO
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.version }}
+          target_commitish: ${{ github.sha }}
+          name: ColorOS Customizer ${{ needs.build.outputs.version }}
+          body_path: RELEASE_NOTES.md
+          files: release/app/*
+          draft: false
+          prerelease: ${{ contains(needs.build.outputs.version, 'beta') }}
