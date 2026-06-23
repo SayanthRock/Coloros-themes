@@ -46,7 +46,6 @@ public class MainActivity extends Activity {
     private static final int COLOR_NAV_BG = 0xE6151517;
     private static final int COLOR_CARD = 0xB81A1A1D;
     private static final int COLOR_CARD_SOFT = 0xAA242429;
-    private static final int COLOR_GLASS = 0x66FFFFFF;
     private static final int COLOR_ACCENT = 0xFFE2B884;
     private static final int COLOR_ACCENT_SOFT = 0xFFF0D2A8;
     private static final int COLOR_ACCENT_GLOW = 0x44E2B884;
@@ -55,7 +54,6 @@ public class MainActivity extends Activity {
     private static final int COLOR_BORDER = 0x4DFFFFFF;
     private static final int COLOR_SUCCESS = 0xFF8FD694;
     private static final int COLOR_WARNING = 0xFFFFCC66;
-    private static final int COLOR_DANGER = 0xFFFF7A7A;
 
     private static final String PREFS_UI = "coloros_customizer_ui";
 
@@ -271,7 +269,7 @@ public class MainActivity extends Activity {
     private void renderToolsPage() {
         addSectionTitle("Startup performance", "Fast launch, light effects, and no heavy background animation");
         addFeatureCard("Lightweight Liquid Glass", "Transparent cards use simple drawables for smooth startup.", "Fast", COLOR_ACCENT, toastClick("Liquid glass mode is lightweight"));
-        addFeatureCard("No troll/demo options", "Customer pages use real tools, status labels, and support actions only.", "Clean", COLOR_SUCCESS, toastClick("Troll/demo options removed"));
+        addFeatureCard("Clean Customer Flow", "Customer pages use real tools, status labels, and support actions only.", "Clean", COLOR_SUCCESS, toastClick("Clean customer flow enabled"));
         addFeatureCard("Minimal Motion", "Sliding page changes avoid heavy animation and keep the app responsive.", "Fast", COLOR_ACCENT, toastClick("Minimal motion enabled"));
 
         addSectionTitle("Display controls", "Use safe shortcuts first");
