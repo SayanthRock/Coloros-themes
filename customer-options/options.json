@@ -1,10 +1,11 @@
 {
-  "version": "0.5.2",
+  "version": "0.5.3",
   "project": "ColorOS Themes Rock",
   "product_model": "free_first",
+  "architecture": "hook_overlay_safe",
   "ui_style": "sliding_liquid_glass",
   "startup_mode": "fast_lightweight",
-  "safety_rule": "Use reversible settings and clear customer warnings. Do not hide unsupported features behind fake promises.",
+  "safety_rule": "Use reversible settings, owned assets, tested UI-only behavior, and clear customer warnings.",
   "free_mode": {
     "enabled": true,
     "label": "Free Mode",
@@ -19,8 +20,27 @@
     "swipe_enabled": true,
     "bottom_slider_enabled": true
   },
+  "hook_overlay": {
+    "enabled": true,
+    "default_mode": "safe",
+    "hook_mode": "optional_ui_only",
+    "overlay_mode": "owned_assets_only",
+    "device_profile_required": true,
+    "safe_disable_supported": true,
+    "unsupported_devices_default_to": "needs_device_test"
+  },
+  "package_strategy": [
+    {"area": "system_ui", "strategy": "ui_only_after_device_testing", "risk": "medium"},
+    {"area": "theme_app", "strategy": "owned_assets_and_customer_guidance", "risk": "low"},
+    {"area": "ota_app", "strategy": "no_update_integrity_changes", "risk": "high"},
+    {"area": "battery_app", "strategy": "guidance_and_labels_only", "risk": "medium"},
+    {"area": "wallpaper_picker", "strategy": "standard_wallpaper_api_and_owned_assets", "risk": "low"}
+  ],
   "items": [
     {"id": "free_mode", "name": "Free Mode", "status": "enabled", "risk": "low"},
+    {"id": "hook_overlay_architecture", "name": "Hook and Overlay Architecture", "status": "ready", "risk": "medium"},
+    {"id": "device_profile", "name": "Device Profile Detection", "status": "ready", "risk": "low"},
+    {"id": "safe_disable", "name": "Safe Disable Mode", "status": "required", "risk": "low"},
     {"id": "sliding_app", "name": "Sliding App Navigation", "status": "ready", "risk": "low"},
     {"id": "liquid_glass_ui", "name": "Transparent Liquid Glass UI", "status": "ready", "risk": "low"},
     {"id": "startup_performance", "name": "Fast Startup UI", "status": "ready", "risk": "low"},
@@ -37,8 +57,7 @@
     {"id": "battery_mode", "name": "Battery saver toggle", "status": "permission_optional", "risk": "low"},
     {"id": "performance_tips", "name": "Performance and lag-fix guide", "status": "safe", "risk": "low"},
     {"id": "backup_restore", "name": "Backup and restore", "status": "required_before_risky_changes", "risk": "low"},
-    {"id": "safe_disable", "name": "One-click safe disable guidance", "status": "required", "risk": "low"},
     {"id": "support_report", "name": "Customer support report", "status": "safe", "risk": "low"}
   ],
-  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens"]
+  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens", "unsafe_file_replacement"]
 }
