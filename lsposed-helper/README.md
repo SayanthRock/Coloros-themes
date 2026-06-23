@@ -1,38 +1,34 @@
 # ColorOS Themes LSPosed Helper
 
-Experimental customer helper APK for OPPO, OnePlus, and realme theme testing.
+Experimental customer helper scaffold for OPPO, OnePlus, and realme theme testing.
 
 ## Current version
 
 `0.1.0`
 
-## What it does now
+## Current status
 
-- Opens a simple customer dashboard
-- Shows device information
-- Opens safe Android settings screens
-- Includes LSPosed module metadata
-- Includes a safe hook entry that logs only when safe hooks are enabled at build time
+This folder is a scaffold, not a finished customer APK yet.
 
-## What it does not do yet
+The source code for the actual LSPosed module behavior still needs real-device testing before customer release. Do not advertise this as stable.
 
-- It does not force system theme changes
-- It does not modify third-party apps
-- It does not apply paid/protected theme files
-- It does not promise universal Android 15/16/17 support
+## Planned safe features
 
-## Build APK
+- Customer dashboard
+- Device information screen
+- Public Android settings shortcuts
+- Customer support report
+- Theme install guidance
+- Tested device status screen
 
-From this folder:
+## Not included
 
-```bash
-gradle :app:assembleDebug
-```
+- No third-party app modification
+- No paid theme conversion
+- No private customer data collection
+- No hidden tracking
+- No fake performance claims
 
-Output:
+## Build status
 
-```text
-app/build/outputs/apk/debug/app-debug.apk
-```
-
-GitHub Actions can build it automatically using `.github/workflows/build-lsposed-apk.yml`.
+The main module ZIP is the current build target. APK build workflow should be added only after the helper app source is complete and tested.
