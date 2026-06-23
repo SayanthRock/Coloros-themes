@@ -1,6 +1,6 @@
 id=coloros_themes_rock
 name=ColorOS Themes Rock
-version=v0.3.0
-versionCode=3
+version=v0.4.0
+versionCode=4
 author=Sayanth Rock
-description=Theme helper APK for OPPO, OnePlus, and realme devices using user-owned assets.
+description=Systemless ColorOS/realme UI/OxygenOS theme module builder with safe wallpaper, icon, preview, package import, and customer customization tools.
