@@ -1,8 +1,20 @@
 {
-  "version": "0.5.0",
+  "version": "0.5.1",
   "project": "ColorOS Themes Rock",
-  "safety_rule": "Use systemless Magisk overlays and reversible settings. Do not directly replace real /system files.",
+  "product_model": "free_first",
+  "ui_style": "new_model_premium_dark_glass",
+  "safety_rule": "Use reversible settings and clear customer warnings. Do not hide unsupported features behind fake promises.",
+  "free_mode": {
+    "enabled": true,
+    "label": "Free Mode",
+    "summary": "All customer options are designed to be available without paid gates.",
+    "paid_features_enabled": false,
+    "forced_ads_enabled": false,
+    "donation_optional": true
+  },
   "items": [
+    {"id": "free_mode", "name": "Free Mode", "status": "enabled", "risk": "low"},
+    {"id": "new_model_ui", "name": "New Model Premium UI", "status": "ready", "risk": "low"},
     {"id": "default_theme", "name": "Default Rock Premium Theme", "status": "starter_ready", "risk": "low"},
     {"id": "wallpaper", "name": "Wallpaper manager", "status": "safe", "risk": "low"},
     {"id": "lock_screen", "name": "Lock screen customization", "status": "device_test_required", "risk": "medium"},
