@@ -1,0 +1,32 @@
+{
+  "version": "0.4.0",
+  "project": "ColorOS Themes Rock",
+  "description": "Metadata catalog for user-owned ColorOS, OxygenOS, and realme UI theme packages. Binary theme files are not stored here unless the owner has redistribution rights.",
+  "packages": [
+    {
+      "id": "aquatic-design",
+      "archiveName": "aquatic_design.theme",
+      "summary": "aquatic design",
+      "rootElement": "OplusSmartPhoneThemeInfo",
+      "sizeBytes": 1739061,
+      "packages": ["com.android.launcher", "icons", "picture", "wallpaper"],
+      "resolutions": ["2400*1080"],
+      "importCommand": "python3 scripts/import-theme-package.py aquatic_design.theme aquatic-design --author 'Sayanth Rock'"
+    },
+    {
+      "id": "art-of-simplicity",
+      "archiveName": "1-Simplicity.theme",
+      "summary": "Art of Simplicity",
+      "rootElement": "OppoSmartPhoneThemeInfo",
+      "sizeBytes": 10630223,
+      "packages": ["com.oppo.launcher", "wallpaper"],
+      "resolutions": ["2340*1080"],
+      "importCommand": "python3 scripts/import-theme-package.py 1-Simplicity.theme art-of-simplicity --author 'Sayanth Rock'"
+    }
+  ],
+  "safeRules": [
+    "Only import and distribute files you created, own, or have permission to redistribute.",
+    "Always test on one OPPO, OnePlus, or realme device before public release.",
+    "Keep rollback instructions visible for customers."
+  ]
+}
