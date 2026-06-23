@@ -1,7 +1,7 @@
 {
   "id": "default-rock-premium",
   "name": "Default Rock Premium",
-  "version": "0.1.0",
+  "version": "0.4.0",
   "author": "Sayanth Rock",
   "style": {
     "mode": "dark",
@@ -11,11 +11,24 @@
     "text": "#f5f2ea",
     "cornerRadius": 28
   },
+  "customizationMatrix": {
+    "wallpapers": "user_selectable",
+    "lockscreen": "device_supported",
+    "homescreen": "device_supported",
+    "icons": "asset_pack_supported",
+    "fonts": "asset_pack_supported",
+    "sounds": "asset_pack_supported",
+    "previews": "ready",
+    "rollback": "documented"
+  },
   "features": [
     {"id": "home_wallpaper", "title": "Home Wallpaper", "status": "safe"},
     {"id": "lock_wallpaper", "title": "Lock Wallpaper", "status": "safe_when_supported"},
-    {"id": "theme_folder", "title": "Theme Folder", "status": "test_required"},
+    {"id": "theme_package_import", "title": "Theme Package Import", "status": "ready"},
     {"id": "icons", "title": "Icons", "status": "test_required"},
-    {"id": "sounds", "title": "Sounds", "status": "test_required"}
+    {"id": "fonts", "title": "Fonts", "status": "test_required"},
+    {"id": "sounds", "title": "Sounds", "status": "test_required"},
+    {"id": "previews", "title": "Preview Images", "status": "ready"},
+    {"id": "rollback", "title": "Rollback Support", "status": "documented"}
   ]
 }
