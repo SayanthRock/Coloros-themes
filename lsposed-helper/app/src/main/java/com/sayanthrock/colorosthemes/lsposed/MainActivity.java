@@ -95,6 +95,9 @@ public class MainActivity extends Activity {
         addStatusBarBlurCard();
         addCustomizationCenter();
 
+        addSectionHeader("Settings Customization", "Safe tools for com.android.settings shortcuts and premium setup flow");
+        addSettingsCustomizationCard();
+
         addSectionHeader("Battery Tools", "Quick access to the important Android battery screens");
         addBatteryButtons();
 
@@ -137,7 +140,7 @@ public class MainActivity extends Activity {
         hero.addView(title);
 
         TextView subtitle = new TextView(this);
-        subtitle.setText("New UI polish update with cleaner sections, stronger hierarchy, smoother card layout, and a more premium safe customization dashboard.");
+        subtitle.setText("Standard premium UI refresh with cleaner sections, stronger hierarchy, settings shortcuts, and a safer customization dashboard for OPPO, OnePlus, and realme devices.");
         subtitle.setTextColor(COLOR_TEXT_SECONDARY);
         subtitle.setTextSize(14);
         subtitle.setLineSpacing(0, 1.14f);
@@ -146,9 +149,9 @@ public class MainActivity extends Activity {
         LinearLayout badges = new LinearLayout(this);
         badges.setOrientation(LinearLayout.HORIZONTAL);
         badges.setPadding(0, dp(14), 0, 0);
-        badges.addView(createBadge("v0.3.3"));
-        badges.addView(createBadge("Blur Tools"));
-        badges.addView(createBadge("Safe Mode"));
+        badges.addView(createBadge("v0.3.4"));
+        badges.addView(createBadge("Premium UI"));
+        badges.addView(createBadge("Settings Tools"));
         hero.addView(badges);
 
         root.addView(hero);
@@ -160,8 +163,8 @@ public class MainActivity extends Activity {
         row.setWeightSum(3f);
 
         row.addView(createStatCard("Wallpaper", "Home / Lock"), weightedCardParams());
-        row.addView(createStatCard("Blur", CustomizationManager.statusBarBlurAmount(this) + "%"), weightedCardParams());
-        row.addView(createStatCard("Mode", "Customer Safe"), weightedCardParams());
+        row.addView(createStatCard("Settings", "com.android.settings"), weightedCardParams());
+        row.addView(createStatCard("Mode", "Standard Premium"), weightedCardParams());
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -365,6 +368,56 @@ public class MainActivity extends Activity {
 
         addAboutPhoneOptions();
         addOtaOptions();
+    }
+
+    private void addSettingsCustomizationCard() {
+        LinearLayout card = cardContainer(false);
+        card.addView(cardTitle("Settings customization"));
+        card.addView(cardBody("These tools open safe pages inside com.android.settings so you can customize display, wallpaper, sound, battery, and developer options without unsafe system hooks."));
+
+        card.addView(cardButton("Open main settings", true, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_SETTINGS));
+            }
+        }));
+
+        card.addView(cardButton("Open display settings", false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
+            }
+        }));
+
+        card.addView(cardButton("Open sound settings", false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_SOUND_SETTINGS));
+            }
+        }));
+
+        card.addView(cardButton("Open wallpaper settings", false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent("android.settings.WALLPAPER_SETTINGS"));
+            }
+        }));
+
+        card.addView(cardButton("Open battery settings", false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS));
+            }
+        }));
+
+        card.addView(cardButton("Open developer options", true, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
+            }
+        }));
+
+        root.addView(card);
     }
 
     private void addAboutPhoneOptions() {
@@ -643,7 +696,7 @@ public class MainActivity extends Activity {
     private void addFooter() {
         LinearLayout footer = cardContainer(false);
         TextView footerTitle = cardTitle("Safe mode");
-        TextView footerBody = cardBody("No hidden tracking, no paid-theme bypass, no aggressive task killer, and no unsafe root battery hacks. Blur controls are stored safely and use fallback mode on unsupported phones.");
+        TextView footerBody = cardBody("No hidden tracking, no paid-theme bypass, no aggressive task killer, and no unsafe root battery hacks. Settings tools use safe intents inside com.android.settings and avoid unsupported system patches.");
         footer.addView(footerTitle);
         footer.addView(footerBody);
         root.addView(footer);
