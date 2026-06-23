@@ -1,6 +1,6 @@
 id=coloros_themes_rock
 name=ColorOS Themes Rock
-version=v0.5.3
-versionCode=8
+version=v0.5.4
+versionCode=9
 author=Sayanth Rock
-description=Free-first ColorOS/realme UI/OxygenOS customization module with safe hook-overlay architecture, sliding liquid glass UI, device profile detection, safe-disable support, customer options, wallpaper controls, performance guidance, backup planning, and rollback support.
+description=Free-first ColorOS/realme UI/OxygenOS customization module with professional modular architecture, safe hook-overlay model, sliding liquid glass UI, device validation, safe-disable support, OTA-safe policy, customer options, wallpaper controls, logs, backup planning, and rollback support.
