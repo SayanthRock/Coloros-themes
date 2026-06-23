@@ -1,5 +1,4 @@
 name: Publish GitHub Release
-run-name: Publish GitHub Release • ${{ github.event_name == 'workflow_dispatch' && inputs.target || github.ref_name }}
 
 on:
   push:
@@ -18,21 +17,12 @@ on:
       - '.github/workflows/publish-github-release.yml'
   workflow_dispatch:
     inputs:
-      target:
-        description: "What to build"
-        required: true
-        type: choice
-        options:
-          - apk
-          - module
-          - both
-        default: both
       version:
-        description: "Version tag, example: v0.4.0"
+        description: 'Version tag, example: v0.4.1'
         required: false
-        default: ""
+        default: ''
       publish:
-        description: "Publish GitHub Release"
+        description: 'Publish GitHub Release'
         required: true
         type: boolean
         default: true
@@ -43,113 +33,23 @@ concurrency:
 
 permissions:
   contents: write
+  id-token: write
+  attestations: write
 
 env:
   APK_NAME: ColorOS-Customizer
   MODULE_ID: ColorOS-Themes-Rock
 
 jobs:
-  resolve:
-    name: Resolve Build Context
+  build-and-publish:
+    name: Build and Publish Release
     runs-on: ubuntu-latest
-    outputs:
-      version: ${{ steps.meta.outputs.version }}
-      run_apk: ${{ steps.meta.outputs.run_apk }}
-      run_module: ${{ steps.meta.outputs.run_module }}
-      should_publish: ${{ steps.meta.outputs.should_publish }}
+    timeout-minutes: 45
     steps:
       - name: Checkout
         uses: actions/checkout@v4
         with:
-          fetch-depth: 1
-
-      - name: Resolve version and targets
-        id: meta
-        shell: bash
-        run: |
-          EVENT="${{ github.event_name }}"
-          REF="${GITHUB_REF}"
-          INPUT_TARGET="${{ inputs.target }}"
-          INPUT_VERSION="${{ inputs.version }}"
-          INPUT_PUBLISH="${{ inputs.publish }}"
-
-          VERSION=""
-          if [[ -n "$INPUT_VERSION" ]]; then
-            VERSION="$INPUT_VERSION"
-          elif [[ "$REF" == refs/tags/* ]]; then
-            VERSION="${GITHUB_REF_NAME}"
-          elif [[ -f lsposed-helper/app/build.gradle ]]; then
-            VERSION="v$(grep -E "versionName '" lsposed-helper/app/build.gradle | head -n 1 | sed -E "s/.*versionName '([^']+)'.*/\1/")"
-          else
-            VERSION="$(grep -E '^version=' module.prop | head -n 1 | cut -d'=' -f2-)"
-          fi
-
-          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
-            echo "Invalid version format: $VERSION"
-            exit 1
-          fi
-
-          RUN_APK="false"
-          RUN_MODULE="false"
-          SHOULD_PUBLISH="true"
-
-          if [[ "$EVENT" == "workflow_dispatch" ]]; then
-            [[ "$INPUT_TARGET" == "apk" || "$INPUT_TARGET" == "both" ]] && RUN_APK="true"
-            [[ "$INPUT_TARGET" == "module" || "$INPUT_TARGET" == "both" ]] && RUN_MODULE="true"
-            [[ "$INPUT_PUBLISH" == "true" ]] && SHOULD_PUBLISH="true" || SHOULD_PUBLISH="false"
-          elif [[ "$REF" == refs/tags/* ]]; then
-            RUN_APK="true"
-            RUN_MODULE="true"
-            SHOULD_PUBLISH="true"
-          else
-            RUN_APK="true"
-            RUN_MODULE="true"
-            SHOULD_PUBLISH="true"
-          fi
-
-          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
-          echo "run_apk=$RUN_APK" >> "$GITHUB_OUTPUT"
-          echo "run_module=$RUN_MODULE" >> "$GITHUB_OUTPUT"
-          echo "should_publish=$SHOULD_PUBLISH" >> "$GITHUB_OUTPUT"
-
-  validate-module:
-    name: Validate Theme Module
-    needs: resolve
-    if: needs.resolve.outputs.run_module == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: read
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 1
-
-      - name: Set up Python
-        uses: actions/setup-python@v5
-        with:
-          python-version: '3.x'
-
-      - name: Module validation
-        run: bash scripts/validate-module.sh
-
-      - name: Theme asset validation
-        run: bash scripts/check-theme-size.sh
-
-  build-apk:
-    name: Build Android APK
-    needs: resolve
-    if: needs.resolve.outputs.run_apk == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 35
-    permissions:
-      contents: read
-    outputs:
-      artifact_name: ${{ steps.meta.outputs.artifact_name }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
+          fetch-depth: 0
 
       - name: Set up JDK 17
         uses: actions/setup-java@v4
@@ -163,185 +63,119 @@ jobs:
       - name: Install Android SDK packages
         run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
 
-      - name: Set up Gradle
+      - name: Set up Gradle 8.10.2
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.10.2
 
-      - name: Prepare artifact name
+      - name: Resolve version
         id: meta
-        run: echo "artifact_name=${APK_NAME}-${{ needs.resolve.outputs.version }}" >> "$GITHUB_OUTPUT"
-
-      - name: Create Android debug keystore
+        shell: bash
         run: |
-          mkdir -p "$HOME/.android"
-          keytool -genkeypair -v \
-            -keystore "$HOME/.android/debug.keystore" \
-            -storepass android \
-            -alias androiddebugkey \
-            -keypass android \
-            -keyalg RSA \
-            -keysize 2048 \
-            -validity 10000 \
-            -dname "CN=Android Debug,O=Android,C=US"
+          VERSION="${{ inputs.version }}"
+          if [[ -z "$VERSION" && "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION="$GITHUB_REF_NAME"
+          fi
+          if [[ -z "$VERSION" ]]; then
+            VERSION="v$(grep -E "versionName '" lsposed-helper/app/build.gradle | head -n 1 | sed -E "s/.*versionName '([^']+)'.*/\1/")"
+          fi
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+            echo "Invalid version: $VERSION"
+            exit 1
+          fi
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
 
-      - name: Build debug and release APKs
+      - name: Validate theme module
+        run: bash scripts/validate-module.sh
+
+      - name: Check theme asset sizes
+        run: bash scripts/check-theme-size.sh
+
+      - name: Build Android APK files
         working-directory: lsposed-helper
         run: gradle :app:assembleDebug :app:assembleRelease --no-daemon --stacktrace
 
-      - name: Collect APK files
-        run: |
-          mkdir -p release/apk
-          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}-debug.apk"
-          if [[ -f lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk ]]; then
-            cp lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}-release-unsigned.apk"
-          elif [[ -f lsposed-helper/app/build/outputs/apk/release/app-release.apk ]]; then
-            cp lsposed-helper/app/build/outputs/apk/release/app-release.apk "release/apk/${APK_NAME}-${{ needs.resolve.outputs.version }}-release.apk"
-          fi
-          cat > release/apk/BUILD_INFO.txt <<INFO
-          Project: ColorOS Customizer APK
-          Version: ${{ needs.resolve.outputs.version }}
-          Commit: ${GITHUB_SHA}
-          Workflow: ${GITHUB_WORKFLOW}
-          Run ID: ${GITHUB_RUN_ID}
-          Install note: debug APK is installable for testing. Release APK may need production signing for Play Store.
-          INFO
-          (cd release/apk && sha256sum * > SHA256SUMS-APK.txt)
-
-      - name: Upload APK artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: ${{ steps.meta.outputs.artifact_name }}
-          path: release/apk/*
-          if-no-files-found: error
-          retention-days: 30
-
-  build-module:
-    name: Build Theme Module
-    needs:
-      - resolve
-      - validate-module
-    if: needs.resolve.outputs.run_module == 'true'
-    runs-on: ubuntu-latest
-    timeout-minutes: 20
-    permissions:
-      contents: read
-      id-token: write
-      attestations: write
-    outputs:
-      artifact_name: ${{ steps.meta.outputs.artifact_name }}
-    steps:
-      - name: Checkout
-        uses: actions/checkout@v4
-        with:
-          fetch-depth: 0
-
-      - name: Install build tools
-        run: sudo apt-get update && sudo apt-get install -y zip coreutils
-
-      - name: Prepare artifact name
-        id: meta
-        run: |
-          echo "artifact_name=${MODULE_ID}-${{ needs.resolve.outputs.version }}" >> "$GITHUB_OUTPUT"
-          echo "MODULE_VERSION=${{ needs.resolve.outputs.version }}" >> "$GITHUB_ENV"
-
-      - name: Build module
+      - name: Build theme module ZIP
         run: bash scripts/package.sh
 
-      - name: Collect module files
+      - name: Collect release files
+        shell: bash
         run: |
-          mkdir -p release/module
-          cp dist/* release/module/
-          cat > release/module/BUILD_INFO.txt <<INFO
-          Project: ${MODULE_ID}
-          Version: ${MODULE_VERSION}
+          set -euo pipefail
+          mkdir -p release/files
+          VERSION="${{ steps.meta.outputs.version }}"
+
+          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/files/${APK_NAME}-${VERSION}-debug.apk"
+
+          if [[ -f lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk ]]; then
+            cp lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk "release/files/${APK_NAME}-${VERSION}-release-unsigned.apk"
+          elif [[ -f lsposed-helper/app/build/outputs/apk/release/app-release.apk ]]; then
+            cp lsposed-helper/app/build/outputs/apk/release/app-release.apk "release/files/${APK_NAME}-${VERSION}-release.apk"
+          fi
+
+          for file in dist/*.zip; do
+            cp "$file" release/files/
+          done
+
+          cat > release/files/BUILD_INFO.txt <<INFO
+          Project: Sayanth Rock ColorOS Release
+          Version: ${VERSION}
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
           INFO
-          cat > release/module/SBOM.txt <<INFO
-          Project: ColorOS Themes Rock
-          Version: ${MODULE_VERSION}
-          Build runner: GitHub Actions ubuntu-latest
-          Build tools: bash, zip, coreutils
-          Commit: ${GITHUB_SHA}
-          INFO
-          (cd release/module && sha256sum * > SHA256SUMS.txt)
 
-      - name: Upload module artifact
+          (cd release/files && sha256sum * > SHA256SUMS.txt)
+
+      - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ${{ steps.meta.outputs.artifact_name }}
-          path: release/module/*
+          name: Sayanth-Rock-ColorOS-${{ steps.meta.outputs.version }}
+          path: release/files/*
           if-no-files-found: error
           retention-days: 30
 
       - name: Generate build provenance attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: 'release/module/*'
+          subject-path: 'release/files/*'
 
-  publish-release:
-    name: Publish GitHub Release
-    needs:
-      - resolve
-      - build-apk
-      - build-module
-    if: always() && needs.resolve.outputs.should_publish == 'true' && (needs.build-apk.result == 'success' || needs.build-module.result == 'success')
-    runs-on: ubuntu-latest
-    timeout-minutes: 15
-    permissions:
-      contents: write
-    steps:
-      - name: Download APK artifact
-        if: needs.build-apk.result == 'success'
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-apk.outputs.artifact_name }}
-          path: release/apk
-
-      - name: Download module artifact
-        if: needs.build-module.result == 'success'
-        uses: actions/download-artifact@v4
-        with:
-          name: ${{ needs.build-module.outputs.artifact_name }}
-          path: release/module
-
-      - name: Build release notes
-        id: release_meta
-        shell: bash
+      - name: Create release notes
         run: |
-          VERSION="${{ needs.resolve.outputs.version }}"
-          echo "release_name=Sayanth Rock ColorOS Release ${VERSION}" >> "$GITHUB_OUTPUT"
+          VERSION="${{ steps.meta.outputs.version }}"
           cat > RELEASE_NOTES.md <<INFO
           # Sayanth Rock ColorOS Release ${VERSION}
 
-          ## Highlights
-          - APK build and upload automation
-          - Theme module ZIP build automation
-          - Artifact collection with checksums
-          - Public GitHub Release publishing
-          - OPPO, OnePlus, and realme customization helper updates
+          ## Included files
+          - Debug APK for direct testing
+          - Release APK output when produced by Gradle
+          - ColorOS Themes Rock module ZIP
+          - BUILD_INFO.txt
+          - SHA256SUMS.txt
 
-          ## Files
-          - ColorOS Customizer APK files when APK build succeeds
-          - ColorOS Themes Rock module ZIP when module build succeeds
-          - BUILD_INFO files
-          - SHA256 checksum files
-
-          ## Install note
-          Use the debug APK for direct test installation. Use a properly signed release APK for store distribution.
+          ## Notes
+          - Test on an OPPO, OnePlus, or realme phone before public sharing.
+          - Advanced root options stay locked until root is detected and the customer confirms backup and rollback steps.
           INFO
 
-      - name: Publish GitHub Release
-        uses: softprops/action-gh-release@v2
-        with:
-          tag_name: ${{ needs.resolve.outputs.version }}
-          target_commitish: ${{ github.sha }}
-          name: ${{ steps.release_meta.outputs.release_name }}
-          body_path: RELEASE_NOTES.md
-          files: |
-            release/apk/*
-            release/module/*
-          draft: false
-          prerelease: ${{ contains(needs.resolve.outputs.version, 'beta') }}
+      - name: Publish GitHub Release with clobber upload
+        if: github.event_name != 'workflow_dispatch' || inputs.publish
+        env:
+          GH_TOKEN: ${{ github.token }}
+          VERSION: ${{ steps.meta.outputs.version }}
+        shell: bash
+        run: |
+          set -euo pipefail
+          shopt -s nullglob
+          files=(release/files/*)
+          if [[ ${#files[@]} -eq 0 ]]; then
+            echo "No files to upload"
+            exit 1
+          fi
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release edit "$VERSION" --title "Sayanth Rock ColorOS Release ${VERSION}" --notes-file RELEASE_NOTES.md
+          else
+            gh release create "$VERSION" --target "$GITHUB_SHA" --title "Sayanth Rock ColorOS Release ${VERSION}" --notes-file RELEASE_NOTES.md
+          fi
+          gh release upload "$VERSION" "${files[@]}" --clobber
