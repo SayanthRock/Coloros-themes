@@ -10,7 +10,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Manual version name, example: v0.3.2"
+        description: "Manual version name, example: v0.3.3"
         required: false
         default: ""
       publish:
@@ -145,11 +145,11 @@ jobs:
           # ColorOS Customizer APK ${{ needs.build-apk.outputs.version }}
 
           ## UI update
-          - Added polished hero card and quick status row
-          - Added cleaner card hierarchy and section grouping
-          - Added safer Theme Store compatibility notice
-          - Added refined inputs, chips, and action buttons
+          - Added status bar blur increase and decrease controls
+          - Added fallback mode for phones without native blur support
+          - Added blur visibility switch and blur amount display
           - Kept wallpaper, OTA, and battery tools
+          - Kept Theme Store behavior customer-safe
 
           ## Build files
           - APK artifact
