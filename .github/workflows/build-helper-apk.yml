@@ -1,4 +1,5 @@
 name: Build ColorOS Customizer APK
+run-name: Build ColorOS Customizer APK • ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
 
 on:
   push:
@@ -34,6 +35,7 @@ jobs:
   build-apk:
     name: Build Android APK
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     permissions:
       contents: read
     outputs:
@@ -88,11 +90,18 @@ jobs:
         working-directory: lsposed-helper
         run: gradle :app:assembleDebug --no-daemon --stacktrace
 
-      - name: Collect APK
+      - name: Collect APK and build info
         run: |
           mkdir -p dist
           cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "dist/${APK_NAME}-${{ steps.version.outputs.version }}.apk"
-          sha256sum dist/*.apk > dist/SHA256SUMS-APK.txt
+          cat > dist/BUILD_INFO.txt <<EOF
+          Project: ColorOS Customizer APK
+          Version: ${{ steps.version.outputs.version }}
+          Commit: ${GITHUB_SHA}
+          Workflow: ${GITHUB_WORKFLOW}
+          Run ID: ${GITHUB_RUN_ID}
+          EOF
+          sha256sum dist/* > dist/SHA256SUMS-APK.txt
 
       - name: Upload APK artifact
         uses: actions/upload-artifact@v4
@@ -102,10 +111,23 @@ jobs:
           if-no-files-found: error
           retention-days: 30
 
+      - name: Write workflow summary
+        run: |
+          {
+            echo "## ColorOS Customizer APK"
+            echo ""
+            echo "- Version: ${{ steps.version.outputs.version }}"
+            echo "- Artifact: ${{ steps.version.outputs.artifact_name }}"
+            echo "- APK: dist/${APK_NAME}-${{ steps.version.outputs.version }}.apk"
+            echo "- Build info: dist/BUILD_INFO.txt"
+            echo "- Checksums: dist/SHA256SUMS-APK.txt"
+          } >> "$GITHUB_STEP_SUMMARY"
+
   release-apk:
     name: Publish APK Release Asset
     needs: build-apk
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: github.event_name == 'release' || (github.event_name == 'workflow_dispatch' && inputs.publish == true)
     permissions:
       contents: write
@@ -131,6 +153,7 @@ jobs:
 
           ## Build files
           - APK artifact
+          - Build info file
           - SHA256 checksum file
           EOF
 
