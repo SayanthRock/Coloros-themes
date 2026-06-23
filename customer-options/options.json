@@ -1,8 +1,9 @@
 {
-  "version": "0.5.1",
+  "version": "0.5.2",
   "project": "ColorOS Themes Rock",
   "product_model": "free_first",
-  "ui_style": "new_model_premium_dark_glass",
+  "ui_style": "sliding_liquid_glass",
+  "startup_mode": "fast_lightweight",
   "safety_rule": "Use reversible settings and clear customer warnings. Do not hide unsupported features behind fake promises.",
   "free_mode": {
     "enabled": true,
@@ -12,9 +13,18 @@
     "forced_ads_enabled": false,
     "donation_optional": true
   },
+  "navigation": {
+    "model": "sliding_pages",
+    "pages": ["Home", "Theme Layers", "Performance", "Support", "More"],
+    "swipe_enabled": true,
+    "bottom_slider_enabled": true
+  },
   "items": [
     {"id": "free_mode", "name": "Free Mode", "status": "enabled", "risk": "low"},
-    {"id": "new_model_ui", "name": "New Model Premium UI", "status": "ready", "risk": "low"},
+    {"id": "sliding_app", "name": "Sliding App Navigation", "status": "ready", "risk": "low"},
+    {"id": "liquid_glass_ui", "name": "Transparent Liquid Glass UI", "status": "ready", "risk": "low"},
+    {"id": "startup_performance", "name": "Fast Startup UI", "status": "ready", "risk": "low"},
+    {"id": "layer_customization", "name": "All Layer Customization", "status": "ready", "risk": "low"},
     {"id": "default_theme", "name": "Default Rock Premium Theme", "status": "starter_ready", "risk": "low"},
     {"id": "wallpaper", "name": "Wallpaper manager", "status": "safe", "risk": "low"},
     {"id": "lock_screen", "name": "Lock screen customization", "status": "device_test_required", "risk": "medium"},
@@ -22,13 +32,13 @@
     {"id": "icon_pack", "name": "Icon pack apply", "status": "device_test_required", "risk": "medium"},
     {"id": "theme_assets", "name": "Theme assets", "status": "test_required", "risk": "medium"},
     {"id": "device_info", "name": "About phone dashboard", "status": "safe", "risk": "low"},
-    {"id": "refresh_rate", "name": "Refresh rate Auto / High / Standard", "status": "root_optional", "risk": "medium"},
-    {"id": "animation_speed", "name": "Animation speed control", "status": "root_optional", "risk": "low"},
-    {"id": "battery_mode", "name": "Battery saver toggle", "status": "root_optional", "risk": "low"},
+    {"id": "refresh_rate", "name": "Refresh rate Auto / High / Standard", "status": "permission_optional", "risk": "medium"},
+    {"id": "animation_speed", "name": "Animation speed control", "status": "permission_optional", "risk": "low"},
+    {"id": "battery_mode", "name": "Battery saver toggle", "status": "permission_optional", "risk": "low"},
     {"id": "performance_tips", "name": "Performance and lag-fix guide", "status": "safe", "risk": "low"},
     {"id": "backup_restore", "name": "Backup and restore", "status": "required_before_risky_changes", "risk": "low"},
     {"id": "safe_disable", "name": "One-click safe disable guidance", "status": "required", "risk": "low"},
-    {"id": "lsposed_mode", "name": "LSPosed hook mode", "status": "experimental", "risk": "high"},
     {"id": "support_report", "name": "Customer support report", "status": "safe", "risk": "low"}
-  ]
+  ],
+  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens"]
 }
