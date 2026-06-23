@@ -18,6 +18,10 @@ ZIP_NAME="$MODULE_ID-$VERSION.zip"
 mkdir -p "$OUT_DIR"
 rm -f "$OUT_DIR"/*.zip
 
+if [[ -f module.prop ]]; then
+  sed -i "s/^version=.*/version=$VERSION/" module.prop
+fi
+
 FILES=(
   "module.prop"
   "customize.sh"
