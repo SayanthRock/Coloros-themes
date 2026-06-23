@@ -1,34 +1,40 @@
-# ColorOS Themes LSPosed Helper
+# ColorOS Battery Helper APK
 
-Experimental customer helper scaffold for OPPO, OnePlus, and realme theme testing.
+Safe customer helper APK for OPPO, OnePlus, and realme theme and battery support.
 
 ## Current version
 
-`0.1.0`
+`0.2.0`
 
-## Current status
+## What changed
 
-This folder is a scaffold, not a finished customer APK yet.
+- Added Android dashboard source code.
+- Added OPPO, OnePlus, and realme device detection.
+- Added battery optimization status checking.
+- Added shortcuts to public Android battery settings pages.
+- Added support report copy button for troubleshooting.
+- Added LSPosed entry class.
+- Added GitHub Actions APK build and artifact upload.
 
-The source code for the actual LSPosed module behavior still needs real-device testing before customer release. Do not advertise this as stable.
+## Battery approach
 
-## Planned safe features
+This APK uses public Android settings and clear guidance. It is designed to be reversible and customer-safe.
 
-- Customer dashboard
-- Device information screen
-- Public Android settings shortcuts
-- Customer support report
-- Theme install guidance
-- Tested device status screen
+## Build APK locally
 
-## Not included
+```bash
+cd lsposed-helper
+gradle :app:assembleDebug --no-daemon --stacktrace
+```
 
-- No third-party app modification
-- No paid theme conversion
-- No private customer data collection
-- No hidden tracking
-- No fake performance claims
+Output:
 
-## Build status
+```text
+lsposed-helper/app/build/outputs/apk/debug/app-debug.apk
+```
 
-The main module ZIP is the current build target. APK build workflow should be added only after the helper app source is complete and tested.
+## Build APK on GitHub
+
+Open **Actions > Build Battery Helper APK > Run workflow**.
+
+The workflow uploads the APK as a GitHub Actions artifact. Enable release publishing during manual workflow runs when you want the APK attached to a public release.
