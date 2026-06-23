@@ -1,28 +1,28 @@
-name: Enterprise Release System (SLSA L3)
+name: Full Security Fortress Release System
 
 on:
   push:
     branches: [ main ]
+    tags:
+      - 'v*'
   workflow_dispatch:
     inputs:
       version:
-        description: "Manual version (optional)"
+        description: "Manual version, example: v1.0.0"
         required: false
         default: ""
       publish:
-        description: "Publish Release"
+        description: "Publish GitHub Release"
         required: true
         type: boolean
         default: false
 
-permissions:
-  contents: write
-  id-token: write
-  actions: read
-
 concurrency:
-  group: enterprise-${{ github.ref }}
+  group: fortress-${{ github.ref }}
   cancel-in-progress: true
+
+permissions:
+  contents: read
 
 env:
   MODULE_ID: ColorOS-Themes-Rock
@@ -30,125 +30,181 @@ env:
 jobs:
 
   security:
-    name: Security Validation (Hardened)
+    name: Security Fortress Gate
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Install security tools
         run: |
           sudo apt-get update
-          sudo apt-get install -y curl git
+          sudo apt-get install -y git shellcheck
 
-      - name: Run Gitleaks Scan
+      - name: Run Gitleaks secret scan
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fallback Pattern Scan
+      - name: Fallback hard-secret scan
         run: |
-          if grep -RInE "AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-]{35}|-----BEGIN (RSA|OPENSSH) PRIVATE KEY-----" .; then
+          if git grep -I -n -E "AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-]{35}|-----BEGIN (RSA|OPENSSH) PRIVATE KEY-----" -- .; then
             echo "Hard secret detected"
             exit 1
           fi
 
-      - name: File Integrity Check
+      - name: Shell script quality check
         run: |
-          test -f scripts/package.sh
+          find scripts -type f -name "*.sh" -print0 | xargs -0 -r shellcheck
+
+      - name: Required file integrity check
+        run: |
           test -f module.prop
+          test -f scripts/package.sh
+          test -f scripts/validate-module.sh
+          test -f scripts/check-theme-size.sh
+
+      - name: Module validation
+        run: bash scripts/validate-module.sh
+
+      - name: Theme asset validation
+        run: bash scripts/check-theme-size.sh
 
   build:
-    name: Build + SLSA Provenance
+    name: Fortress Build + Attestation
     needs: security
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      id-token: write
+      attestations: write
+    outputs:
+      module_version: ${{ steps.version.outputs.version }}
+      artifact_name: fortress-${{ steps.version.outputs.version }}
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
         with:
           fetch-depth: 0
 
-      - name: Install tools
+      - name: Install build tools
         run: |
           sudo apt-get update
           sudo apt-get install -y zip coreutils
 
       - name: Resolve version
+        id: version
         run: |
-          if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.version }}" != "" ]]; then
+          if [[ "${GITHUB_REF}" == refs/tags/* ]]; then
+            VERSION="${GITHUB_REF_NAME}"
+          elif [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.version }}" != "" ]]; then
             VERSION="${{ inputs.version }}"
           else
             git fetch --tags
             LATEST=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1 || true)
             [ -z "$LATEST" ] && LATEST="v0.0.0"
-
             IFS='.' read -r MAJOR MINOR PATCH <<< "${LATEST#v}"
             PATCH=$((PATCH+1))
             VERSION="v${MAJOR}.${MINOR}.${PATCH}"
           fi
 
-          echo "MODULE_VERSION=$VERSION" >> $GITHUB_ENV
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
 
-      - name: Build Module
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
+
+      - name: Build module
         run: bash scripts/package.sh
 
       - name: Generate SBOM
         run: |
-          echo "SBOM for $MODULE_VERSION" > dist/SBOM.txt
-          echo "Dependencies: zip, bash, coreutils" >> dist/SBOM.txt
+          mkdir -p dist
+          cat > dist/SBOM.txt <<EOF
+          Project: ColorOS Themes Rock
+          Version: ${MODULE_VERSION}
+          Build runner: GitHub Actions ubuntu-latest
+          Build tools: bash, zip, coreutils
+          Commit: ${GITHUB_SHA}
+          EOF
 
-      - name: Generate Checksums
+      - name: Generate SHA256 checksums
         run: |
           cd dist
-          for f in *.zip; do
-            sha256sum "$f" > "$f.sha256"
-          done
+          sha256sum * > SHA256SUMS.txt
 
-      - name: Upload Artifact
+      - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: enterprise-${{ env.MODULE_VERSION }}
+          name: fortress-${{ steps.version.outputs.version }}
           path: dist/*
+          if-no-files-found: error
+          retention-days: 30
 
-      - name: Generate SLSA Provenance
-        uses: slsa-framework/slsa-github-generator@v2
+      - name: Generate GitHub build provenance attestation
+        uses: actions/attest-build-provenance@v2
         with:
-          artifact-path: dist/*.zip
+          subject-path: 'dist/*'
 
   release:
-    name: Publish Release
+    name: Fortress Release
     needs: build
     runs-on: ubuntu-latest
-    if: startsWith(github.ref, 'refs/tags/') || inputs.publish == true
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish == true)
+    permissions:
+      contents: write
 
     environment:
       name: production
 
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
 
       - name: Download artifact
         uses: actions/download-artifact@v4
         with:
-          name: enterprise-${{ env.MODULE_VERSION }}
+          name: ${{ needs.build.outputs.artifact_name }}
           path: dist
 
-      - name: Generate Release Notes
+      - name: Generate release notes
         run: |
-          echo "# Enterprise SLSA L3 Release $MODULE_VERSION" > RELEASE_NOTES.md
-          echo "## Changes" >> RELEASE_NOTES.md
+          VERSION="${{ needs.build.outputs.module_version }}"
+          cat > RELEASE_NOTES.md <<EOF
+          # ColorOS Themes Rock Security Fortress ${VERSION}
+
+          ## Changes
+          EOF
           git log -n 20 --pretty=format:'- %s' >> RELEASE_NOTES.md || true
-          echo "## Security" >> RELEASE_NOTES.md
-          echo "- SBOM included" >> RELEASE_NOTES.md
-          echo "- Checksums verified" >> RELEASE_NOTES.md
-          echo "- SLSA Level 3 provenance attached" >> RELEASE_NOTES.md
+          cat >> RELEASE_NOTES.md <<EOF
+
+          ## Security verification
+          - Gitleaks secret scan passed
+          - Fallback hard-secret scan passed
+          - ShellCheck script quality check passed
+          - Module and theme validation passed
+          - SBOM included
+          - SHA256 checksums included
+          - GitHub build provenance attestation generated
+          EOF
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
-          tag_name: ${{ env.MODULE_VERSION }}
-          name: ColorOS Themes SLSA L3 ${{ env.MODULE_VERSION }}
+          tag_name: ${{ needs.build.outputs.module_version }}
+          name: ColorOS Themes Security Fortress ${{ needs.build.outputs.module_version }}
           body_path: RELEASE_NOTES.md
           files: dist/*
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(needs.build.outputs.module_version, 'beta') }}
