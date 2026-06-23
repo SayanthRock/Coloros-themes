@@ -285,7 +285,7 @@ jobs:
       - resolve
       - build-apk
       - build-module
-    if: needs.resolve.outputs.should_publish == 'true'
+    if: always() && needs.resolve.outputs.should_publish == 'true' && (needs.build-apk.result == 'success' || needs.build-module.result == 'success')
     runs-on: ubuntu-latest
     timeout-minutes: 15
     permissions:
