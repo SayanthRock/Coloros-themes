@@ -1,0 +1,81 @@
+name: Test and Build Debug APK Fixed
+
+on:
+  push:
+    branches:
+      - main
+    paths:
+      - 'lsposed-helper/**'
+      - '.github/workflows/test-and-build-debug-apk-fixed.yml'
+  workflow_dispatch:
+
+concurrency:
+  group: test-and-build-debug-apk-fixed-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: read
+
+env:
+  APP_NAME: ColorOS-Customizer
+
+jobs:
+  debug-apk:
+    name: Android CI Debug Fixed
+    runs-on: ubuntu-latest
+    timeout-minutes: 35
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '17'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Install Android SDK packages
+        run: sdkmanager "platforms;android-35" "build-tools;35.0.0" "platform-tools"
+
+      - name: Set up Gradle 8.10.2
+        uses: gradle/actions/setup-gradle@v4
+        with:
+          gradle-version: 8.10.2
+
+      - name: Validate Gradle Runtime
+        working-directory: lsposed-helper
+        run: gradle --version
+
+      - name: Run unit tests
+        working-directory: lsposed-helper
+        run: gradle :app:testDebugUnitTest --no-daemon --stacktrace
+
+      - name: Build debug APK
+        working-directory: lsposed-helper
+        run: gradle :app:assembleDebug --no-daemon --stacktrace
+
+      - name: Collect debug APK
+        run: |
+          mkdir -p release/debug-apk
+          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/debug-apk/${APP_NAME}-debug.apk"
+          cat > release/debug-apk/BUILD_INFO.txt <<INFO
+          Project: ColorOS Customizer
+          Build: debug APK
+          Commit: ${GITHUB_SHA}
+          Workflow: ${GITHUB_WORKFLOW}
+          Run ID: ${GITHUB_RUN_ID}
+          Gradle: 8.10.2
+          JDK: 17
+          INFO
+          (cd release/debug-apk && sha256sum * > SHA256SUMS-DEBUG.txt)
+
+      - name: Upload debug APK artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ColorOS-Customizer-debug-apk
+          path: release/debug-apk/*
+          if-no-files-found: error
+          retention-days: 30
