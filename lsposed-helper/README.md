@@ -4,10 +4,14 @@ Safe customer helper APK for OPPO, OnePlus, and realme theme, wallpaper, and bat
 
 ## Current version
 
-`0.3.0`
+`0.3.3`
 
 ## What changed
 
+- Added polished UI update.
+- Added status bar blur increase and decrease controls.
+- Added fallback mode for phones without native blur support.
+- Added blur visibility switch and blur amount display.
 - Added Customization Center.
 - Added open image picker option.
 - Added selected image preview.
@@ -23,7 +27,7 @@ Safe customer helper APK for OPPO, OnePlus, and realme theme, wallpaper, and bat
 
 ## Safe approach
 
-The APK uses public Android image picking and wallpaper APIs. Custom text values are stored as helper settings and shown in reports first.
+The APK uses public Android image picking and wallpaper APIs. Custom text values are stored as helper settings and shown in reports first. Theme Store behavior remains customer-safe.
 
 ## Build APK locally
 
