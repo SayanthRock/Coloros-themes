@@ -1,0 +1,30 @@
+name: Lag report
+description: Report slow behavior after testing the module
+title: "Lag report: "
+labels: [lag]
+body:
+  - type: input
+    id: device
+    attributes:
+      label: Device model
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android version
+    validations:
+      required: true
+  - type: input
+    id: rom
+    attributes:
+      label: ROM version
+    validations:
+      required: true
+  - type: textarea
+    id: details
+    attributes:
+      label: Details
+      description: Explain what became slow and what you tested.
+    validations:
+      required: true
