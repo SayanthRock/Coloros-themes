@@ -47,11 +47,13 @@ public class MainActivity extends Activity {
         super.onActivityResult(requestCode, resultCode, data);
         if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
             Uri uri = data.getData();
-            int flags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
-            try {
-                getContentResolver().takePersistableUriPermission(uri, flags & Intent.FLAG_GRANT_READ_URI_PERMISSION);
-            } catch (SecurityException ignored) {
-                // Some gallery apps do not provide persistable access. The URI can still work for the current session.
+            int readFlag = data.getFlags() & Intent.FLAG_GRANT_READ_URI_PERMISSION;
+            if (readFlag != 0) {
+                try {
+                    getContentResolver().takePersistableUriPermission(uri, readFlag);
+                } catch (SecurityException | IllegalArgumentException ignored) {
+                    // Some gallery apps do not provide persistable access. The URI can still work for the current session.
+                }
             }
             CustomizationManager.saveImageUri(this, uri);
             Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
