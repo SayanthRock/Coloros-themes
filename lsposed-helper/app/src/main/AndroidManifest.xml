@@ -24,7 +24,7 @@
 
         <activity
             android:name=".PermissionCenterActivity"
-            android:exported="false" />
+            android:exported="true" />
 
         <activity
             android:name=".MainActivity"
