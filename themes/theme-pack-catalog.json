@@ -11,7 +11,7 @@
       "sizeBytes": 1739061,
       "packages": ["com.android.launcher", "icons", "picture", "wallpaper"],
       "resolutions": ["2400*1080"],
-      "importCommand": "python3 scripts/import-theme-package.py aquatic_design.theme aquatic-design --author 'Sayanth Rock'"
+      "checkCommand": "python3 scripts/inspect-theme-package.py aquatic_design.theme --pretty"
     },
     {
       "id": "art-of-simplicity",
@@ -21,7 +21,7 @@
       "sizeBytes": 10630223,
       "packages": ["com.oppo.launcher", "wallpaper"],
       "resolutions": ["2340*1080"],
-      "importCommand": "python3 scripts/import-theme-package.py 1-Simplicity.theme art-of-simplicity --author 'Sayanth Rock'"
+      "checkCommand": "python3 scripts/inspect-theme-package.py 1-Simplicity.theme --pretty"
     }
   ],
   "safeRules": [
