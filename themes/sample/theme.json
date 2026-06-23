@@ -1,0 +1,15 @@
+{
+  "name": "Rock Sample Theme",
+  "version": "0.1.0",
+  "author": "Sayanth Rock",
+  "targetBrands": ["OPPO", "OnePlus", "realme"],
+  "targetAndroid": [15, 16, 17],
+  "features": {
+    "lockScreen": "placeholder",
+    "homeScreen": "placeholder",
+    "wallpapers": "placeholder",
+    "icons": "placeholder",
+    "sounds": "placeholder"
+  },
+  "notes": "Replace placeholders with your own licensed assets before sharing with customers."
+}
