@@ -17,6 +17,9 @@ import java.io.InputStream;
 public final class CustomizationManager {
 
     public static final String DEFAULT_OTA_NAME = "Sayanth Rock";
+    private static final int DEFAULT_STATUS_BAR_BLUR = 24;
+    private static final int MIN_STATUS_BAR_BLUR = 0;
+    private static final int MAX_STATUS_BAR_BLUR = 100;
 
     private static final String PREFS = "customization_center";
     private static final String KEY_IMAGE_URI = "image_uri";
@@ -24,6 +27,9 @@ public final class CustomizationManager {
     private static final String KEY_OTA_BRANDING = "ota_branding";
     private static final String KEY_OTA_BACKGROUND = "ota_background";
     private static final String KEY_ABOUT_PHONE_NAME = "about_phone_name";
+    private static final String KEY_STATUS_BAR_BLUR_ENABLED = "status_bar_blur_enabled";
+    private static final String KEY_STATUS_BAR_BLUR_AMOUNT = "status_bar_blur_amount";
+    private static final String KEY_STATUS_BAR_BLUR_FORCE_FALLBACK = "status_bar_blur_force_fallback";
 
     private CustomizationManager() {
         // Utility class.
@@ -80,6 +86,52 @@ public final class CustomizationManager {
         return prefs(context).getString(KEY_ABOUT_PHONE_NAME, "ColorOS Themes Rock");
     }
 
+    public static void setStatusBarBlurEnabled(Context context, boolean enabled) {
+        prefs(context).edit().putBoolean(KEY_STATUS_BAR_BLUR_ENABLED, enabled).apply();
+    }
+
+    public static boolean statusBarBlurEnabled(Context context) {
+        return prefs(context).getBoolean(KEY_STATUS_BAR_BLUR_ENABLED, false);
+    }
+
+    public static void setStatusBarBlurAmount(Context context, int amount) {
+        prefs(context).edit().putInt(KEY_STATUS_BAR_BLUR_AMOUNT, clampBlur(amount)).apply();
+    }
+
+    public static int statusBarBlurAmount(Context context) {
+        return clampBlur(prefs(context).getInt(KEY_STATUS_BAR_BLUR_AMOUNT, DEFAULT_STATUS_BAR_BLUR));
+    }
+
+    public static void increaseStatusBarBlur(Context context) {
+        setStatusBarBlurAmount(context, statusBarBlurAmount(context) + 10);
+    }
+
+    public static void decreaseStatusBarBlur(Context context) {
+        setStatusBarBlurAmount(context, statusBarBlurAmount(context) - 10);
+    }
+
+    public static void setStatusBarBlurFallbackEnabled(Context context, boolean enabled) {
+        prefs(context).edit().putBoolean(KEY_STATUS_BAR_BLUR_FORCE_FALLBACK, enabled).apply();
+    }
+
+    public static boolean statusBarBlurFallbackEnabled(Context context) {
+        return prefs(context).getBoolean(KEY_STATUS_BAR_BLUR_FORCE_FALLBACK, true);
+    }
+
+    public static boolean supportsRealStatusBarBlur() {
+        return Build.VERSION.SDK_INT >= Build.VERSION_CODES.S;
+    }
+
+    public static String statusBarBlurModeLabel(Context context) {
+        if (supportsRealStatusBarBlur()) {
+            return "Real blur may be available on this Android version, depending on OEM support.";
+        }
+        if (statusBarBlurFallbackEnabled(context)) {
+            return "This phone does not report native status bar blur support. Fallback mode stores your blur setting for compatible overlays and future module hooks.";
+        }
+        return "Native status bar blur is not available on this phone.";
+    }
+
     public static String applyWallpaper(Context context, int target) throws IOException {
         Uri uri = selectedImageUri(context);
         if (uri == null) {
@@ -126,7 +178,20 @@ public final class CustomizationManager {
         builder.append("OTA name: ").append(otaName(context)).append('\n');
         builder.append("OTA name toggle: ").append(otaBrandingEnabled(context)).append('\n');
         builder.append("OTA background toggle: ").append(otaBackgroundEnabled(context)).append('\n');
+        builder.append("Status bar blur enabled: ").append(statusBarBlurEnabled(context)).append('\n');
+        builder.append("Status bar blur amount: ").append(statusBarBlurAmount(context)).append('%').append('\n');
+        builder.append("Status bar blur mode: ").append(statusBarBlurModeLabel(context)).append('\n');
         return builder.toString();
+    }
+
+    private static int clampBlur(int value) {
+        if (value < MIN_STATUS_BAR_BLUR) {
+            return MIN_STATUS_BAR_BLUR;
+        }
+        if (value > MAX_STATUS_BAR_BLUR) {
+            return MAX_STATUS_BAR_BLUR;
+        }
+        return value;
     }
 
     private static SharedPreferences prefs(Context context) {
