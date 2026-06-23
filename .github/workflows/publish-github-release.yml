@@ -305,38 +305,74 @@ jobs:
           name: ${{ needs.build-module.outputs.artifact_name }}
           path: release/module
 
-      - name: Create release notes
+      - name: Build branded release metadata
+        id: release_meta
         shell: bash
         run: |
-          cat > RELEASE_NOTES.md <<EOF
-          # GitHub Release ${{ needs.resolve.outputs.version }}
+          VERSION="${{ needs.resolve.outputs.version }}"
+          HAS_APK="false"
+          HAS_MODULE="false"
 
-          ## Included
+          [[ -d release/apk ]] && HAS_APK="true"
+          [[ -d release/module ]] && HAS_MODULE="true"
+
+          if [[ "$HAS_APK" == "true" && "$HAS_MODULE" == "true" ]]; then
+            RELEASE_NAME="Sayanth Rock Release ${VERSION}"
+          elif [[ "$HAS_APK" == "true" ]]; then
+            RELEASE_NAME="ColorOS Customizer ${VERSION}"
+          else
+            RELEASE_NAME="ColorOS Themes Rock ${VERSION}"
+          fi
+
+          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
+
+          cat > RELEASE_NOTES.md <<EOF
+          # ${RELEASE_NAME}
+
+          Premium release package for OPPO, OnePlus, and realme customization tools.
+
+          ## Highlights
+          - Premium UI polish update
+          - Status bar blur controls with safe fallback mode
+          - Wallpaper, OTA, battery, and support tools
+          - Unified GitHub release automation
+
+          ## Included files
           EOF
 
-          if [[ -d release/apk ]]; then
+          if [[ "$HAS_APK" == "true" ]]; then
             cat >> RELEASE_NOTES.md <<EOF
-          - ColorOS Customizer APK
+
+          ### ColorOS Customizer APK
+          - APK package
           - BUILD_INFO.txt
           - SHA256SUMS-APK.txt
           EOF
           fi
 
-          if [[ -d release/module ]]; then
+          if [[ "$HAS_MODULE" == "true" ]]; then
             cat >> RELEASE_NOTES.md <<EOF
-          - ColorOS Themes Rock module
+
+          ### ColorOS Themes Rock Module
+          - Flashable module package
           - BUILD_INFO.txt
           - SBOM.txt
           - SHA256SUMS.txt
           EOF
           fi
 
+          cat >> RELEASE_NOTES.md <<EOF
+
+          ## Release version
+          - ${VERSION}
+          EOF
+
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.resolve.outputs.version }}
           target_commitish: ${{ github.sha }}
-          name: GitHub Release ${{ needs.resolve.outputs.version }}
+          name: ${{ steps.release_meta.outputs.release_name }}
           body_path: RELEASE_NOTES.md
           files: |
             release/apk/*
