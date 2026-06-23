@@ -1,0 +1,160 @@
+name: Build Theme Module
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+    paths:
+      - 'module.prop'
+      - 'customize.sh'
+      - 'post-fs-data.sh'
+      - 'service.sh'
+      - 'uninstall.sh'
+      - 'scripts/**'
+      - 'themes/**'
+      - 'theme-packs/**'
+      - 'customer-options/**'
+      - 'docs/THEME_MODULE_BUILDER.md'
+      - '.github/workflows/build-theme-module.yml'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Module version, example: v0.4.0'
+        required: false
+        default: ''
+      publish:
+        description: 'Publish GitHub Release'
+        required: true
+        type: boolean
+        default: true
+
+concurrency:
+  group: build-theme-module-${{ github.ref }}
+  cancel-in-progress: true
+
+permissions:
+  contents: write
+  id-token: write
+  attestations: write
+
+env:
+  MODULE_ID: ColorOS-Themes-Rock
+
+jobs:
+  validate:
+    name: Validate Module
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+
+      - name: Validate module structure
+        run: bash scripts/validate-module.sh
+
+      - name: Inspect known theme packages
+        run: |
+          find theme-packs -type f -name '*.theme' -print0 | while IFS= read -r -d '' file; do
+            python3 scripts/inspect-theme-package.py "$file" --pretty
+          done
+
+  build:
+    name: Build Module ZIP
+    needs: validate
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    outputs:
+      version: ${{ steps.meta.outputs.version }}
+      artifact_name: ${{ steps.meta.outputs.artifact_name }}
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install zip
+        run: sudo apt-get update && sudo apt-get install -y zip coreutils
+
+      - name: Resolve version
+        id: meta
+        shell: bash
+        run: |
+          VERSION="${{ inputs.version }}"
+          if [[ -z "$VERSION" && "$GITHUB_REF" == refs/tags/* ]]; then
+            VERSION="$GITHUB_REF_NAME"
+          fi
+          if [[ -z "$VERSION" ]]; then
+            VERSION="$(grep -E '^version=' module.prop | head -n 1 | cut -d'=' -f2-)"
+          fi
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+            echo "Invalid version format: $VERSION"
+            exit 1
+          fi
+          echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${MODULE_ID}-${VERSION}" >> "$GITHUB_OUTPUT"
+
+      - name: Build module
+        run: bash scripts/package.sh
+
+      - name: Collect files
+        run: |
+          mkdir -p release/module
+          cp dist/*.zip release/module/
+          cat > release/module/BUILD_INFO.txt <<INFO
+          Project: ${MODULE_ID}
+          Version: ${MODULE_VERSION}
+          Commit: ${GITHUB_SHA}
+          Workflow: ${GITHUB_WORKFLOW}
+          Run ID: ${GITHUB_RUN_ID}
+          INFO
+          (cd release/module && sha256sum * > SHA256SUMS.txt)
+
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: ${{ steps.meta.outputs.artifact_name }}
+          path: release/module/*
+          if-no-files-found: error
+          retention-days: 30
+
+      - name: Generate build provenance attestation
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: 'release/module/*'
+
+  publish:
+    name: Publish Release
+    needs: build
+    if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish)
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+    permissions:
+      contents: write
+    steps:
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.build.outputs.artifact_name }}
+          path: release/module
+
+      - name: Publish GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          tag_name: ${{ needs.build.outputs.version }}
+          name: ColorOS Themes Rock ${{ needs.build.outputs.version }}
+          body: |
+            ColorOS Themes Rock module build.
+
+            Included files:
+            - Module ZIP
+            - BUILD_INFO.txt
+            - SHA256SUMS.txt
+          files: release/module/*
+          draft: false
+          prerelease: ${{ contains(needs.build.outputs.version, 'beta') }}
