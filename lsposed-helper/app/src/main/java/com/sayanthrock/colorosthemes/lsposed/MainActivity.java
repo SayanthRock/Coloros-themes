@@ -149,9 +149,9 @@ public class MainActivity extends Activity {
         LinearLayout badges = new LinearLayout(this);
         badges.setOrientation(LinearLayout.HORIZONTAL);
         badges.setPadding(0, dp(14), 0, 0);
-        badges.addView(createBadge("v0.3.4"));
-        badges.addView(createBadge("Premium UI"));
-        badges.addView(createBadge("Settings Tools"));
+        badges.addView(createBadge("v0.4.0"));
+        badges.addView(createBadge("APK Release"));
+        badges.addView(createBadge("Theme Module"));
         hero.addView(badges);
 
         root.addView(hero);
@@ -259,7 +259,7 @@ public class MainActivity extends Activity {
         });
         card.addView(fallbackSwitch);
 
-        TextView amountView = cardBody("Current blur strength: " + CustomizationManager.statusBarBlurAmount(this) + "%");
+        TextView amountView = cardBody("Blur strength: " + CustomizationManager.statusBarBlurAmount(this) + "%");
         amountView.setPadding(0, dp(10), 0, dp(6));
         card.addView(amountView);
 
