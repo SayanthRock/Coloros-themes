@@ -1,0 +1,58 @@
+name: Device test report
+description: Report support status for an OPPO, OnePlus, or realme device
+title: "Device report: "
+labels: [device-test]
+body:
+  - type: input
+    id: brand
+    attributes:
+      label: Brand
+      placeholder: OPPO / OnePlus / realme
+    validations:
+      required: true
+  - type: input
+    id: model
+    attributes:
+      label: Device model
+      placeholder: Example, CPHxxxx / RMXxxxx / LE2xxx
+    validations:
+      required: true
+  - type: input
+    id: android
+    attributes:
+      label: Android version
+      placeholder: Android 15 / 16 / 17
+    validations:
+      required: true
+  - type: input
+    id: skin
+    attributes:
+      label: ColorOS, OxygenOS, or realme UI version
+      placeholder: Example, ColorOS 15
+    validations:
+      required: true
+  - type: dropdown
+    id: root
+    attributes:
+      label: Root tool
+      options:
+        - Magisk
+        - KernelSU
+        - APatch
+        - None
+        - Other
+    validations:
+      required: true
+  - type: textarea
+    id: result
+    attributes:
+      label: Test result
+      description: Explain what worked and what did not work.
+      placeholder: Phone booted normally. Wallpaper worked. Lock screen did not change.
+    validations:
+      required: true
+  - type: textarea
+    id: screenshots
+    attributes:
+      label: Screenshots or video
+      description: Add screenshots or screen recording links if available.
