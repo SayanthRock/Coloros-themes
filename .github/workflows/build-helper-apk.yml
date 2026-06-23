@@ -1,4 +1,4 @@
-name: Build Battery Helper APK
+name: Build ColorOS Customizer APK
 
 on:
   push:
@@ -9,7 +9,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: "Manual version name, example: v0.2.0"
+        description: "Manual version name, example: v0.3.0"
         required: false
         default: ""
       publish:
@@ -21,14 +21,14 @@ on:
     types: [ published ]
 
 concurrency:
-  group: battery-helper-apk-${{ github.ref }}
+  group: coloros-customizer-apk-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
   contents: read
 
 env:
-  APK_NAME: ColorOS-Battery-Helper
+  APK_NAME: ColorOS-Customizer
 
 jobs:
   build-apk:
@@ -120,15 +120,19 @@ jobs:
       - name: Create APK release notes
         run: |
           cat > APK_RELEASE_NOTES.md <<EOF
-          # ColorOS Battery Helper APK ${{ needs.build-apk.outputs.version }}
+          # ColorOS Customizer APK ${{ needs.build-apk.outputs.version }}
 
-          ## Battery optimization improvements
-          - Added safe battery status dashboard
-          - Added OPPO, OnePlus, and realme device detection
-          - Added public Android battery settings shortcuts
-          - Added support report copy button
-          - Added safe LSPosed entry class
-          - Avoids aggressive task killers, hidden tracking, and unsafe root hacks
+          ## Customization improvements
+          - Added image picker open option
+          - Added selected image preview
+          - Added Home screen wallpaper button
+          - Added Lock screen wallpaper button
+          - Added Home + Lock wallpaper button
+          - Added About phone helper label
+          - Added OTA display name option with Sayanth Rock default
+          - Added OTA name on/off toggle
+          - Added OTA background toggle using the selected image
+          - Added full support report copy
 
           ## Build files
           - APK artifact
@@ -139,7 +143,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.build-apk.outputs.version }}
-          name: ColorOS Battery Helper ${{ needs.build-apk.outputs.version }}
+          name: ColorOS Customizer ${{ needs.build-apk.outputs.version }}
           body_path: APK_RELEASE_NOTES.md
           files: dist/*
           draft: false
