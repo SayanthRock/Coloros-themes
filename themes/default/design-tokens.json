@@ -1,25 +1,38 @@
 {
   "name": "Default Rock Premium Tokens",
+  "version": "0.4.0",
   "colors": {
     "background": "#0f0f10",
     "surface": "#1a1a1d",
     "surfaceSoft": "#242429",
     "accent": "#e2b884",
+    "accentStrong": "#f2c66d",
     "textPrimary": "#f5f2ea",
-    "textMuted": "#b9b1a3"
+    "textMuted": "#b9b1a3",
+    "danger": "#ff6b6b",
+    "success": "#55d187"
   },
   "radius": {
     "card": 28,
     "button": 22,
-    "sheet": 32
+    "sheet": 32,
+    "icon": 18
   },
   "spacing": {
     "screen": 16,
     "card": 18,
-    "section": 24
+    "section": 24,
+    "gridGap": 12
   },
   "motion": {
     "durationMs": 180,
-    "style": "minimal"
+    "style": "minimal",
+    "avoidHeavyBlurOnLowRam": true
+  },
+  "quality": {
+    "previewWidth": 1080,
+    "previewHeight": 2400,
+    "recommendedWallpaperFormat": "webp",
+    "recommendedIconFormat": "png"
   }
 }
