@@ -1,8 +1,8 @@
 # ColorOS Themes Rock
 
-Customer-safe theme module starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI on Android 15, Android 16, and Android 17.
+Customer-safe theme module and helper APK starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI on Android 15, Android 16, and Android 17.
 
-This repo is built for legal theme customization, wallpaper packs, device compatibility checks, and safe setup guidance. It does **not** bypass paid themes, Theme Store DRM, private OEM protections, or region locks.
+This repo is built for legal theme customization, wallpaper packs, device compatibility checks, safe battery guidance, and support reports. It does **not** convert protected Theme Store assets or make fake performance claims.
 
 ## What this project does
 
@@ -11,8 +11,9 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 - Gives a clean place to package your own lock screen, home screen, wallpaper, and UI assets.
 - Adds install-time device checks for OPPO, OnePlus, and realme.
 - Adds a GitHub Actions workflow to build a flashable module ZIP.
-- Publishes public GitHub Releases automatically from tags or manual workflow runs.
-- Documents customer support steps so users know what is safe and what is not.
+- Adds a helper APK for battery status, settings shortcuts, and customer support reports.
+- Adds a GitHub Actions workflow to build and upload the helper APK.
+- Publishes public GitHub Releases from tags or manual workflow runs.
 
 ## Supported targets
 
@@ -25,12 +26,29 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 | Android 16 | Modern supported target | Planned testing |
 | Android 17 | Latest target | Needs device-by-device testing |
 
+## Included battery helper APK
+
+The APK is in:
+
+```text
+lsposed-helper/
+```
+
+APK features:
+
+- Device status dashboard
+- Battery optimization status message
+- OPPO, OnePlus, realme, and OPlus-family detection
+- Public Android battery settings shortcuts
+- Customer support report copy button
+- Safe LSPosed entry class
+
 ## What it cannot safely do
 
 - It cannot silently change lock screen or home screen on non-root phones.
 - It cannot guarantee every OEM Theme Store package will accept external theme files.
-- It cannot convert paid/protected Theme Store assets.
-- It cannot honestly promise magical performance boosts. Performance features must be safe, reversible, and device-specific.
+- It cannot convert paid or protected Theme Store assets.
+- It cannot honestly promise magical performance boosts.
 - It should not spoof About phone identity unless the user fully understands root/system risks.
 
 ## Folder structure
@@ -45,15 +63,19 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 ├── system_ext/media/themeInner/
 ├── themes/sample/theme.json
 ├── docs/
+│   ├── BATTERY_GUIDE.md
 │   ├── COMPATIBILITY.md
 │   ├── CUSTOMER_SUPPORT.md
 │   └── ROADMAP.md
-└── .github/workflows/build-module.yml
+├── lsposed-helper/
+└── .github/workflows/
+    ├── build-module.yml
+    └── build-helper-apk.yml
 ```
 
 ## Build module ZIP
 
-The GitHub workflow builds the module ZIP automatically on every push to `main`.
+The module ZIP workflow builds automatically on every push to `main`.
 
 Manual local build:
 
@@ -64,32 +86,58 @@ bash scripts/package.sh
 Output:
 
 ```text
-dist/ColorOS-Themes-Rock-v0.1.0.zip
+dist/ColorOS-Themes-Rock-v0.2.0.zip
 ```
+
+## Build helper APK
+
+Manual local build:
+
+```bash
+cd lsposed-helper
+gradle :app:assembleDebug --no-daemon --stacktrace
+```
+
+Output:
+
+```text
+lsposed-helper/app/build/outputs/apk/debug/app-debug.apk
+```
+
+GitHub build:
+
+1. Open **Actions**.
+2. Select **Build Battery Helper APK**.
+3. Tap **Run workflow**.
+4. Use version `v0.2.0` or newer.
+5. Enable release publishing only when you want the APK uploaded to a public GitHub Release.
 
 ## Public releases
 
-Public GitHub Releases are automated through `.github/workflows/build-module.yml`.
+Public GitHub Releases are automated through:
 
-### Option 1: Release from a tag
-
-```bash
-git tag v0.1.1
-git push origin v0.1.1
+```text
+.github/workflows/build-module.yml
+.github/workflows/build-helper-apk.yml
 ```
 
-The workflow will build the module ZIP and publish a public release with the ZIP attached.
+### Release from a tag
 
-### Option 2: Release from GitHub Actions
+```bash
+git tag v0.2.0
+git push origin v0.2.0
+```
+
+### Release from GitHub Actions
 
 1. Open **Actions**.
-2. Select **Build Theme Module**.
+2. Select the build workflow.
 3. Tap **Run workflow**.
-4. Enter a version like `v0.1.1`.
-5. Enable **Create a public GitHub Release**.
+4. Enter a version like `v0.2.0`.
+5. Enable public release publishing.
 6. Run the workflow.
 
-## Install
+## Install module ZIP
 
 1. Open the latest GitHub Release.
 2. Download the module ZIP.
@@ -97,6 +145,14 @@ The workflow will build the module ZIP and publish a public release with the ZIP
 4. Flash the module ZIP.
 5. Reboot.
 6. Test on one device first before giving it to customers.
+
+## Install helper APK
+
+1. Download the APK artifact or release APK.
+2. Install it on the test phone.
+3. Open **ColorOS Battery Helper**.
+4. Review the battery status and device report.
+5. Use the settings shortcuts only when needed.
 
 ## Customer-safe feature plan
 
@@ -106,7 +162,7 @@ The workflow will build the module ZIP and publish a public release with the ZIP
 | Home screen style | Wallpapers, icon packs, launcher-safe instructions |
 | Wallpapers | Companion app using Android `WallpaperManager` later |
 | About phone | Device info dashboard first, no unsafe spoofing by default |
-| Performance | Diagnostics, battery settings guide, no fake RAM/speed claims |
+| Battery | Diagnostics, settings shortcuts, support report, no fake booster claims |
 | Customer support | Device report template, compatibility table, rollback steps |
 
 ## Legal and safety rule
