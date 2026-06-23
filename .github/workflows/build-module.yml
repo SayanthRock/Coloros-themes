@@ -12,7 +12,7 @@ env:
 
 jobs:
   build:
-    name: Auto Version + Build + Release
+    name: Smart Release (SemVer + Changelog)
     runs-on: ubuntu-latest
 
     steps:
@@ -34,16 +34,27 @@ jobs:
           fi
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-      - name: Compute next version
+      - name: Compute next version (SemVer)
         id: version
         run: |
-          LATEST=${{ steps.tag.outputs.latest }}
+          LATEST="${{ steps.tag.outputs.latest }}"
           VERSION_NUM=${LATEST#v}
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
+
+          # default patch bump
           PATCH=$((PATCH+1))
+
           NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
           echo "MODULE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
+          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
+
+      - name: Generate changelog
+        run: |
+          echo "# ColorOS Themes Rock ${MODULE_VERSION}" > RELEASE_NOTES.md
+          echo "" >> RELEASE_NOTES.md
+          echo "## Changes" >> RELEASE_NOTES.md
+          git log $(git describe --tags --abbrev=0 2>/dev/null || echo '')..HEAD --pretty=format:'- %s' >> RELEASE_NOTES.md || true
 
       - name: Create Git tag
         run: |
@@ -66,23 +77,6 @@ jobs:
         with:
           name: ColorOS-Themes-Rock-${{ env.MODULE_VERSION }}
           path: dist/*.zip
-
-      - name: Generate release notes
-        run: |
-          cat > RELEASE_NOTES.md <<EOF
-# ColorOS Themes Rock ${MODULE_VERSION}
-
-Automated release.
-
-## Included
-- Flashable module ZIP
-- OPPO / OnePlus / realme support
-- Theme assets structure
-- CI automated build
-
-## Install
-Flash via Magisk / KernelSU / APatch
-EOF
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
