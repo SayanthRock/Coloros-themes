@@ -1,4 +1,5 @@
-name: Full Security Fortress Release System
+name: Build Theme Module Release
+run-name: Build Theme Module Release • ${{ github.event_name == 'workflow_dispatch' && inputs.version || github.ref_name }}
 
 on:
   push:
@@ -18,7 +19,7 @@ on:
         default: false
 
 concurrency:
-  group: fortress-${{ github.ref }}
+  group: theme-module-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -28,10 +29,10 @@ env:
   MODULE_ID: ColorOS-Themes-Rock
 
 jobs:
-
   security:
-    name: Security Fortress Gate
+    name: Security Gate
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       security-events: write
@@ -52,13 +53,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Fallback hard-secret scan
-        run: |
-          if git grep -I -n -E "AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-]{35}|-----BEGIN (RSA|OPENSSH) PRIVATE KEY-----" -- .; then
-            echo "Hard secret detected"
-            exit 1
-          fi
-
       - name: Shell script quality check
         run: |
           find scripts -type f -name "*.sh" -print0 | xargs -0 -r shellcheck
@@ -77,16 +71,17 @@ jobs:
         run: bash scripts/check-theme-size.sh
 
   build:
-    name: Fortress Build + Attestation
+    name: Build Module + Attestation
     needs: security
     runs-on: ubuntu-latest
+    timeout-minutes: 20
     permissions:
       contents: read
       id-token: write
       attestations: write
     outputs:
       module_version: ${{ steps.version.outputs.version }}
-      artifact_name: fortress-${{ steps.version.outputs.version }}
+      artifact_name: ${{ steps.version.outputs.artifact_name }}
 
     steps:
       - name: Checkout
@@ -121,12 +116,13 @@ jobs:
           fi
 
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=${MODULE_ID}-${VERSION}" >> "$GITHUB_OUTPUT"
           echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
 
       - name: Build module
         run: bash scripts/package.sh
 
-      - name: Generate SBOM
+      - name: Generate SBOM and build info
         run: |
           mkdir -p dist
           cat > dist/SBOM.txt <<EOF
@@ -135,6 +131,13 @@ jobs:
           Build runner: GitHub Actions ubuntu-latest
           Build tools: bash, zip, coreutils
           Commit: ${GITHUB_SHA}
+          EOF
+          cat > dist/BUILD_INFO.txt <<EOF
+          Project: ${MODULE_ID}
+          Version: ${MODULE_VERSION}
+          Commit: ${GITHUB_SHA}
+          Workflow: ${GITHUB_WORKFLOW}
+          Run ID: ${GITHUB_RUN_ID}
           EOF
 
       - name: Generate SHA256 checksums
@@ -145,7 +148,7 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: fortress-${{ steps.version.outputs.version }}
+          name: ${{ steps.version.outputs.artifact_name }}
           path: dist/*
           if-no-files-found: error
           retention-days: 30
@@ -155,10 +158,23 @@ jobs:
         with:
           subject-path: 'dist/*'
 
+      - name: Write workflow summary
+        run: |
+          {
+            echo "## Theme Module Build"
+            echo ""
+            echo "- Version: ${MODULE_VERSION}"
+            echo "- Artifact: ${{ steps.version.outputs.artifact_name }}"
+            echo "- Build info: dist/BUILD_INFO.txt"
+            echo "- SBOM: dist/SBOM.txt"
+            echo "- Checksums: dist/SHA256SUMS.txt"
+          } >> "$GITHUB_STEP_SUMMARY"
+
   release:
-    name: Fortress Release
+    name: Publish Module Release
     needs: build
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     if: startsWith(github.ref, 'refs/tags/') || (github.event_name == 'workflow_dispatch' && inputs.publish == true)
     permissions:
       contents: write
@@ -182,18 +198,18 @@ jobs:
         run: |
           VERSION="${{ needs.build.outputs.module_version }}"
           cat > RELEASE_NOTES.md <<EOF
-          # ColorOS Themes Rock Security Fortress ${VERSION}
+          # ColorOS Themes Rock ${VERSION}
 
           ## Changes
           EOF
           git log -n 20 --pretty=format:'- %s' >> RELEASE_NOTES.md || true
           cat >> RELEASE_NOTES.md <<EOF
 
-          ## Security verification
+          ## Verification
           - Gitleaks secret scan passed
-          - Fallback hard-secret scan passed
-          - ShellCheck script quality check passed
+          - Shell script quality check passed
           - Module and theme validation passed
+          - Build info included
           - SBOM included
           - SHA256 checksums included
           - GitHub build provenance attestation generated
@@ -203,7 +219,7 @@ jobs:
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ needs.build.outputs.module_version }}
-          name: ColorOS Themes Security Fortress ${{ needs.build.outputs.module_version }}
+          name: ColorOS Themes Rock ${{ needs.build.outputs.module_version }}
           body_path: RELEASE_NOTES.md
           files: dist/*
           draft: false
