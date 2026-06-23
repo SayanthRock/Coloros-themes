@@ -34,14 +34,15 @@ public class MainActivity extends Activity {
 
     private static final int REQUEST_PICK_IMAGE = 1001;
 
-    private static final int COLOR_BG = 0xFF0B0D12;
-    private static final int COLOR_SURFACE = 0xFF151A22;
-    private static final int COLOR_SURFACE_ALT = 0xFF1A2030;
+    private static final int COLOR_BG = 0xFF090B10;
+    private static final int COLOR_SURFACE = 0xFF141922;
+    private static final int COLOR_SURFACE_ALT = 0xFF1A2130;
+    private static final int COLOR_SURFACE_ELEVATED = 0xFF101621;
     private static final int COLOR_ACCENT = 0xFFE2B884;
     private static final int COLOR_ACCENT_SOFT = 0x26E2B884;
     private static final int COLOR_TEXT = 0xFFFFFFFF;
     private static final int COLOR_TEXT_SECONDARY = 0xFFD7DAE0;
-    private static final int COLOR_TEXT_MUTED = 0xFF9EA4B3;
+    private static final int COLOR_TEXT_MUTED = 0xFF98A1B3;
     private static final int COLOR_DARK_BUTTON_TEXT = 0xFF101319;
 
     private LinearLayout root;
@@ -82,13 +83,15 @@ public class MainActivity extends Activity {
         scrollView.addView(root);
 
         addHeroCard();
+        addQuickStatsRow();
 
-        addSectionHeader("Status Overview", "Device details and battery health shortcuts");
+        addSectionHeader("Status Overview", "Device details, optimization state, and support basics");
         addCard("Device status", BatteryOptimizationAdvisor.supportReport(this));
         addCard("Optimization status", BatteryOptimizationAdvisor.optimizationStatus(this));
         addRecommendationCard(BatteryOptimizationAdvisor.recommendations(this));
 
         addSectionHeader("Customization Center", "Wallpapers, About phone label, and OTA style options");
+        addThemeStoreSafetyCard();
         addCustomizationCenter();
 
         addSectionHeader("Battery Tools", "Quick access to the important Android battery screens");
@@ -127,13 +130,13 @@ public class MainActivity extends Activity {
         TextView title = new TextView(this);
         title.setText("ColorOS Customizer");
         title.setTextColor(COLOR_TEXT);
-        title.setTextSize(30);
+        title.setTextSize(31);
         title.setTypeface(Typeface.DEFAULT_BOLD);
         title.setPadding(0, dp(8), 0, dp(6));
         hero.addView(title);
 
         TextView subtitle = new TextView(this);
-        subtitle.setText("Improved UI style with cleaner sections, better controls, and a more premium dashboard for OPPO, OnePlus, and realme devices.");
+        subtitle.setText("New UI polish update with cleaner sections, stronger hierarchy, smoother card layout, and a more premium safe customization dashboard.");
         subtitle.setTextColor(COLOR_TEXT_SECONDARY);
         subtitle.setTextSize(14);
         subtitle.setLineSpacing(0, 1.14f);
@@ -142,12 +145,64 @@ public class MainActivity extends Activity {
         LinearLayout badges = new LinearLayout(this);
         badges.setOrientation(LinearLayout.HORIZONTAL);
         badges.setPadding(0, dp(14), 0, 0);
-        badges.addView(createBadge("v0.3.1"));
-        badges.addView(createBadge("UI Refresh"));
-        badges.addView(createBadge("Safe Tools"));
+        badges.addView(createBadge("v0.3.2"));
+        badges.addView(createBadge("UI Polish"));
+        badges.addView(createBadge("Safe Mode"));
         hero.addView(badges);
 
         root.addView(hero);
+    }
+
+    private void addQuickStatsRow() {
+        LinearLayout row = new LinearLayout(this);
+        row.setOrientation(LinearLayout.HORIZONTAL);
+        row.setWeightSum(3f);
+
+        row.addView(createStatCard("Wallpaper", "Home / Lock"), weightedCardParams());
+        row.addView(createStatCard("OTA", "Sayanth Rock"), weightedCardParams());
+        row.addView(createStatCard("Mode", "Customer Safe"), weightedCardParams());
+
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                LinearLayout.LayoutParams.MATCH_PARENT,
+                LinearLayout.LayoutParams.WRAP_CONTENT
+        );
+        params.setMargins(0, 0, 0, dp(14));
+        row.setLayoutParams(params);
+        root.addView(row);
+    }
+
+    private LinearLayout createStatCard(String label, String value) {
+        LinearLayout card = new LinearLayout(this);
+        card.setOrientation(LinearLayout.VERTICAL);
+        card.setPadding(dp(14), dp(14), dp(14), dp(14));
+        card.setBackground(roundedDrawable(COLOR_SURFACE_ELEVATED, dp(18), 0x24E2B884));
+
+        TextView labelView = new TextView(this);
+        labelView.setText(label);
+        labelView.setTextColor(COLOR_TEXT_MUTED);
+        labelView.setTextSize(12);
+        labelView.setTypeface(Typeface.DEFAULT_BOLD);
+        card.addView(labelView);
+
+        TextView valueView = new TextView(this);
+        valueView.setText(value);
+        valueView.setTextColor(COLOR_TEXT);
+        valueView.setTextSize(15);
+        valueView.setTypeface(Typeface.DEFAULT_BOLD);
+        valueView.setPadding(0, dp(6), 0, 0);
+        card.addView(valueView);
+
+        return card;
+    }
+
+    private LinearLayout.LayoutParams weightedCardParams() {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
+        );
+        params.setMargins(0, 0, dp(8), 0);
+        return params;
     }
 
     private void addSectionHeader(String title, String subtitle) {
@@ -167,6 +222,13 @@ public class MainActivity extends Activity {
         root.addView(subtitleView, matchWrap());
     }
 
+    private void addThemeStoreSafetyCard() {
+        LinearLayout card = cardContainer(false);
+        card.addView(cardTitle("Theme Store compatibility"));
+        card.addView(cardBody("This update improves style and usability, but it does not unlock paid or protected Theme Store features. Use your own assets and OEM-supported options only."));
+        root.addView(card);
+    }
+
     private void addCustomizationCenter() {
         addCard(
                 "Customization Center",
@@ -183,7 +245,6 @@ public class MainActivity extends Activity {
             preview.setScaleType(ImageView.ScaleType.CENTER_CROP);
             preview.setImageURI(imageUri);
             preview.setBackground(roundedDrawable(COLOR_SURFACE_ALT, dp(18), 0x33E2B884));
-            preview.setClipToOutline(false);
 
             LinearLayout.LayoutParams imageParams = new LinearLayout.LayoutParams(
                     LinearLayout.LayoutParams.MATCH_PARENT,
@@ -441,7 +502,7 @@ public class MainActivity extends Activity {
         input.setText(value);
         input.setTextColor(COLOR_TEXT);
         input.setHintTextColor(COLOR_TEXT_MUTED);
-        input.setBackground(roundedDrawable(0xFF111621, dp(16), 0x26E2B884));
+        input.setBackground(roundedDrawable(COLOR_SURFACE_ELEVATED, dp(16), 0x26E2B884));
         input.setPadding(dp(16), dp(14), dp(16), dp(14));
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
