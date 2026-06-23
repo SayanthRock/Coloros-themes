@@ -1,0 +1,13 @@
+# ColorOS Themes Rock safe config example
+# Copy this file to config/settings.conf inside the installed module when enabling options.
+# Keep values conservative. Unsupported values are ignored by service.sh.
+
+# Refresh rate options: auto, 60, 90, 120, 144
+REFRESH_RATE=auto
+
+# Animation options: default, fast, off
+ANIMATION_SCALE=default
+
+# Battery options: balanced, saver, performance
+# Current service only requests saver. Balanced/performance are left to the device/user.
+BATTERY_MODE=balanced
