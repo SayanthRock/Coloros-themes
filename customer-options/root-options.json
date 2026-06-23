@@ -1,0 +1,46 @@
+{
+  "version": "0.4.2",
+  "project": "ColorOS Themes Rock",
+  "mode": "permission_aware_customer_options",
+  "rootPolicy": {
+    "autoGainRoot": false,
+    "showNoRootWarning": true,
+    "lockAdvancedOptionsWithoutRoot": true,
+    "requireCustomerConfirmation": true,
+    "requireRollbackPlan": true
+  },
+  "permissions": [
+    {
+      "id": "manage_all_files",
+      "name": "Allow access to manage all files",
+      "androidPermission": "android.permission.MANAGE_EXTERNAL_STORAGE",
+      "status": "customer_granted_in_settings",
+      "purpose": "Import local theme packages, wallpaper files, backups, and customer-owned assets"
+    },
+    {
+      "id": "install_unknown_apps",
+      "name": "Allow from this source",
+      "androidPermission": "android.permission.REQUEST_INSTALL_PACKAGES",
+      "status": "customer_granted_in_settings",
+      "purpose": "Allow customer-approved direct APK installation outside an app store"
+    },
+    {
+      "id": "set_wallpaper",
+      "name": "Set wallpaper",
+      "androidPermission": "android.permission.SET_WALLPAPER",
+      "status": "safe_runtime_action",
+      "purpose": "Apply selected customer wallpaper to home or lock screen where supported"
+    }
+  ],
+  "customerOptions": [
+    {"id": "wallpaper_home_lock", "name": "Home and Lock wallpaper", "requiresRoot": false, "requiresAllFiles": false, "status": "ready"},
+    {"id": "theme_package_import", "name": "Theme package import", "requiresRoot": false, "requiresAllFiles": true, "status": "ready_when_permission_granted"},
+    {"id": "recommended_apps", "name": "Recommended apps selector", "requiresRoot": false, "requiresAllFiles": false, "status": "ready"},
+    {"id": "permission_report", "name": "Permission report", "requiresRoot": false, "requiresAllFiles": false, "status": "ready"},
+    {"id": "advanced_theme_mode", "name": "Advanced theme mode", "requiresRoot": true, "requiresAllFiles": true, "status": "locked_without_root"},
+    {"id": "system_theme_path", "name": "System theme path helper", "requiresRoot": true, "requiresAllFiles": true, "status": "locked_without_root"},
+    {"id": "backup_before_apply", "name": "Backup before apply", "requiresRoot": true, "requiresAllFiles": true, "status": "locked_without_root"},
+    {"id": "rollback_mode", "name": "Rollback mode", "requiresRoot": false, "requiresAllFiles": false, "status": "always_enabled"},
+    {"id": "safe_compatibility_mode", "name": "Safe compatibility mode", "requiresRoot": false, "requiresAllFiles": false, "status": "always_enabled"}
+  ]
+}
