@@ -10,8 +10,8 @@ android {
         applicationId 'com.sayanthrock.colorosthemes.lsposed'
         minSdk 26
         targetSdk 35
-        versionCode 7
-        versionName '0.3.4'
+        versionCode 8
+        versionName '0.4.0'
         buildConfigField 'boolean', 'DEBUG_SAFE_HOOKS', 'false'
     }
 
@@ -22,6 +22,17 @@ android {
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_17
         targetCompatibility JavaVersion.VERSION_17
+    }
+
+    buildTypes {
+        debug {
+            applicationIdSuffix '.debug'
+            versionNameSuffix '-debug'
+        }
+        release {
+            minifyEnabled false
+            shrinkResources false
+        }
     }
 }
 
