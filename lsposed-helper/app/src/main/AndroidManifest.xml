@@ -12,7 +12,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="ColorOS Themes helper for tested OPPO, OnePlus, and realme devices" />
+            android:value="Safe ColorOS battery and theme helper for tested OPPO, OnePlus, and realme devices" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
