@@ -1,0 +1,12 @@
+{
+  "version": "0.1.0",
+  "project": "ColorOS Themes Rock",
+  "items": [
+    {"id": "wallpaper", "name": "Wallpaper setup", "status": "safe"},
+    {"id": "theme_assets", "name": "Theme assets", "status": "test_required"},
+    {"id": "device_info", "name": "About phone dashboard", "status": "safe"},
+    {"id": "performance_tips", "name": "Performance help", "status": "safe"},
+    {"id": "lsposed_mode", "name": "LSPosed mode", "status": "experimental"},
+    {"id": "support_report", "name": "Customer support report", "status": "safe"}
+  ]
+}
