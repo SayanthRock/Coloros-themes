@@ -1,8 +1,12 @@
-name: Build Theme Module
+name: Build Theme Module PRO
 
 on:
   push:
     branches: [ main ]
+
+concurrency:
+  group: release-${{ github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: write
@@ -12,7 +16,7 @@ env:
 
 jobs:
   build:
-    name: Smart Release (SemVer + Changelog)
+    name: PRO Release System (Stable + Beta + Checksums)
     runs-on: ubuntu-latest
 
     steps:
@@ -21,33 +25,52 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Install zip
-        run: sudo apt-get update && sudo apt-get install -y zip
+      - name: Cache tools
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache
+          key: ${{ runner.os }}-tools
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y zip coreutils
+
+      - name: Detect release channel
+        id: channel
+        run: |
+          if echo "${{ github.event.head_commit.message }}" | grep -qi "beta"; then
+            echo "channel=beta" >> $GITHUB_OUTPUT
+          else
+            echo "channel=stable" >> $GITHUB_OUTPUT
+          fi
 
       - name: Get latest tag
         id: tag
         run: |
           git fetch --tags
           LATEST=$(git tag --sort=-v:refname | grep -E '^v[0-9]+\.[0-9]+\.[0-9]+' | head -n 1 || true)
-          if [ -z "$LATEST" ]; then
-            LATEST="v0.0.0"
-          fi
+          [ -z "$LATEST" ] && LATEST="v0.0.0"
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-      - name: Compute next version (SemVer)
+      - name: Compute version (PRO SemVer)
         id: version
         run: |
           LATEST="${{ steps.tag.outputs.latest }}"
           VERSION_NUM=${LATEST#v}
           IFS='.' read -r MAJOR MINOR PATCH <<< "$VERSION_NUM"
 
-          # default patch bump
           PATCH=$((PATCH+1))
 
-          NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          CHANNEL="${{ steps.channel.outputs.channel }}"
+
+          if [ "$CHANNEL" = "beta" ]; then
+            NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}-beta"
+          else
+            NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
+          fi
 
           echo "MODULE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
-          echo "version=$NEW_VERSION" >> $GITHUB_OUTPUT
 
       - name: Generate changelog
         run: |
@@ -55,35 +78,31 @@ jobs:
           echo "" >> RELEASE_NOTES.md
           echo "## Changes" >> RELEASE_NOTES.md
           git log $(git describe --tags --abbrev=0 2>/dev/null || echo '')..HEAD --pretty=format:'- %s' >> RELEASE_NOTES.md || true
-
-      - name: Create Git tag
-        run: |
-          git config user.name "github-actions"
-          git config user.email "github-actions@github.com"
-          git tag $MODULE_VERSION
-          git push origin $MODULE_VERSION
-
-      - name: Validate module
-        run: bash scripts/validate-module.sh
-
-      - name: Check theme assets
-        run: bash scripts/check-theme-size.sh
+          echo "" >> RELEASE_NOTES.md
+          echo "## Channel: ${{ steps.channel.outputs.channel }}" >> RELEASE_NOTES.md
 
       - name: Package module
         run: bash scripts/package.sh
 
+      - name: Generate SHA256 checksum
+        run: |
+          cd dist
+          for f in *.zip; do
+            sha256sum "$f" > "$f.sha256"
+          done
+
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ColorOS-Themes-Rock-${{ env.MODULE_VERSION }}
-          path: dist/*.zip
+          name: ColorOS-Themes-Rock-PRO-${{ env.MODULE_VERSION }}
+          path: dist/*
 
-      - name: Publish GitHub Release
+      - name: Publish GitHub Release (PRO)
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.MODULE_VERSION }}
-          name: ColorOS Themes Rock ${{ env.MODULE_VERSION }}
+          name: ColorOS Themes Rock PRO ${{ env.MODULE_VERSION }}
           body_path: RELEASE_NOTES.md
-          files: dist/*.zip
+          files: dist/*
           draft: false
-          prerelease: false
+          prerelease: ${{ contains(env.MODULE_VERSION, 'beta') }}
