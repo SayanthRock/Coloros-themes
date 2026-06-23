@@ -1,6 +1,7 @@
 package com.sayanthrock.colorosthemes.lsposed;
 
 import android.app.Activity;
+import android.app.WallpaperManager;
 import android.content.ActivityNotFoundException;
 import android.content.ClipData;
 import android.content.ClipboardManager;
@@ -14,17 +15,24 @@ import android.provider.Settings;
 import android.view.Gravity;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
+import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
+import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.IOException;
 import java.util.List;
 
 /**
- * Customer dashboard for safe battery and theme support guidance.
+ * Customer dashboard for safe battery, wallpaper, OTA, and theme support guidance.
  */
 public class MainActivity extends Activity {
+
+    private static final int REQUEST_PICK_IMAGE = 1001;
 
     private LinearLayout root;
 
@@ -32,6 +40,23 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         render();
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if (requestCode == REQUEST_PICK_IMAGE && resultCode == RESULT_OK && data != null && data.getData() != null) {
+            Uri uri = data.getData();
+            int flags = data.getFlags() & (Intent.FLAG_GRANT_READ_URI_PERMISSION | Intent.FLAG_GRANT_WRITE_URI_PERMISSION);
+            try {
+                getContentResolver().takePersistableUriPermission(uri, flags & Intent.FLAG_GRANT_READ_URI_PERMISSION);
+            } catch (SecurityException ignored) {
+                // Some gallery apps do not provide persistable access. The URI can still work for the current session.
+            }
+            CustomizationManager.saveImageUri(this, uri);
+            Toast.makeText(this, "Image selected", Toast.LENGTH_SHORT).show();
+            render();
+        }
     }
 
     private void render() {
@@ -45,11 +70,180 @@ public class MainActivity extends Activity {
         scrollView.addView(root);
 
         addTitle("ColorOS Themes Rock");
-        addSubtitle("Battery Optimization Helper");
+        addSubtitle("Battery + Customization Helper");
         addCard("Device status", BatteryOptimizationAdvisor.supportReport(this));
         addCard("Optimization status", BatteryOptimizationAdvisor.optimizationStatus(this));
         addRecommendationCard(BatteryOptimizationAdvisor.recommendations(this));
+        addCustomizationCenter();
+        addBatteryButtons();
 
+        addButton("Copy full support report", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                copyReport();
+            }
+        });
+
+        addButton("Refresh status", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                render();
+            }
+        });
+
+        addFooter();
+        setContentView(scrollView);
+    }
+
+    private void addCustomizationCenter() {
+        addCard(
+                "Customization Center",
+                "Open any image from your phone and apply it as Home screen, Lock screen, or both. OTA name/background and About phone labels are stored as safe helper options for preview and customer reports."
+        );
+
+        Uri imageUri = CustomizationManager.selectedImageUri(this);
+        if (imageUri != null) {
+            ImageView preview = new ImageView(this);
+            preview.setAdjustViewBounds(true);
+            preview.setMaxHeight(dp(220));
+            preview.setScaleType(ImageView.ScaleType.CENTER_CROP);
+            preview.setImageURI(imageUri);
+            GradientDrawable background = new GradientDrawable();
+            background.setColor(0xFF191D27);
+            background.setCornerRadius(dp(18));
+            preview.setBackground(background);
+            LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                    LinearLayout.LayoutParams.MATCH_PARENT,
+                    dp(220)
+            );
+            params.setMargins(0, 0, 0, dp(12));
+            root.addView(preview, params);
+        }
+
+        addCard("Selected image", CustomizationManager.selectedImageLabel(this));
+
+        addButton("Open image picker", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openImagePicker();
+            }
+        });
+
+        addButton("Apply image to Home screen", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                applySelectedWallpaper(WallpaperManager.FLAG_SYSTEM);
+            }
+        });
+
+        addButton("Apply image to Lock screen", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                applySelectedWallpaper(WallpaperManager.FLAG_LOCK);
+            }
+        });
+
+        addButton("Apply image to Home + Lock screen", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                applySelectedWallpaper(WallpaperManager.FLAG_SYSTEM | WallpaperManager.FLAG_LOCK);
+            }
+        });
+
+        addButton("Open Android wallpaper settings", new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent("android.settings.WALLPAPER_SETTINGS"));
+            }
+        });
+
+        addAboutPhoneOptions();
+        addOtaOptions();
+    }
+
+    private void addAboutPhoneOptions() {
+        LinearLayout card = cardContainer();
+        card.addView(cardTitle("About phone customization"));
+        card.addView(cardBody("Saved as a safe helper label for preview and support reports. Directly changing OEM About phone system identity is not enabled by default."));
+
+        final EditText input = new EditText(this);
+        input.setSingleLine(true);
+        input.setText(CustomizationManager.aboutPhoneName(this));
+        input.setTextColor(0xFFFFFFFF);
+        input.setHintTextColor(0xFF9EA4B3);
+        input.setHint("About phone label");
+        card.addView(input);
+
+        Button save = smallButton("Save About phone label");
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomizationManager.setAboutPhoneName(MainActivity.this, input.getText().toString());
+                Toast.makeText(MainActivity.this, "About phone label saved", Toast.LENGTH_SHORT).show();
+                render();
+            }
+        });
+        card.addView(save);
+
+        Button openSettings = smallButton("Open About phone settings");
+        openSettings.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_DEVICE_INFO_SETTINGS));
+            }
+        });
+        card.addView(openSettings);
+
+        root.addView(card);
+    }
+
+    private void addOtaOptions() {
+        LinearLayout card = cardContainer();
+        card.addView(cardTitle("OTA customization"));
+        card.addView(cardBody("Use this for safe local OTA branding options. The default OTA name can be Sayanth Rock and can be turned on or off."));
+
+        final EditText otaName = new EditText(this);
+        otaName.setSingleLine(true);
+        otaName.setText(CustomizationManager.otaName(this));
+        otaName.setTextColor(0xFFFFFFFF);
+        otaName.setHintTextColor(0xFF9EA4B3);
+        otaName.setHint("OTA display name");
+        card.addView(otaName);
+
+        Switch otaNameSwitch = optionSwitch("Turn on OTA name", CustomizationManager.otaBrandingEnabled(this));
+        otaNameSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomizationManager.setOtaBrandingEnabled(MainActivity.this, isChecked);
+            }
+        });
+        card.addView(otaNameSwitch);
+
+        Switch otaBackgroundSwitch = optionSwitch("Use selected image as OTA background", CustomizationManager.otaBackgroundEnabled(this));
+        otaBackgroundSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomizationManager.setOtaBackgroundEnabled(MainActivity.this, isChecked);
+            }
+        });
+        card.addView(otaBackgroundSwitch);
+
+        Button save = smallButton("Save OTA customization");
+        save.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomizationManager.setOtaName(MainActivity.this, otaName.getText().toString());
+                Toast.makeText(MainActivity.this, "OTA customization saved", Toast.LENGTH_SHORT).show();
+                render();
+            }
+        });
+        card.addView(save);
+
+        root.addView(card);
+        addCard("Current customization report", CustomizationManager.report(this));
+    }
+
+    private void addBatteryButtons() {
         addButton("Open Battery Saver settings", new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -81,23 +275,25 @@ public class MainActivity extends Activity {
                 openSettings(intent);
             }
         });
+    }
 
-        addButton("Copy support report", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                copyReport();
-            }
-        });
+    private void openImagePicker() {
+        try {
+            startActivityForResult(CustomizationManager.imagePickerIntent(), REQUEST_PICK_IMAGE);
+        } catch (ActivityNotFoundException failure) {
+            Toast.makeText(this, "No image picker found", Toast.LENGTH_SHORT).show();
+        }
+    }
 
-        addButton("Refresh status", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                render();
-            }
-        });
-
-        addFooter();
-        setContentView(scrollView);
+    private void applySelectedWallpaper(int target) {
+        try {
+            String message = CustomizationManager.applyWallpaper(this, target);
+            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
+        } catch (IOException failure) {
+            Toast.makeText(this, "Wallpaper failed: image cannot be read", Toast.LENGTH_LONG).show();
+        } catch (RuntimeException failure) {
+            Toast.makeText(this, "Wallpaper failed on this device", Toast.LENGTH_LONG).show();
+        }
     }
 
     private void addTitle(String text) {
@@ -178,13 +374,7 @@ public class MainActivity extends Activity {
     }
 
     private void addButton(String text, View.OnClickListener listener) {
-        Button button = new Button(this);
-        button.setText(text);
-        button.setAllCaps(false);
-        button.setTextColor(0xFF111318);
-        button.setTextSize(15);
-        button.setTypeface(Typeface.DEFAULT_BOLD);
-        button.setBackgroundColor(0xFFE2B884);
+        Button button = smallButton(text);
         button.setOnClickListener(listener);
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -193,6 +383,27 @@ public class MainActivity extends Activity {
         );
         params.setMargins(0, dp(4), 0, dp(8));
         root.addView(button, params);
+    }
+
+    private Button smallButton(String text) {
+        Button button = new Button(this);
+        button.setText(text);
+        button.setAllCaps(false);
+        button.setTextColor(0xFF111318);
+        button.setTextSize(15);
+        button.setTypeface(Typeface.DEFAULT_BOLD);
+        button.setBackgroundColor(0xFFE2B884);
+        return button;
+    }
+
+    private Switch optionSwitch(String text, boolean checked) {
+        Switch option = new Switch(this);
+        option.setText(text);
+        option.setTextColor(0xFFD7DAE0);
+        option.setTextSize(14);
+        option.setChecked(checked);
+        option.setPadding(0, dp(8), 0, dp(8));
+        return option;
     }
 
     private void addFooter() {
@@ -209,8 +420,8 @@ public class MainActivity extends Activity {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard != null) {
             clipboard.setPrimaryClip(ClipData.newPlainText(
-                    "ColorOS Themes Rock Battery Report",
-                    BatteryOptimizationAdvisor.supportReport(this)
+                    "ColorOS Themes Rock Support Report",
+                    BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this)
             ));
             Toast.makeText(this, "Support report copied", Toast.LENGTH_SHORT).show();
         }
