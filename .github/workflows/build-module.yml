@@ -28,16 +28,33 @@ env:
 jobs:
 
   security:
-    name: Security Validation
+    name: Security Validation (Hardened)
     runs-on: ubuntu-latest
 
     steps:
       - uses: actions/checkout@v4
 
-      - name: Secret Scan
+      - name: Install security tools
         run: |
-          echo "Scanning repo..."
-          ! grep -R "PASSWORD\|TOKEN\|SECRET" -n . || exit 1
+          sudo apt-get update
+          sudo apt-get install -y curl git
+
+      # Enterprise-grade secret scanner
+      - name: Run Gitleaks Scan
+        uses: gitleaks/gitleaks-action@v2
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+      # Backup static scan (non-fatal keyword filter)
+      - name: Fallback Pattern Scan
+        run: |
+          echo "Running fallback scan..."
+          
+          # Only fail on REAL secrets, not keywords in config
+          if grep -RInE "AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-]{35}|-----BEGIN (RSA|OPENSSH) PRIVATE KEY-----" .; then
+            echo "Hard secret detected"
+            exit 1
+          fi
 
       - name: File Integrity Check
         run: |
