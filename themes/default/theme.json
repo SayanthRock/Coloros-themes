@@ -1,0 +1,21 @@
+{
+  "id": "default-rock-premium",
+  "name": "Default Rock Premium",
+  "version": "0.1.0",
+  "author": "Sayanth Rock",
+  "style": {
+    "mode": "dark",
+    "accent": "#e2b884",
+    "background": "#0f0f10",
+    "surface": "#1a1a1d",
+    "text": "#f5f2ea",
+    "cornerRadius": 28
+  },
+  "features": [
+    {"id": "home_wallpaper", "title": "Home Wallpaper", "status": "safe"},
+    {"id": "lock_wallpaper", "title": "Lock Wallpaper", "status": "safe_when_supported"},
+    {"id": "theme_folder", "title": "Theme Folder", "status": "test_required"},
+    {"id": "icons", "title": "Icons", "status": "test_required"},
+    {"id": "sounds", "title": "Sounds", "status": "test_required"}
+  ]
+}
