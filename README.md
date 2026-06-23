@@ -1,8 +1,8 @@
 # ColorOS Themes Rock
 
-Customer-safe theme module and helper APK starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI on Android 15, Android 16, and Android 17.
+Customer-safe theme module and **ColorOS Customizer APK** starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI on Android 15, Android 16, and Android 17.
 
-This repo is built for legal theme customization, wallpaper packs, device compatibility checks, safe battery guidance, and support reports. It does **not** convert protected Theme Store assets or make fake performance claims.
+This repo is built for legal theme customization, wallpaper packs, device compatibility checks, safe battery guidance, image-based customization, and support reports. It does **not** convert protected Theme Store assets or make fake performance claims.
 
 ## What this project does
 
@@ -11,8 +11,10 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 - Gives a clean place to package your own lock screen, home screen, wallpaper, and UI assets.
 - Adds install-time device checks for OPPO, OnePlus, and realme.
 - Adds a GitHub Actions workflow to build a flashable module ZIP.
-- Adds a helper APK for battery status, settings shortcuts, and customer support reports.
-- Adds a GitHub Actions workflow to build and upload the helper APK.
+- Adds a ColorOS Customizer APK for wallpaper, lock screen, home screen, battery, and support options.
+- Adds an open image picker so customers can choose any image they like.
+- Adds local About phone helper label and OTA-style name/background switches.
+- Adds a GitHub Actions workflow to build and upload the APK.
 - Publishes public GitHub Releases from tags or manual workflow runs.
 
 ## Supported targets
@@ -26,7 +28,7 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 | Android 16 | Modern supported target | Planned testing |
 | Android 17 | Latest target | Needs device-by-device testing |
 
-## Included battery helper APK
+## Included ColorOS Customizer APK
 
 The APK is in:
 
@@ -38,18 +40,25 @@ APK features:
 
 - Device status dashboard
 - Battery optimization status message
-- OPPO, OnePlus, realme, and OPlus-family detection
-- Public Android battery settings shortcuts
+- Open image picker option
+- Selected image preview
+- Apply image to Home screen wallpaper
+- Apply image to Lock screen wallpaper
+- Apply image to Home + Lock screen wallpaper
+- About phone helper label
+- OTA display name option with `Sayanth Rock` default
+- OTA name on/off switch
+- OTA background on/off switch using the selected image
 - Customer support report copy button
 - Safe LSPosed entry class
 
 ## What it cannot safely do
 
-- It cannot silently change lock screen or home screen on non-root phones.
+- It cannot silently change lock screen or home screen on non-root phones without user action.
 - It cannot guarantee every OEM Theme Store package will accept external theme files.
 - It cannot convert paid or protected Theme Store assets.
 - It cannot honestly promise magical performance boosts.
-- It should not spoof About phone identity unless the user fully understands root/system risks.
+- It does not directly spoof system identity by default.
 
 ## Folder structure
 
@@ -64,6 +73,7 @@ APK features:
 ├── themes/sample/theme.json
 ├── docs/
 │   ├── BATTERY_GUIDE.md
+│   ├── CUSTOMIZATION_CENTER.md
 │   ├── COMPATIBILITY.md
 │   ├── CUSTOMER_SUPPORT.md
 │   └── ROADMAP.md
@@ -86,10 +96,10 @@ bash scripts/package.sh
 Output:
 
 ```text
-dist/ColorOS-Themes-Rock-v0.2.0.zip
+dist/ColorOS-Themes-Rock-v0.3.0.zip
 ```
 
-## Build helper APK
+## Build ColorOS Customizer APK
 
 Manual local build:
 
@@ -107,9 +117,9 @@ lsposed-helper/app/build/outputs/apk/debug/app-debug.apk
 GitHub build:
 
 1. Open **Actions**.
-2. Select **Build Battery Helper APK**.
+2. Select **Build ColorOS Customizer APK**.
 3. Tap **Run workflow**.
-4. Use version `v0.2.0` or newer.
+4. Use version `v0.3.0` or newer.
 5. Enable release publishing only when you want the APK uploaded to a public GitHub Release.
 
 ## Public releases
@@ -124,8 +134,8 @@ Public GitHub Releases are automated through:
 ### Release from a tag
 
 ```bash
-git tag v0.2.0
-git push origin v0.2.0
+git tag v0.3.0
+git push origin v0.3.0
 ```
 
 ### Release from GitHub Actions
@@ -133,7 +143,7 @@ git push origin v0.2.0
 1. Open **Actions**.
 2. Select the build workflow.
 3. Tap **Run workflow**.
-4. Enter a version like `v0.2.0`.
+4. Enter a version like `v0.3.0`.
 5. Enable public release publishing.
 6. Run the workflow.
 
@@ -150,18 +160,22 @@ git push origin v0.2.0
 
 1. Download the APK artifact or release APK.
 2. Install it on the test phone.
-3. Open **ColorOS Battery Helper**.
-4. Review the battery status and device report.
-5. Use the settings shortcuts only when needed.
+3. Open **ColorOS Customizer**.
+4. Tap **Open image picker** and choose any image.
+5. Apply it to Home screen, Lock screen, or both.
+6. Configure About phone helper label and OTA-style options.
+7. Copy the support report if testing or reporting problems.
 
 ## Customer-safe feature plan
 
 | Feature | Safe approach |
 |---|---|
-| Lock screen themes | Own assets only, root module or OEM-supported theme import |
-| Home screen style | Wallpapers, icon packs, launcher-safe instructions |
-| Wallpapers | Companion app using Android `WallpaperManager` later |
-| About phone | Device info dashboard first, no unsafe spoofing by default |
+| Lock screen | User-selected wallpaper through Android public API |
+| Home screen | User-selected wallpaper through Android public API |
+| Wallpapers | Open image picker and selected image preview |
+| About phone | Helper label and support report first |
+| OTA name | Local `Sayanth Rock` display option with on/off switch |
+| OTA background | Local selected-image background option with on/off switch |
 | Battery | Diagnostics, settings shortcuts, support report, no fake booster claims |
 | Customer support | Device report template, compatibility table, rollback steps |
 
