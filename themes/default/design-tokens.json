@@ -1,0 +1,25 @@
+{
+  "name": "Default Rock Premium Tokens",
+  "colors": {
+    "background": "#0f0f10",
+    "surface": "#1a1a1d",
+    "surfaceSoft": "#242429",
+    "accent": "#e2b884",
+    "textPrimary": "#f5f2ea",
+    "textMuted": "#b9b1a3"
+  },
+  "radius": {
+    "card": 28,
+    "button": 22,
+    "sheet": 32
+  },
+  "spacing": {
+    "screen": 16,
+    "card": 18,
+    "section": 24
+  },
+  "motion": {
+    "durationMs": 180,
+    "style": "minimal"
+  }
+}
