@@ -1,0 +1,46 @@
+{
+  "version": "0.5.1",
+  "name": "New Model Premium Dark Glass",
+  "free_first": true,
+  "tokens": {
+    "background": "#0f0f10",
+    "background_elevated": "#151517",
+    "surface": "#1a1a1d",
+    "surface_soft": "#242429",
+    "accent": "#e2b884",
+    "accent_soft": "#f0d2a8",
+    "text_primary": "#f5f2ea",
+    "text_muted": "#b9b1a3",
+    "warning": "#ffcc66",
+    "success": "#8fd694",
+    "danger": "#ff7a7a"
+  },
+  "shape": {
+    "screen_padding_dp": 16,
+    "card_radius_dp": 24,
+    "button_radius_dp": 22,
+    "chip_radius": "pill",
+    "card_padding_dp": 18
+  },
+  "motion": {
+    "card_fade_ms": 160,
+    "sheet_open_ms": 200,
+    "button_press_ms": 100,
+    "warning_dialog_ms": 180
+  },
+  "dashboard_cards": [
+    "Free Mode",
+    "Theme Setup",
+    "Wallpaper",
+    "Performance",
+    "Safety",
+    "Device Status"
+  ],
+  "feature_badges": [
+    "Safe",
+    "Needs test",
+    "Needs permission",
+    "Experimental",
+    "Not supported"
+  ]
+}
