@@ -2,6 +2,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
+    <uses-permission android:name="android.permission.MANAGE_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.REQUEST_INSTALL_PACKAGES" />
 
     <application
         android:allowBackup="false"
@@ -19,6 +21,10 @@
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
+
+        <activity
+            android:name=".PermissionCenterActivity"
+            android:exported="false" />
 
         <activity
             android:name=".MainActivity"
