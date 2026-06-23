@@ -11,6 +11,7 @@ This repo is built for legal theme customization, wallpaper packs, device compat
 - Gives a clean place to package your own lock screen, home screen, wallpaper, and UI assets.
 - Adds install-time device checks for OPPO, OnePlus, and realme.
 - Adds a GitHub Actions workflow to build a flashable module ZIP.
+- Publishes public GitHub Releases automatically from tags or manual workflow runs.
 - Documents customer support steps so users know what is safe and what is not.
 
 ## Supported targets
@@ -66,13 +67,36 @@ Output:
 dist/ColorOS-Themes-Rock-v0.1.0.zip
 ```
 
+## Public releases
+
+Public GitHub Releases are automated through `.github/workflows/build-module.yml`.
+
+### Option 1: Release from a tag
+
+```bash
+git tag v0.1.1
+git push origin v0.1.1
+```
+
+The workflow will build the module ZIP and publish a public release with the ZIP attached.
+
+### Option 2: Release from GitHub Actions
+
+1. Open **Actions**.
+2. Select **Build Theme Module**.
+3. Tap **Run workflow**.
+4. Enter a version like `v0.1.1`.
+5. Enable **Create a public GitHub Release**.
+6. Run the workflow.
+
 ## Install
 
-1. Download the ZIP from GitHub Actions artifacts.
-2. Open Magisk, KernelSU, or APatch.
-3. Flash the module ZIP.
-4. Reboot.
-5. Test on one device first before giving it to customers.
+1. Open the latest GitHub Release.
+2. Download the module ZIP.
+3. Open Magisk, KernelSU, or APatch.
+4. Flash the module ZIP.
+5. Reboot.
+6. Test on one device first before giving it to customers.
 
 ## Customer-safe feature plan
 
