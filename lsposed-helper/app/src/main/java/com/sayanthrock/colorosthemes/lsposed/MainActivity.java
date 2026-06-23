@@ -90,8 +90,9 @@ public class MainActivity extends Activity {
         addCard("Optimization status", BatteryOptimizationAdvisor.optimizationStatus(this));
         addRecommendationCard(BatteryOptimizationAdvisor.recommendations(this));
 
-        addSectionHeader("Customization Center", "Wallpapers, About phone label, and OTA style options");
+        addSectionHeader("Customization Center", "Wallpapers, About phone label, status bar blur, and OTA style options");
         addThemeStoreSafetyCard();
+        addStatusBarBlurCard();
         addCustomizationCenter();
 
         addSectionHeader("Battery Tools", "Quick access to the important Android battery screens");
@@ -145,8 +146,8 @@ public class MainActivity extends Activity {
         LinearLayout badges = new LinearLayout(this);
         badges.setOrientation(LinearLayout.HORIZONTAL);
         badges.setPadding(0, dp(14), 0, 0);
-        badges.addView(createBadge("v0.3.2"));
-        badges.addView(createBadge("UI Polish"));
+        badges.addView(createBadge("v0.3.3"));
+        badges.addView(createBadge("Blur Tools"));
         badges.addView(createBadge("Safe Mode"));
         hero.addView(badges);
 
@@ -159,7 +160,7 @@ public class MainActivity extends Activity {
         row.setWeightSum(3f);
 
         row.addView(createStatCard("Wallpaper", "Home / Lock"), weightedCardParams());
-        row.addView(createStatCard("OTA", "Sayanth Rock"), weightedCardParams());
+        row.addView(createStatCard("Blur", CustomizationManager.statusBarBlurAmount(this) + "%"), weightedCardParams());
         row.addView(createStatCard("Mode", "Customer Safe"), weightedCardParams());
 
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
@@ -227,6 +228,77 @@ public class MainActivity extends Activity {
         card.addView(cardTitle("Theme Store compatibility"));
         card.addView(cardBody("This update improves style and usability, but it does not unlock paid or protected Theme Store features. Use your own assets and OEM-supported options only."));
         root.addView(card);
+    }
+
+    private void addStatusBarBlurCard() {
+        LinearLayout card = cardContainer(false);
+        card.addView(cardTitle("Status bar blur"));
+        card.addView(cardBody("Increase or decrease the stored blur strength for status bar styling. On phones without native blur support, fallback mode saves the blur level for compatible overlays instead of pretending to force unsupported hardware behavior."));
+
+        Switch blurSwitch = optionSwitch("Turn on status bar blur", CustomizationManager.statusBarBlurEnabled(this));
+        blurSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomizationManager.setStatusBarBlurEnabled(MainActivity.this, isChecked);
+                Toast.makeText(MainActivity.this, isChecked ? "Status bar blur enabled" : "Status bar blur disabled", Toast.LENGTH_SHORT).show();
+                render();
+            }
+        });
+        card.addView(blurSwitch);
+
+        Switch fallbackSwitch = optionSwitch("Allow fallback mode on unsupported phones", CustomizationManager.statusBarBlurFallbackEnabled(this));
+        fallbackSwitch.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                CustomizationManager.setStatusBarBlurFallbackEnabled(MainActivity.this, isChecked);
+                render();
+            }
+        });
+        card.addView(fallbackSwitch);
+
+        TextView amountView = cardBody("Current blur strength: " + CustomizationManager.statusBarBlurAmount(this) + "%");
+        amountView.setPadding(0, dp(10), 0, dp(6));
+        card.addView(amountView);
+
+        TextView modeView = cardBody(CustomizationManager.statusBarBlurModeLabel(this));
+        modeView.setPadding(0, 0, 0, dp(10));
+        card.addView(modeView);
+
+        LinearLayout controls = new LinearLayout(this);
+        controls.setOrientation(LinearLayout.HORIZONTAL);
+
+        Button decrease = createButton("Decrease blur", false);
+        decrease.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomizationManager.decreaseStatusBarBlur(MainActivity.this);
+                render();
+            }
+        });
+        controls.addView(decrease, weightedControlParams());
+
+        Button increase = createButton("Increase blur", true);
+        increase.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                CustomizationManager.increaseStatusBarBlur(MainActivity.this);
+                render();
+            }
+        });
+        controls.addView(increase, weightedControlParams());
+
+        card.addView(controls);
+        root.addView(card);
+    }
+
+    private LinearLayout.LayoutParams weightedControlParams() {
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+                0,
+                LinearLayout.LayoutParams.WRAP_CONTENT,
+                1f
+        );
+        params.setMargins(0, dp(4), dp(8), dp(0));
+        return params;
     }
 
     private void addCustomizationCenter() {
@@ -571,7 +643,7 @@ public class MainActivity extends Activity {
     private void addFooter() {
         LinearLayout footer = cardContainer(false);
         TextView footerTitle = cardTitle("Safe mode");
-        TextView footerBody = cardBody("No hidden tracking, no paid-theme bypass, no aggressive task killer, and no unsafe root battery hacks. This update focuses on cleaner UI design and safer customization flow.");
+        TextView footerBody = cardBody("No hidden tracking, no paid-theme bypass, no aggressive task killer, and no unsafe root battery hacks. Blur controls are stored safely and use fallback mode on unsupported phones.");
         footer.addView(footerTitle);
         footer.addView(footerBody);
         root.addView(footer);
