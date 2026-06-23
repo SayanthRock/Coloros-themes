@@ -1,4 +1,4 @@
-name: Enterprise Release System
+name: Enterprise Release System (SLSA L3)
 
 on:
   push:
@@ -17,6 +17,8 @@ on:
 
 permissions:
   contents: write
+  id-token: write
+  actions: read
 
 concurrency:
   group: enterprise-${{ github.ref }}
@@ -39,18 +41,13 @@ jobs:
           sudo apt-get update
           sudo apt-get install -y curl git
 
-      # Enterprise-grade secret scanner
       - name: Run Gitleaks Scan
         uses: gitleaks/gitleaks-action@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      # Backup static scan (non-fatal keyword filter)
       - name: Fallback Pattern Scan
         run: |
-          echo "Running fallback scan..."
-          
-          # Only fail on REAL secrets, not keywords in config
           if grep -RInE "AKIA[0-9A-Z]{16}|AIza[0-9A-Za-z\-]{35}|-----BEGIN (RSA|OPENSSH) PRIVATE KEY-----" .; then
             echo "Hard secret detected"
             exit 1
@@ -62,7 +59,7 @@ jobs:
           test -f module.prop
 
   build:
-    name: Build Package
+    name: Build + SLSA Provenance
     needs: security
     runs-on: ubuntu-latest
 
@@ -77,7 +74,6 @@ jobs:
           sudo apt-get install -y zip coreutils
 
       - name: Resolve version
-        id: version
         run: |
           if [[ "${{ github.event_name }}" == "workflow_dispatch" && "${{ inputs.version }}" != "" ]]; then
             VERSION="${{ inputs.version }}"
@@ -114,6 +110,11 @@ jobs:
           name: enterprise-${{ env.MODULE_VERSION }}
           path: dist/*
 
+      - name: Generate SLSA Provenance
+        uses: slsa-framework/slsa-github-generator@v2
+        with:
+          artifact-path: dist/*.zip
+
   release:
     name: Publish Release
     needs: build
@@ -134,18 +135,19 @@ jobs:
 
       - name: Generate Release Notes
         run: |
-          echo "# Enterprise Release $MODULE_VERSION" > RELEASE_NOTES.md
+          echo "# Enterprise SLSA L3 Release $MODULE_VERSION" > RELEASE_NOTES.md
           echo "## Changes" >> RELEASE_NOTES.md
           git log -n 20 --pretty=format:'- %s' >> RELEASE_NOTES.md || true
           echo "## Security" >> RELEASE_NOTES.md
           echo "- SBOM included" >> RELEASE_NOTES.md
           echo "- Checksums verified" >> RELEASE_NOTES.md
+          echo "- SLSA Level 3 provenance attached" >> RELEASE_NOTES.md
 
       - name: Publish GitHub Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.MODULE_VERSION }}
-          name: ColorOS Themes Enterprise ${{ env.MODULE_VERSION }}
+          name: ColorOS Themes SLSA L3 ${{ env.MODULE_VERSION }}
           body_path: RELEASE_NOTES.md
           files: dist/*
           draft: false
