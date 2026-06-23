@@ -1,13 +1,22 @@
 {
-  "version": "0.1.0",
+  "version": "0.5.0",
   "project": "ColorOS Themes Rock",
+  "safety_rule": "Use systemless Magisk overlays and reversible settings. Do not directly replace real /system files.",
   "items": [
-    {"id": "default_theme", "name": "Default Rock Premium Theme", "status": "starter_ready"},
-    {"id": "wallpaper", "name": "Wallpaper setup", "status": "safe"},
-    {"id": "theme_assets", "name": "Theme assets", "status": "test_required"},
-    {"id": "device_info", "name": "About phone dashboard", "status": "safe"},
-    {"id": "performance_tips", "name": "Performance help", "status": "safe"},
-    {"id": "lsposed_mode", "name": "LSPosed mode", "status": "experimental"},
-    {"id": "support_report", "name": "Customer support report", "status": "safe"}
+    {"id": "default_theme", "name": "Default Rock Premium Theme", "status": "starter_ready", "risk": "low"},
+    {"id": "wallpaper", "name": "Wallpaper manager", "status": "safe", "risk": "low"},
+    {"id": "lock_screen", "name": "Lock screen customization", "status": "device_test_required", "risk": "medium"},
+    {"id": "home_screen", "name": "Home screen customization", "status": "device_test_required", "risk": "medium"},
+    {"id": "icon_pack", "name": "Icon pack apply", "status": "device_test_required", "risk": "medium"},
+    {"id": "theme_assets", "name": "Theme assets", "status": "test_required", "risk": "medium"},
+    {"id": "device_info", "name": "About phone dashboard", "status": "safe", "risk": "low"},
+    {"id": "refresh_rate", "name": "Refresh rate Auto / High / Standard", "status": "root_optional", "risk": "medium"},
+    {"id": "animation_speed", "name": "Animation speed control", "status": "root_optional", "risk": "low"},
+    {"id": "battery_mode", "name": "Battery saver toggle", "status": "root_optional", "risk": "low"},
+    {"id": "performance_tips", "name": "Performance and lag-fix guide", "status": "safe", "risk": "low"},
+    {"id": "backup_restore", "name": "Backup and restore", "status": "required_before_risky_changes", "risk": "low"},
+    {"id": "safe_disable", "name": "One-click safe disable guidance", "status": "required", "risk": "low"},
+    {"id": "lsposed_mode", "name": "LSPosed hook mode", "status": "experimental", "risk": "high"},
+    {"id": "support_report", "name": "Customer support report", "status": "safe", "risk": "low"}
   ]
 }
