@@ -1,4 +1,4 @@
-name: Build Theme Module PRO
+name: Ultimate Release System
 
 on:
   push:
@@ -16,7 +16,7 @@ env:
 
 jobs:
   build:
-    name: PRO Release System (Stable + Beta + Checksums)
+    name: Ultimate PRO Release System
     runs-on: ubuntu-latest
 
     steps:
@@ -25,18 +25,28 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Cache tools
+      - name: Skip conditions
+        run: |
+          MSG="${{ github.event.head_commit.message }}"
+          if echo "$MSG" | grep -qi "\[skip release\]"; then
+            echo "Skipping release"
+            exit 0
+          fi
+
+      - name: Cache dependencies
         uses: actions/cache@v4
         with:
-          path: ~/.cache
-          key: ${{ runner.os }}-tools
+          path: |
+            ~/.cache
+            ~/.gradle
+          key: ${{ runner.os }}-cache
 
-      - name: Install dependencies
+      - name: Install tools
         run: |
           sudo apt-get update
           sudo apt-get install -y zip coreutils
 
-      - name: Detect release channel
+      - name: Detect channel
         id: channel
         run: |
           if echo "${{ github.event.head_commit.message }}" | grep -qi "beta"; then
@@ -53,7 +63,7 @@ jobs:
           [ -z "$LATEST" ] && LATEST="v0.0.0"
           echo "latest=$LATEST" >> $GITHUB_OUTPUT
 
-      - name: Compute version (PRO SemVer)
+      - name: Compute version
         id: version
         run: |
           LATEST="${{ steps.tag.outputs.latest }}"
@@ -70,13 +80,18 @@ jobs:
             NEW_VERSION="v${MAJOR}.${MINOR}.${PATCH}"
           fi
 
+          # prevent duplicate tag
+          if git rev-parse "$NEW_VERSION" >/dev/null 2>&1; then
+            echo "Tag exists, skipping"
+            exit 0
+          fi
+
           echo "MODULE_VERSION=$NEW_VERSION" >> $GITHUB_ENV
 
       - name: Generate changelog
         run: |
           echo "# ColorOS Themes Rock ${MODULE_VERSION}" > RELEASE_NOTES.md
           echo "" >> RELEASE_NOTES.md
-          echo "## Changes" >> RELEASE_NOTES.md
           git log $(git describe --tags --abbrev=0 2>/dev/null || echo '')..HEAD --pretty=format:'- %s' >> RELEASE_NOTES.md || true
           echo "" >> RELEASE_NOTES.md
           echo "## Channel: ${{ steps.channel.outputs.channel }}" >> RELEASE_NOTES.md
@@ -84,7 +99,7 @@ jobs:
       - name: Package module
         run: bash scripts/package.sh
 
-      - name: Generate SHA256 checksum
+      - name: Generate checksum
         run: |
           cd dist
           for f in *.zip; do
@@ -94,14 +109,14 @@ jobs:
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
-          name: ColorOS-Themes-Rock-PRO-${{ env.MODULE_VERSION }}
+          name: Ultimate-Release-${{ env.MODULE_VERSION }}
           path: dist/*
 
-      - name: Publish GitHub Release (PRO)
+      - name: Publish Release
         uses: softprops/action-gh-release@v2
         with:
           tag_name: ${{ env.MODULE_VERSION }}
-          name: ColorOS Themes Rock PRO ${{ env.MODULE_VERSION }}
+          name: ColorOS Themes Rock ${{ env.MODULE_VERSION }}
           body_path: RELEASE_NOTES.md
           files: dist/*
           draft: false
