@@ -15,14 +15,22 @@ fi
 
 ZIP_NAME="$MODULE_ID-$VERSION.zip"
 
-mkdir -p "$OUT_DIR"
-rm -f "$OUT_DIR"/*.zip
+REQUIRED_FILES=(
+  "module.prop"
+  "customize.sh"
+  "post-fs-data.sh"
+  "service.sh"
+  "uninstall.sh"
+)
 
-if [[ -f module.prop ]]; then
-  sed -i "s/^version=.*/version=$VERSION/" module.prop
-fi
+for file in "${REQUIRED_FILES[@]}"; do
+  if [[ ! -f "$file" ]]; then
+    echo "Missing required module file: $file" >&2
+    exit 1
+  fi
+done
 
-FILES=(
+INCLUDE_PATHS=(
   "module.prop"
   "customize.sh"
   "post-fs-data.sh"
@@ -30,10 +38,30 @@ FILES=(
   "uninstall.sh"
   "system_ext"
   "themes"
-  "docs"
+  "theme-packs"
   "customer-options"
+  "docs"
+  "scripts"
 )
 
+FILES=()
+for path in "${INCLUDE_PATHS[@]}"; do
+  [[ -e "$path" ]] && FILES+=("$path")
+done
+
+mkdir -p "$OUT_DIR"
+rm -f "$OUT_DIR"/*.zip
+
+if [[ -f module.prop ]]; then
+  sed -i "s/^version=.*/version=$VERSION/" module.prop
+fi
+
 printf 'Building %s\n' "$ZIP_NAME"
-zip -r "$OUT_DIR/$ZIP_NAME" "${FILES[@]}" -x "*.git*" -x "dist/*" -x "*.DS_Store"
+zip -r "$OUT_DIR/$ZIP_NAME" "${FILES[@]}" \
+  -x "*.git*" \
+  -x "dist/*" \
+  -x "*.DS_Store" \
+  -x "**/__pycache__/*" \
+  -x "**/*.pyc"
+
 printf 'Done: %s/%s\n' "$OUT_DIR" "$ZIP_NAME"
