@@ -1,14 +1,18 @@
 {
-  "version": "0.5.1",
-  "name": "New Model Premium Dark Glass",
+  "version": "0.5.2",
+  "name": "Sliding Liquid Glass",
   "free_first": true,
+  "startup_mode": "fast_lightweight",
+  "navigation_model": "sliding_pages",
   "tokens": {
     "background": "#0f0f10",
     "background_elevated": "#151517",
-    "surface": "#1a1a1d",
-    "surface_soft": "#242429",
+    "glass_surface": "#1a1a1d",
+    "glass_surface_soft": "#242429",
+    "glass_border": "#4dffffff",
     "accent": "#e2b884",
     "accent_soft": "#f0d2a8",
+    "accent_glow": "#44e2b884",
     "text_primary": "#f5f2ea",
     "text_muted": "#b9b1a3",
     "warning": "#ffcc66",
@@ -16,31 +20,52 @@
     "danger": "#ff7a7a"
   },
   "shape": {
-    "screen_padding_dp": 16,
-    "card_radius_dp": 24,
+    "screen_padding_dp": 18,
+    "card_radius_dp": 26,
     "button_radius_dp": 22,
     "chip_radius": "pill",
     "card_padding_dp": 18
   },
   "motion": {
-    "card_fade_ms": 160,
-    "sheet_open_ms": 200,
-    "button_press_ms": 100,
-    "warning_dialog_ms": 180
+    "swipe_enabled": true,
+    "heavy_animation_enabled": false,
+    "card_fade_ms": 140,
+    "button_press_ms": 100
   },
+  "pages": [
+    "Home",
+    "Theme Layers",
+    "Performance",
+    "Support",
+    "More"
+  ],
+  "layer_customization": [
+    "Base Layer",
+    "Wallpaper Layer",
+    "Icon Layer",
+    "Lock Layer",
+    "Status Layer",
+    "Support Layer"
+  ],
   "dashboard_cards": [
     "Free Mode",
-    "Theme Setup",
-    "Wallpaper",
+    "Theme Layers",
     "Performance",
     "Safety",
     "Device Status"
   ],
   "feature_badges": [
     "Safe",
+    "Ready",
+    "Fast",
     "Needs test",
     "Needs permission",
-    "Experimental",
+    "Required",
     "Not supported"
+  ],
+  "removed_items": [
+    "troll_or_demo_options",
+    "fake_premium_locks",
+    "forced_payment_screens"
   ]
 }
