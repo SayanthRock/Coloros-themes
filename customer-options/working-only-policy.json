@@ -1,0 +1,37 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "mode": "working_only",
+  "customerMessage": "Only working and safe tools are enabled. Problematic or untested features are hidden, blocked, or marked as Needs testing until verified on real devices.",
+  "enabledByDefault": [
+    "wallpaper_picker",
+    "wallpaper_preview",
+    "wallpaper_apply_android_api",
+    "theme_package_scanner",
+    "device_status",
+    "root_status_display",
+    "scope_status_display",
+    "support_report",
+    "rollback_guide",
+    "performance_balanced",
+    "battery_saver_guidance",
+    "android_settings_shortcuts"
+  ],
+  "disabledByDefault": [
+    "theme_package_apply",
+    "system_ui_changes",
+    "launcher_changes",
+    "framework_changes",
+    "custom_root_controls",
+    "compiled_bundle_import",
+    "unknown_binary_import"
+  ],
+  "statusLabels": {
+    "working": "Visible and enabled",
+    "safe_guidance": "Visible as guidance only",
+    "limited": "Visible with device-specific warning",
+    "needs_testing": "Disabled for normal users",
+    "blocked": "Hidden or blocked",
+    "not_available": "Unavailable on this device"
+  }
+}
