@@ -123,31 +123,23 @@ jobs:
       - name: Build module
         run: bash scripts/package.sh
 
-      - name: Collect files
+      - name: Collect module file
         run: |
           mkdir -p release/module
           cp dist/*.zip release/module/
-          cat > release/module/BUILD_INFO.txt <<INFO
-          Project: ${MODULE_ID}
-          Version: ${MODULE_VERSION}
-          Commit: ${GITHUB_SHA}
-          Workflow: ${GITHUB_WORKFLOW}
-          Run ID: ${GITHUB_RUN_ID}
-          INFO
-          (cd release/module && sha256sum * > SHA256SUMS.txt)
 
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:
           name: ${{ steps.meta.outputs.artifact_name }}
-          path: release/module/*
+          path: release/module/*.zip
           if-no-files-found: error
           retention-days: 30
 
       - name: Generate build provenance attestation
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: 'release/module/*'
+          subject-path: 'release/module/*.zip'
 
   publish:
     name: Publish Release
@@ -174,8 +166,6 @@ jobs:
 
             Included files:
             - Module ZIP
-            - BUILD_INFO.txt
-            - SHA256SUMS.txt
-          files: release/module/*
+          files: release/module/*.zip
           draft: false
           prerelease: ${{ contains(needs.build.outputs.version, 'beta') }}
