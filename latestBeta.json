@@ -2,18 +2,17 @@
   "schema": 1,
   "project": "ColorOS Themes Rock",
   "channel": "beta",
-  "version": "v0.5.7-beta",
-  "versionCode": 12,
-  "status": "rootd-customization-planning",
+  "version": "v0.5.8-beta",
+  "versionCode": 13,
+  "status": "clean-release-assets",
   "recommendedForCustomers": false,
-  "apkUpdateFocus": "Rootd customization structure and options",
+  "apkUpdateFocus": "Clean GitHub Release assets",
   "downloadUrl": "",
   "changelog": [
-    "Added Rootd system customization plan for the uploaded rock theme ZIP sample.",
-    "Added rootd/ structure for themeInner, overlays, customer overrides, and reports.",
-    "Added rootd-system-map.json for safe customization mapping.",
-    "Added rootd-customization-options.json for future APK options.",
-    "Updated Rootd UI feature map with a Rootd Customization section.",
-    "Only verified and permitted assets should be used later; advanced items remain Needs testing or Not available."
+    "Removed BUILD_INFO.txt from generated release uploads.",
+    "Removed SHA256SUMS.txt from generated release uploads.",
+    "APK release workflow now uploads APK files and module ZIP only.",
+    "Module workflow now uploads module ZIP only.",
+    "Release automation guide updated with the clean upload list."
   ]
 }
