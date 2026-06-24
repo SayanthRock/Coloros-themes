@@ -10,6 +10,8 @@ This project is for legal customization using assets that you created, own, or h
 - A safe theme inspection pipeline for ColorOS, OPlus, and realme `.theme` files.
 - A systemless overlay target for `/system_ext/media/themeInner/`.
 - A clean customization structure for wallpapers, icons, fonts, sounds, previews, customer support, and rollback notes.
+- A Rootd customer foundation for status-first package targets: `android`, `com.android.systemui`, and `com.android.settings`.
+- Customer overlay assets under `assets/Overlays/` for safe previews, presets, templates, support reports, and future tested overlay APK work.
 - A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
@@ -42,6 +44,18 @@ Every feature shown in the APK should use a clear status label.
 
 Free customer tools should stay visible. Advanced or untested items must show clear labels so customers know what works, what needs testing, and what is not available on their device.
 
+## Rootd customer overlay targets
+
+The Rootd customer layer is status-first and safe by default.
+
+| Target package | Customer area | Default status | Folder |
+|---|---|---|---|
+| `android` | Framework visual resources | Needs testing | `assets/Overlays/android/` |
+| `com.android.systemui` | Status bar, quick settings, notifications, lock surface previews | Needs testing | `assets/Overlays/systemui/` |
+| `com.android.settings` | Settings cards, About phone, support and diagnostics previews | Needs testing | `assets/Overlays/settings/` |
+
+The package target map is stored in [`assets/Overlays/targets.json`](assets/Overlays/targets.json). Customer-safe defaults are stored in [`customer-options/safe-defaults.conf`](customer-options/safe-defaults.conf).
+
 ## Uploaded theme package metadata
 
 The uploaded packages were inspected as ZIP-based theme archives with `themeInfo.xml` metadata.
@@ -66,7 +80,17 @@ Use these only when sharing rights are clear.
 ├── themes/default/
 ├── themes/theme-pack-catalog.json
 ├── theme-packs/
-├── customer-options/options.json
+├── customer-options/
+│   ├── options.json
+│   └── safe-defaults.conf
+├── assets/Overlays/
+│   ├── README.md
+│   ├── targets.json
+│   ├── customer-overlay-preset.json
+│   ├── android/
+│   ├── systemui/
+│   ├── settings/
+│   └── templates/
 ├── scripts/
 │   ├── package.sh
 │   ├── validate-module.sh
@@ -78,6 +102,7 @@ Use these only when sharing rights are clear.
 │   ├── safety.md
 │   ├── THEME_MODULE_BUILDER.md
 │   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
+│   ├── ROOTD_CUSTOMER_FOUNDATION.md
 │   ├── UI_DESIGN_SYSTEM.md
 │   ├── LAG_FIX_GUIDE.md
 │   └── PROBLEM_SOLVER_MATRIX.md
@@ -119,7 +144,7 @@ dist/ColorOS-Themes-Rock-v0.5.4.zip
 4. Enter a version like `v0.5.4`.
 5. Keep release publishing enabled to upload the module ZIP to a public GitHub Release.
 
-The workflow also runs on pushes that change module, theme, script, docs, release metadata, or workflow files.
+The workflow also runs on pushes that change module, theme, script, docs, overlay asset, release metadata, or workflow files.
 
 ## Build ColorOS Customizer APK
 
@@ -163,6 +188,9 @@ These files can be used later by the APK update screen, GitHub release automatio
 | Fonts | Owned font/theme asset | Device testing required |
 | Sounds | Owned ringtone/UI sound asset | Device testing required |
 | Preview images | Catalog previews and screenshots | Ready |
+| System UI | Status-first target preview and tested overlay workflow | Needs testing |
+| Settings UI | Settings shortcuts, support screen, and tested overlay workflow | Needs testing |
+| Android framework | Framework visual preview and tested overlay workflow | Needs testing |
 | Battery/performance | Diagnostics, shortcuts, lag-fix guide | Safe, no fake booster claims |
 | Rollback | Uninstall script and customer guide | Documented |
 
