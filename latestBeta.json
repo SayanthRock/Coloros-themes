@@ -2,17 +2,17 @@
   "schema": 1,
   "project": "ColorOS Themes Rock",
   "channel": "beta",
-  "version": "v0.5.8-beta",
-  "versionCode": 13,
-  "status": "clean-release-assets",
+  "version": "v0.5.9-beta",
+  "versionCode": 14,
+  "status": "public-apk-readiness",
   "recommendedForCustomers": false,
-  "apkUpdateFocus": "Clean GitHub Release assets",
+  "apkUpdateFocus": "Public APK readiness and problem solver",
   "downloadUrl": "",
   "changelog": [
-    "Removed BUILD_INFO.txt from generated release uploads.",
-    "Removed SHA256SUMS.txt from generated release uploads.",
-    "APK release workflow now uploads APK files and module ZIP only.",
-    "Module workflow now uploads module ZIP only.",
-    "Release automation guide updated with the clean upload list."
+    "Added public APK update plan.",
+    "Added public problem solver options for future APK screens.",
+    "Kept APK files and module ZIP enabled for release upload.",
+    "Kept extra text assets disabled for release upload.",
+    "Kept public release as beta until real device testing is complete."
   ]
 }
