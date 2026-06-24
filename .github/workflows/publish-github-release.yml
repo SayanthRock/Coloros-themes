@@ -13,12 +13,13 @@ on:
       - 'theme-packs/**'
       - 'system_ext/**'
       - 'customer-options/**'
+      - 'docs/**'
       - 'module.prop'
       - '.github/workflows/publish-github-release.yml'
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag, example: v0.4.1'
+        description: 'Version tag, example: v0.5.6'
         required: false
         default: ''
       publish:
@@ -154,9 +155,17 @@ jobs:
           - BUILD_INFO.txt
           - SHA256SUMS.txt
 
-          ## Notes
+          ## Free customer tools
+          - Wallpaper tools
+          - Feedback and support pages
+          - Safe mode guidance
+          - Diagnostics status page plan
+          - Feature labels: Working, Limited, Needs testing, Not available
+
+          ## Release rule
+          - Free customer tools stay available.
+          - Advanced or untested items must show clear status labels.
           - Test on an OPPO, OnePlus, or realme phone before public sharing.
-          - Advanced root options stay locked until root is detected and the customer confirms backup and rollback steps.
           INFO
 
       - name: Publish GitHub Release with clobber upload
