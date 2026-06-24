@@ -59,6 +59,15 @@
       "action": "Inspect ZIP and theme packages before import"
     },
     {
+      "id": "rootd_customization",
+      "title": "Rootd Customization",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Limited",
+      "action": "Show wallpaper, preview, themeInner, icons, lock screen, fonts, sounds, performance, backup, rollback, and support options with status labels"
+    },
+    {
       "id": "performance_level",
       "title": "Performance Level",
       "free": true,
