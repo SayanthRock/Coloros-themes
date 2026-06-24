@@ -13,6 +13,7 @@ This project is for legal customization using assets that you created, own, or h
 - A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
+- A Rootd UI feature map for status-first APK behavior.
 
 ## Supported targets
 
@@ -53,6 +54,20 @@ The uploaded packages were inspected as ZIP-based theme archives with `themeInfo
 
 Use these only when sharing rights are clear.
 
+## Uploaded Rock Theme ZIP note
+
+The uploaded `rock theme .zip` was inspected as a private sample. It appears to be an extracted Android APK/module bundle, not a clean ColorOS `.theme` package. It contains compiled Android files, native binaries, Xposed metadata, and signing/test-key style files, so it was **not copied into this repo**.
+
+Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-theme-analysis.md).
+
+## APK Rootd and UI direction
+
+| Guide | Purpose |
+|---|---|
+| [`docs/APK_ROOTD_IMPROVEMENT_PLAN.md`](docs/APK_ROOTD_IMPROVEMENT_PLAN.md) | Status-first Rootd dashboard, root manager checks, LSPosed checks, scope checks, rollback, and support report. |
+| [`docs/THEMES_UI_DESIGN_2026.md`](docs/THEMES_UI_DESIGN_2026.md) | 2026 APK UI style for themes, permissions, Rootd, compatibility, and customer-safe labels. |
+| [`customer-options/rootd-ui-feature-map.json`](customer-options/rootd-ui-feature-map.json) | Machine-readable feature map for future APK screens. |
+
 ## Folder structure
 
 ```text
@@ -66,7 +81,9 @@ Use these only when sharing rights are clear.
 ├── themes/default/
 ├── themes/theme-pack-catalog.json
 ├── theme-packs/
-├── customer-options/options.json
+├── customer-options/
+│   ├── options.json
+│   └── rootd-ui-feature-map.json
 ├── scripts/
 │   ├── package.sh
 │   ├── validate-module.sh
@@ -76,6 +93,9 @@ Use these only when sharing rights are clear.
 │   ├── compatibility.md
 │   ├── permissions.md
 │   ├── safety.md
+│   ├── uploaded-rock-theme-analysis.md
+│   ├── APK_ROOTD_IMPROVEMENT_PLAN.md
+│   ├── THEMES_UI_DESIGN_2026.md
 │   ├── THEME_MODULE_BUILDER.md
 │   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
 │   ├── UI_DESIGN_SYSTEM.md
@@ -119,7 +139,7 @@ dist/ColorOS-Themes-Rock-v0.5.4.zip
 4. Enter a version like `v0.5.4`.
 5. Keep release publishing enabled to upload the module ZIP to a public GitHub Release.
 
-The workflow also runs on pushes that change module, theme, script, docs, release metadata, or workflow files.
+The workflow also runs on pull requests and pushes that change module, theme, script, docs, release metadata, or workflow files.
 
 ## Build ColorOS Customizer APK
 
