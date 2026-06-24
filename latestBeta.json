@@ -2,8 +2,16 @@
   "schema": 1,
   "project": "ColorOS Themes Rock",
   "channel": "beta",
-  "version": "v0.5.4-beta",
-  "versionCode": 9,
+  "version": "v0.5.5-beta",
+  "versionCode": 10,
   "status": "needs-testing",
-  "downloadUrl": ""
+  "recommendedForCustomers": false,
+  "apkUpdateFocus": "Performance Level",
+  "downloadUrl": "",
+  "changelog": [
+    "Added Performance Level plan for the APK.",
+    "Added safe presets: Off, Battery Saver, Balanced, Smooth, Performance, and Custom.",
+    "Performance and Custom remain marked as Needs testing until real-device verification is complete.",
+    "Added machine-readable performance-levels.json for future APK UI work."
+  ]
 }
