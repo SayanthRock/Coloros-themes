@@ -2,17 +2,18 @@
   "schema": 1,
   "project": "ColorOS Themes Rock",
   "channel": "beta",
-  "version": "v0.5.6-beta",
-  "versionCode": 11,
-  "status": "working-only-cleanup",
+  "version": "v0.5.7-beta",
+  "versionCode": 12,
+  "status": "rootd-customization-planning",
   "recommendedForCustomers": false,
-  "apkUpdateFocus": "Working-only APK cleanup and system improvement",
+  "apkUpdateFocus": "Rootd customization structure and options",
   "downloadUrl": "",
   "changelog": [
-    "Removed Free Liquid Glass and Sliding App Model marketing text from the APK source.",
-    "Replaced the APK hero with a working-only customer dashboard.",
-    "Blocked problematic APK/ZIP bundle imports by default.",
-    "Added working-only APK policy documentation and configuration.",
-    "Added a dedicated Validate APK workflow for future APK source changes."
+    "Added Rootd system customization plan for the uploaded rock theme ZIP sample.",
+    "Added rootd/ structure for themeInner, overlays, customer overrides, and reports.",
+    "Added rootd-system-map.json for safe customization mapping.",
+    "Added rootd-customization-options.json for future APK options.",
+    "Updated Rootd UI feature map with a Rootd Customization section.",
+    "Only verified and permitted assets should be used later; advanced items remain Needs testing or Not available."
   ]
 }
