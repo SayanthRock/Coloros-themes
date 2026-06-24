@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="xposedscope">
+        <!-- OPPO / ColorOS core packages -->
+        <item>com.oplus.themestore</item>
+        <item>com.oplus.uxdesign</item>
+        <item>com.oplus.ota</item>
+        <item>com.oplus.battery</item>
+        <item>com.oplus.notificationmanager</item>
+
+        <!-- AOSP packages customized by ColorOS / realme UI / OxygenOS -->
+        <item>com.android.wallpaper.livepicker</item>
+        <item>com.android.settings</item>
+        <item>com.android.systemui</item>
+
+        <!-- Framework scopes for deep compatibility checks -->
+        <item>android</item>
+        <item>system</item>
+    </string-array>
+</resources>
