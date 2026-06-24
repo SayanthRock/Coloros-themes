@@ -1,0 +1,46 @@
+{
+  "rootdModules": [
+    {
+      "id": "dashboard",
+      "name": "Home Dashboard",
+      "status": "Ready",
+      "customerVisible": true,
+      "advanced": false
+    },
+    {
+      "id": "theme_engine",
+      "name": "Theme Engine",
+      "status": "Needs testing",
+      "customerVisible": true,
+      "advanced": false
+    },
+    {
+      "id": "icon_pack",
+      "name": "Icon Pack",
+      "status": "Needs testing",
+      "customerVisible": true,
+      "advanced": true
+    },
+    {
+      "id": "systemui",
+      "name": "SystemUI Theming",
+      "status": "Advanced",
+      "customerVisible": true,
+      "advanced": true
+    },
+    {
+      "id": "backup_restore",
+      "name": "Backup and Restore",
+      "status": "Required",
+      "customerVisible": true,
+      "advanced": false
+    },
+    {
+      "id": "diagnostics",
+      "name": "Diagnostics Report",
+      "status": "Required",
+      "customerVisible": true,
+      "advanced": false
+    }
+  ]
+}
