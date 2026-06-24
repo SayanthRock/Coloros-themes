@@ -1,0 +1,101 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "area": "rootd_system_customization",
+  "sourceSample": "rock theme .zip",
+  "sourcePolicy": "inspection_only",
+  "defaultMode": "working_only",
+  "rootdPaths": {
+    "themeInner": "rootd/system_ext/media/themeInner/",
+    "overlays": "rootd/overlays/",
+    "customerOverrides": "rootd/customer-overrides/",
+    "reports": "rootd/reports/"
+  },
+  "customizationAreas": [
+    {
+      "id": "wallpaper",
+      "title": "Wallpaper",
+      "defaultLabel": "Working",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "android_wallpaper_api"
+    },
+    {
+      "id": "theme_preview",
+      "title": "Theme Preview",
+      "defaultLabel": "Working",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "preview_only"
+    },
+    {
+      "id": "icons",
+      "title": "Icons",
+      "defaultLabel": "Needs testing",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "launcher_supported_only"
+    },
+    {
+      "id": "lock_screen",
+      "title": "Lock Screen",
+      "defaultLabel": "Needs testing",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "device_specific"
+    },
+    {
+      "id": "fonts",
+      "title": "Fonts",
+      "defaultLabel": "Needs testing",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "owned_assets_only"
+    },
+    {
+      "id": "sounds",
+      "title": "Sounds",
+      "defaultLabel": "Needs testing",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "owned_assets_only"
+    },
+    {
+      "id": "performance_level",
+      "title": "Performance Level",
+      "defaultLabel": "Limited",
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "applyMode": "safe_guidance_first"
+    },
+    {
+      "id": "system_ui",
+      "title": "System UI",
+      "defaultLabel": "Not available",
+      "requiresRoot": true,
+      "requiresLsposed": true,
+      "applyMode": "disabled_until_tested"
+    },
+    {
+      "id": "launcher_hooks",
+      "title": "Launcher Hooks",
+      "defaultLabel": "Not available",
+      "requiresRoot": true,
+      "requiresLsposed": true,
+      "applyMode": "disabled_until_tested"
+    }
+  ],
+  "requiredChecks": [
+    "device_brand",
+    "device_model",
+    "android_version",
+    "rom_skin",
+    "root_status",
+    "module_status",
+    "lsposed_status",
+    "scope_status",
+    "safe_mode_state",
+    "rollback_available",
+    "asset_permission_verified"
+  ]
+}
