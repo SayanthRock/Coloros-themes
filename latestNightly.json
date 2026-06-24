@@ -1,0 +1,24 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "packageId": "coloros_themes_rock",
+  "channel": "nightly",
+  "version": "v0.5.4-nightly",
+  "versionCode": 9,
+  "status": "experimental",
+  "releaseLevel": "Nightly",
+  "recommendedForCustomers": false,
+  "supportedFamilies": [
+    "OPPO ColorOS",
+    "OnePlus OxygenOS",
+    "realme UI"
+  ],
+  "featureLabelsRequired": true,
+  "safetyMessage": "Nightly builds are experimental. Use for development and testing only.",
+  "downloadUrl": "",
+  "changelog": [
+    "Nightly channel metadata added.",
+    "Use for automated development builds.",
+    "Not recommended for normal customer installs."
+  ]
+}
