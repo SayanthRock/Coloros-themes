@@ -25,7 +25,8 @@
     "ui_tweaks": {"enabled": false, "mode": "optional_ui_only_after_test", "risk": "medium"},
     "system_helper": {"enabled": true, "mode": "settings_shortcuts_and_reports", "risk": "low"},
     "ota_guard": {"enabled": true, "mode": "warn_and_disable_before_updates", "risk": "low"},
-    "log_export": {"enabled": true, "mode": "customer_support_report", "risk": "low"}
+    "log_export": {"enabled": true, "mode": "customer_support_report", "risk": "low"},
+    "customer_overlay_targets": {"enabled": true, "mode": "preview_status_and_support_report", "risk": "medium"}
   },
   "hook_overlay": {
     "enabled": true,
@@ -38,6 +39,8 @@
   },
   "package_strategy": [
     {"area": "system_ui", "strategy": "ui_only_after_device_testing", "risk": "medium"},
+    {"area": "settings_ui", "strategy": "status_preview_shortcuts_and_device_testing", "risk": "medium"},
+    {"area": "android_framework", "strategy": "preview_first_and_tested_overlay_only", "risk": "high"},
     {"area": "theme_app", "strategy": "owned_assets_and_customer_guidance", "risk": "low"},
     {"area": "ota_app", "strategy": "warn_customer_and_do_not_change_update_integrity", "risk": "high"},
     {"area": "battery_app", "strategy": "guidance_and_labels_only", "risk": "medium"},
@@ -58,6 +61,11 @@
     {"id": "startup_performance", "name": "Fast Startup UI", "status": "ready", "risk": "low"},
     {"id": "layer_customization", "name": "All Layer Customization", "status": "ready", "risk": "low"},
     {"id": "default_theme", "name": "Default Rock Premium Theme", "status": "starter_ready", "risk": "low"},
+    {"id": "overlay_assets", "name": "Customer Overlay Assets", "status": "starter_ready", "risk": "low"},
+    {"id": "overlay_target_android", "name": "android target preview", "status": "needs_device_test", "risk": "high"},
+    {"id": "overlay_target_systemui", "name": "com.android.systemui target preview", "status": "needs_device_test", "risk": "high"},
+    {"id": "overlay_target_settings", "name": "com.android.settings target preview", "status": "needs_device_test", "risk": "medium"},
+    {"id": "safe_defaults", "name": "Customer Safe Defaults", "status": "ready", "risk": "low"},
     {"id": "wallpaper", "name": "Wallpaper manager", "status": "safe", "risk": "low"},
     {"id": "lock_screen", "name": "Lock screen customization", "status": "device_test_required", "risk": "medium"},
     {"id": "home_screen", "name": "Home screen customization", "status": "device_test_required", "risk": "medium"},
