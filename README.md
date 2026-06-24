@@ -10,10 +10,11 @@ This project is for legal customization using assets that you created, own, or h
 - A safe theme inspection pipeline for ColorOS, OPlus, and realme `.theme` files.
 - A systemless overlay target for `/system_ext/media/themeInner/`.
 - A clean customization structure for wallpapers, icons, fonts, sounds, previews, customer support, and rollback notes.
-- A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
+- A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, performance level status, and safe toggles.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
 - A Rootd UI feature map for status-first APK behavior.
+- A Performance Level configuration for safe Off, Balanced, Battery Saver, Smooth, Performance, and Custom presets.
 
 ## Supported targets
 
@@ -60,13 +61,15 @@ The uploaded `rock theme .zip` was inspected as a private sample. It appears to 
 
 Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-theme-analysis.md).
 
-## APK Rootd and UI direction
+## APK Rootd, Performance Level, and UI direction
 
 | Guide | Purpose |
 |---|---|
 | [`docs/APK_ROOTD_IMPROVEMENT_PLAN.md`](docs/APK_ROOTD_IMPROVEMENT_PLAN.md) | Status-first Rootd dashboard, root manager checks, LSPosed checks, scope checks, rollback, and support report. |
-| [`docs/THEMES_UI_DESIGN_2026.md`](docs/THEMES_UI_DESIGN_2026.md) | 2026 APK UI style for themes, permissions, Rootd, compatibility, and customer-safe labels. |
-| [`customer-options/rootd-ui-feature-map.json`](customer-options/rootd-ui-feature-map.json) | Machine-readable feature map for future APK screens. |
+| [`docs/PERFORMANCE_LEVEL_PLAN.md`](docs/PERFORMANCE_LEVEL_PLAN.md) | Safe Performance Level design for Off, Battery Saver, Balanced, Smooth, Performance, and Custom presets. |
+| [`docs/THEMES_UI_DESIGN_2026.md`](docs/THEMES_UI_DESIGN_2026.md) | 2026 APK UI style for themes, permissions, Rootd, Performance Level, compatibility, and customer-safe labels. |
+| [`customer-options/rootd-ui-feature-map.json`](customer-options/rootd-ui-feature-map.json) | Machine-readable feature map for future Rootd APK screens. |
+| [`customer-options/performance-levels.json`](customer-options/performance-levels.json) | Machine-readable Performance Level configuration for future APK screens. |
 
 ## Folder structure
 
@@ -83,7 +86,8 @@ Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-t
 ├── theme-packs/
 ├── customer-options/
 │   ├── options.json
-│   └── rootd-ui-feature-map.json
+│   ├── rootd-ui-feature-map.json
+│   └── performance-levels.json
 ├── scripts/
 │   ├── package.sh
 │   ├── validate-module.sh
@@ -95,6 +99,7 @@ Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-t
 │   ├── safety.md
 │   ├── uploaded-rock-theme-analysis.md
 │   ├── APK_ROOTD_IMPROVEMENT_PLAN.md
+│   ├── PERFORMANCE_LEVEL_PLAN.md
 │   ├── THEMES_UI_DESIGN_2026.md
 │   ├── THEME_MODULE_BUILDER.md
 │   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
@@ -183,7 +188,7 @@ These files can be used later by the APK update screen, GitHub release automatio
 | Fonts | Owned font/theme asset | Device testing required |
 | Sounds | Owned ringtone/UI sound asset | Device testing required |
 | Preview images | Catalog previews and screenshots | Ready |
-| Battery/performance | Diagnostics, shortcuts, lag-fix guide | Safe, no fake booster claims |
+| Battery/performance | Performance Level presets, diagnostics, shortcuts, and lag-fix guide | Safe, no fake booster claims |
 | Rollback | Uninstall script and customer guide | Documented |
 
 ## Install module ZIP
