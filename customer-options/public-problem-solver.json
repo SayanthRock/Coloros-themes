@@ -1,0 +1,66 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "screen": "Public APK Problem Solver",
+  "version": "v0.5.9-beta",
+  "defaultChannel": "beta",
+  "recommendedForCustomers": false,
+  "customerMessage": "Public beta update: only working and safe tools are enabled. Advanced features remain hidden, blocked, or marked as Needs testing until verified on real devices.",
+  "releaseAssets": {
+    "uploadApkDebug": true,
+    "uploadApkRelease": true,
+    "uploadModuleZip": true,
+    "uploadBuildInfo": false,
+    "uploadSha256Sums": false
+  },
+  "publicSections": [
+    {
+      "id": "home_status",
+      "title": "Home Status",
+      "status": "Working",
+      "enabled": true
+    },
+    {
+      "id": "working_tools",
+      "title": "Working Tools",
+      "status": "Working",
+      "enabled": true
+    },
+    {
+      "id": "rootd_customization",
+      "title": "Rootd Customization",
+      "status": "Limited",
+      "enabled": true
+    },
+    {
+      "id": "theme_scanner",
+      "title": "Theme Scanner",
+      "status": "Working",
+      "enabled": true
+    },
+    {
+      "id": "performance_level",
+      "title": "Performance Level",
+      "status": "Limited",
+      "enabled": true
+    },
+    {
+      "id": "advanced_options",
+      "title": "Advanced Options",
+      "status": "Needs testing",
+      "enabled": false
+    },
+    {
+      "id": "support_report",
+      "title": "Support Report",
+      "status": "Working",
+      "enabled": true
+    },
+    {
+      "id": "rollback",
+      "title": "Rollback",
+      "status": "Required",
+      "enabled": true
+    }
+  ]
+}
