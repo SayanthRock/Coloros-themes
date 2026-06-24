@@ -79,8 +79,8 @@
   ],
   "folders": {
     "android": "assets/Overlays/android",
-    "com.android.systemui": "assets/Overlays/com.android.systemui",
-    "com.android.settings": "assets/Overlays/com.android.settings",
+    "com.android.systemui": "assets/Overlays/systemui",
+    "com.android.settings": "assets/Overlays/settings",
     "templates": "assets/Overlays/templates"
   },
   "blocked_actions": [
