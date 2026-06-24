@@ -1,0 +1,80 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "screen": "Rootd",
+  "rule": "Status first, action second",
+  "sections": [
+    {
+      "id": "device_status",
+      "title": "Device status",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Working",
+      "action": "Show brand, model, Android version, ROM skin, and build fingerprint"
+    },
+    {
+      "id": "root_manager",
+      "title": "Root manager status",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Root required",
+      "action": "Detect Magisk, KernelSU, APatch, or unavailable state"
+    },
+    {
+      "id": "module_status",
+      "title": "Module status",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Limited",
+      "action": "Show installed, enabled, disabled, missing, or unknown"
+    },
+    {
+      "id": "lsposed_status",
+      "title": "LSPosed status",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "LSPosed scope required",
+      "action": "Show framework active, inactive, not installed, or not required"
+    },
+    {
+      "id": "scope_status",
+      "title": "Scope status",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": true,
+      "defaultLabel": "LSPosed scope required",
+      "action": "Show target packages that are scoped or missing"
+    },
+    {
+      "id": "theme_scanner",
+      "title": "Theme scanner",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Working",
+      "action": "Inspect ZIP and theme packages before import"
+    },
+    {
+      "id": "systemui_hooks",
+      "title": "SystemUI hooks",
+      "free": false,
+      "requiresRoot": true,
+      "requiresLsposed": true,
+      "defaultLabel": "Needs testing",
+      "action": "Keep disabled until device, ROM, root, LSPosed, and scope checks pass"
+    },
+    {
+      "id": "rollback",
+      "title": "Safe mode and rollback",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Working",
+      "action": "Show disable marker, uninstall guide, and support report export"
+    }
+  ]
+}
