@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag, example: v0.5.6-beta or v0.5.6'
+        description: 'Version tag, example: v0.5.7-beta or v0.5.7'
         required: false
         default: ''
       channel:
@@ -52,7 +52,7 @@ permissions:
 env:
   APK_NAME: ColorOS-Customizer
   MODULE_ID: ColorOS-Themes-Rock
-  DEFAULT_BETA_VERSION: v0.5.6-beta
+  DEFAULT_BETA_VERSION: v0.5.7-beta
 
 jobs:
   build-and-publish:
@@ -87,14 +87,11 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-
           CHANNEL="${{ inputs.channel || 'beta' }}"
           VERSION="${{ inputs.version }}"
-
           if [[ -z "$VERSION" && "$GITHUB_REF" == refs/tags/* ]]; then
             VERSION="$GITHUB_REF_NAME"
           fi
-
           if [[ -z "$VERSION" && "$CHANNEL" == "beta" && -f latestBeta.json ]]; then
             VERSION="$(python3 - <<'PY'
           import json
@@ -103,7 +100,6 @@ jobs:
           PY
           )"
           fi
-
           if [[ -z "$VERSION" && "$CHANNEL" == "stable" && -f latestStable.json ]]; then
             VERSION="$(python3 - <<'PY'
           import json
@@ -112,25 +108,18 @@ jobs:
           PY
           )"
           fi
-
           if [[ -z "$VERSION" ]]; then
             VERSION="$DEFAULT_BETA_VERSION"
           fi
-
           if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-(beta|nightly))?$ ]]; then
             echo "Invalid version: $VERSION"
             exit 1
           fi
-
-          RELEASE_NAME="Sayanth Rock ColorOS ${CHANNEL} ${VERSION}"
-          ARTIFACT_NAME="Sayanth-Rock-ColorOS-${VERSION}"
-
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
           echo "channel=$CHANNEL" >> "$GITHUB_OUTPUT"
-          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
-          echo "artifact_name=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
+          echo "release_name=Sayanth Rock ColorOS ${CHANNEL} ${VERSION}" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=Sayanth-Rock-ColorOS-${VERSION}" >> "$GITHUB_OUTPUT"
           echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
-          echo "RELEASE_CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
 
       - name: Validate theme module
         run: bash scripts/validate-module.sh
@@ -145,27 +134,21 @@ jobs:
       - name: Build theme module ZIP
         run: bash scripts/package.sh
 
-      - name: Collect release files
+      - name: Collect APK and module files
         shell: bash
         run: |
           set -euo pipefail
           shopt -s nullglob
-
           VERSION="${{ steps.meta.outputs.version }}"
-          CHANNEL="${{ steps.meta.outputs.channel }}"
           mkdir -p release/files
-
           DEBUG_APK="lsposed-helper/app/build/outputs/apk/debug/app-debug.apk"
           RELEASE_UNSIGNED_APK="lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk"
           RELEASE_APK="lsposed-helper/app/build/outputs/apk/release/app-release.apk"
-
           if [[ ! -f "$DEBUG_APK" ]]; then
             echo "Debug APK not found: $DEBUG_APK"
             exit 1
           fi
-
           cp "$DEBUG_APK" "release/files/${APK_NAME}-${VERSION}-debug.apk"
-
           if [[ -f "$RELEASE_APK" ]]; then
             cp "$RELEASE_APK" "release/files/${APK_NAME}-${VERSION}-release.apk"
           elif [[ -f "$RELEASE_UNSIGNED_APK" ]]; then
@@ -174,25 +157,12 @@ jobs:
             echo "Release APK output was not produced"
             exit 1
           fi
-
           module_files=(dist/*.zip)
           if [[ ${#module_files[@]} -eq 0 ]]; then
             echo "Module ZIP not found in dist/"
             exit 1
           fi
           cp "${module_files[@]}" release/files/
-
-          cat > release/files/BUILD_INFO.txt <<INFO
-          Project: Sayanth Rock ColorOS Release
-          Version: ${VERSION}
-          Channel: ${CHANNEL}
-          Commit: ${GITHUB_SHA}
-          Workflow: ${GITHUB_WORKFLOW}
-          Run ID: ${GITHUB_RUN_ID}
-          APK policy: working-only cleanup
-          INFO
-
-          (cd release/files && sha256sum * > SHA256SUMS.txt)
 
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
@@ -216,24 +186,16 @@ jobs:
           # Sayanth Rock ColorOS ${CHANNEL} ${VERSION}
 
           ## Included files
-          - Debug APK for direct testing
+          - Debug APK
           - Release APK output from Gradle
           - ColorOS Themes Rock module ZIP
-          - BUILD_INFO.txt
-          - SHA256SUMS.txt
 
-          ## New APK update
-          - Working-only customer dashboard
-          - Problematic APK/ZIP bundle imports blocked by default
-          - Safe wallpaper picker and wallpaper apply flow
-          - Performance Level: Balanced, Battery Saver guidance, Smooth guidance
-          - Root, LSPosed, scope, and system hooks shown with honest status labels
-          - Support report copy/share and rollback help kept visible
-
-          ## Release rule
-          - Only working and safe tools are enabled by default.
-          - Problematic or untested features stay hidden, blocked, or marked as Needs testing.
-          - Test on an OPPO, OnePlus, or realme phone before sharing as stable.
+          ## APK update
+          - Working-only dashboard
+          - Safe wallpaper tools
+          - Rootd customization planning
+          - Performance Level guidance
+          - Support and rollback guidance
           INFO
 
       - name: Publish GitHub Release with clobber upload
@@ -247,21 +209,17 @@ jobs:
           set -euo pipefail
           shopt -s nullglob
           files=(release/files/*)
-
           if [[ ${#files[@]} -eq 0 ]]; then
             echo "No files to upload"
             exit 1
           fi
-
           PRERELEASE_FLAG="--prerelease"
           if [[ "$VERSION" != *"-beta" && "$VERSION" != *"-nightly" ]]; then
             PRERELEASE_FLAG=""
           fi
-
           if gh release view "$VERSION" >/dev/null 2>&1; then
             gh release edit "$VERSION" --title "$RELEASE_NAME" --notes-file RELEASE_NOTES.md $PRERELEASE_FLAG
           else
             gh release create "$VERSION" --target "$GITHUB_SHA" --title "$RELEASE_NAME" --notes-file RELEASE_NOTES.md $PRERELEASE_FLAG
           fi
-
           gh release upload "$VERSION" "${files[@]}" --clobber
