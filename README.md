@@ -64,10 +64,11 @@ The uploaded `rock theme .zip` was inspected as a private sample. It appears to 
 
 Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-theme-analysis.md).
 
-## APK Rootd, Performance Level, and working-only direction
+## APK Rootd, Performance Level, working-only, and release automation
 
 | Guide | Purpose |
 |---|---|
+| [`docs/RELEASE_AUTOMATION.md`](docs/RELEASE_AUTOMATION.md) | Explains APK/module release upload automation, version input, channel input, artifacts, and GitHub Release upload. |
 | [`docs/WORKING_ONLY_APK_POLICY.md`](docs/WORKING_ONLY_APK_POLICY.md) | Defines what stays enabled, what is hidden, and how problematic APK/ZIP features are blocked. |
 | [`docs/APK_ROOTD_IMPROVEMENT_PLAN.md`](docs/APK_ROOTD_IMPROVEMENT_PLAN.md) | Status-first Rootd dashboard, root manager checks, LSPosed checks, scope checks, rollback, and support report. |
 | [`docs/PERFORMANCE_LEVEL_PLAN.md`](docs/PERFORMANCE_LEVEL_PLAN.md) | Safe Performance Level design for Off, Battery Saver, Balanced, Smooth, Performance, and Custom presets. |
@@ -104,6 +105,7 @@ Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-t
 │   ├── permissions.md
 │   ├── safety.md
 │   ├── uploaded-rock-theme-analysis.md
+│   ├── RELEASE_AUTOMATION.md
 │   ├── WORKING_ONLY_APK_POLICY.md
 │   ├── APK_ROOTD_IMPROVEMENT_PLAN.md
 │   ├── PERFORMANCE_LEVEL_PLAN.md
@@ -119,6 +121,7 @@ Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-t
 ├── latestNightly.json
 └── .github/workflows/
     ├── build-theme-module.yml
+    ├── validate-apk.yml
     └── publish-github-release.yml
 ```
 
@@ -168,11 +171,31 @@ Output:
 lsposed-helper/app/build/outputs/apk/debug/app-debug.apk
 ```
 
+Validate APK automation is handled by:
+
+```text
+.github/workflows/validate-apk.yml
+```
+
 APK and combined release automation is handled by:
 
 ```text
 .github/workflows/publish-github-release.yml
 ```
+
+## Publish APK Release
+
+Manual release upload:
+
+1. Open **Actions**.
+2. Select **Publish GitHub Release**.
+3. Tap **Run workflow**.
+4. Choose channel: `beta`, `stable`, or `nightly`.
+5. Enter version, for example `v0.5.6-beta`.
+6. Keep **publish** enabled.
+7. Run the workflow.
+
+The workflow uploads APK files, module ZIP, `BUILD_INFO.txt`, and `SHA256SUMS.txt` to the GitHub Release.
 
 ## Release channels
 
