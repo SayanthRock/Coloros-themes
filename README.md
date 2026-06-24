@@ -6,12 +6,13 @@ This project is for legal customization using assets that you created, own, or h
 
 ## What this project builds
 
-- A flashable Magisk / KernelSU / APatch-style theme module ZIP.
-- A safe theme inspection pipeline for ColorOS/OPlus/realme `.theme` files.
+- A flashable Magisk, KernelSU, or APatch-style theme module ZIP.
+- A safe theme inspection pipeline for ColorOS, OPlus, and realme `.theme` files.
 - A systemless overlay target for `/system_ext/media/themeInner/`.
 - A clean customization structure for wallpapers, icons, fonts, sounds, previews, customer support, and rollback notes.
-- A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, and safe toggles.
+- A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
+- Release-channel metadata for Stable, Beta, and Nightly customer update checks.
 
 ## Supported targets
 
@@ -23,6 +24,23 @@ This project is for legal customization using assets that you created, own, or h
 | Android 15 | Modern supported target | Planned testing |
 | Android 16 | Modern supported target | Planned testing |
 | Android 17 | Latest target | Device-by-device testing required |
+
+Read the full compatibility plan in [`docs/compatibility.md`](docs/compatibility.md).
+
+## Customer feature labels
+
+Every feature shown in the APK should use a clear status label.
+
+| Label | Meaning |
+|---|---|
+| Working | Tested on a real matching device. |
+| Limited | Works only on specific ROMs, Android versions, or device models. |
+| Needs testing | Built but not verified enough for normal customers. |
+| Not available | Unsupported on the current device or ROM. |
+| Root required | Needs Magisk, KernelSU, APatch, or equivalent root access. |
+| LSPosed scope required | Needs LSPosed/Xposed scope for the target package. |
+
+Free customer tools should stay visible. Advanced or untested items must show clear labels so customers know what works, what needs testing, and what is not available on their device.
 
 ## Uploaded theme package metadata
 
@@ -55,12 +73,18 @@ Use these only when sharing rights are clear.
 │   ├── check-theme-size.sh
 │   └── inspect-theme-package.py
 ├── docs/
+│   ├── compatibility.md
+│   ├── permissions.md
+│   ├── safety.md
 │   ├── THEME_MODULE_BUILDER.md
 │   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
 │   ├── UI_DESIGN_SYSTEM.md
 │   ├── LAG_FIX_GUIDE.md
 │   └── PROBLEM_SOLVER_MATRIX.md
 ├── lsposed-helper/
+├── latestStable.json
+├── latestBeta.json
+├── latestNightly.json
 └── .github/workflows/
     ├── build-theme-module.yml
     └── publish-github-release.yml
@@ -84,7 +108,7 @@ bash scripts/package.sh
 Output:
 
 ```text
-dist/ColorOS-Themes-Rock-v0.4.0.zip
+dist/ColorOS-Themes-Rock-v0.5.4.zip
 ```
 
 ## Build from GitHub Actions
@@ -92,10 +116,10 @@ dist/ColorOS-Themes-Rock-v0.4.0.zip
 1. Open **Actions**.
 2. Select **Build Theme Module**.
 3. Tap **Run workflow**.
-4. Enter a version like `v0.4.0`.
+4. Enter a version like `v0.5.4`.
 5. Keep release publishing enabled to upload the module ZIP to a public GitHub Release.
 
-The workflow also runs on pushes that change module, theme, script, or workflow files.
+The workflow also runs on pushes that change module, theme, script, docs, release metadata, or workflow files.
 
 ## Build ColorOS Customizer APK
 
@@ -117,6 +141,16 @@ APK and combined release automation is handled by:
 ```text
 .github/workflows/publish-github-release.yml
 ```
+
+## Release channels
+
+| Channel | File | Intended use |
+|---|---|---|
+| Stable | `latestStable.json` | Tested public customer builds. |
+| Beta | `latestBeta.json` | Broader testing before stable. |
+| Nightly | `latestNightly.json` | Experimental development builds. |
+
+These files can be used later by the APK update screen, GitHub release automation, or a simple in-app update checker.
 
 ## Customer customization matrix
 
@@ -143,3 +177,9 @@ APK and combined release automation is handled by:
 ## Safety rule
 
 Only distribute themes, wallpapers, fonts, icons, sounds, previews, and UI files that you created, own, or have permission to share.
+
+Read the safety guide in [`docs/safety.md`](docs/safety.md) and the Android permission guide in [`docs/permissions.md`](docs/permissions.md).
+
+## GPL reference rule
+
+Oxygen Customizer is useful as an open-source reference for structure, release channels, LSPosed/root flow, and customer warning style. Do not copy GPL-3.0 source code into this project unless the project license and distribution method are GPL-compatible.
