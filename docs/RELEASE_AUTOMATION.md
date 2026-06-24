@@ -30,7 +30,7 @@ The workflow automatically:
 8. Builds debug APK.
 9. Builds release APK output.
 10. Builds the module ZIP.
-11. Collects APK, ZIP, build info, and checksums.
+11. Collects APK and ZIP files.
 12. Uploads workflow artifact.
 13. Generates build provenance attestation.
 14. Creates release notes.
@@ -50,7 +50,7 @@ The workflow automatically:
 6. Enter version, for example:
 
 ```text
-v0.5.6-beta
+v0.5.7-beta
 ```
 
 7. Keep **publish** enabled.
@@ -58,13 +58,20 @@ v0.5.6-beta
 
 ## Uploaded files
 
-The release will include:
+The release will include only APK and module files:
 
 ```text
-ColorOS-Customizer-v0.5.6-beta-debug.apk
-ColorOS-Customizer-v0.5.6-beta-release.apk
-ColorOS-Customizer-v0.5.6-beta-release-unsigned.apk, if signing is not configured
+ColorOS-Customizer-v0.5.7-beta-debug.apk
+ColorOS-Customizer-v0.5.7-beta-release.apk
+ColorOS-Customizer-v0.5.7-beta-release-unsigned.apk, if signing is not configured
 ColorOS-Themes-Rock module ZIP
+```
+
+## Removed from release assets
+
+These generated text assets are no longer uploaded:
+
+```text
 BUILD_INFO.txt
 SHA256SUMS.txt
 ```
@@ -74,13 +81,13 @@ SHA256SUMS.txt
 Current planned beta:
 
 ```text
-v0.5.6-beta
+v0.5.7-beta
 ```
 
 Focus:
 
 ```text
-Working-only APK cleanup and system improvement
+Rootd customization structure and options
 ```
 
 ## Release rule
