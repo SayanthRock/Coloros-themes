@@ -1,6 +1,24 @@
 name: Build Theme Module
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'module.prop'
+      - 'customize.sh'
+      - 'post-fs-data.sh'
+      - 'service.sh'
+      - 'uninstall.sh'
+      - 'scripts/**'
+      - 'themes/**'
+      - 'theme-packs/**'
+      - 'customer-options/**'
+      - 'docs/**'
+      - 'latestStable.json'
+      - 'latestBeta.json'
+      - 'latestNightly.json'
+      - '.github/workflows/build-theme-module.yml'
   push:
     branches:
       - main
