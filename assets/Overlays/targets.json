@@ -1,0 +1,103 @@
+{
+  "version": "0.5.4",
+  "project": "ColorOS Themes Rock",
+  "rootd_customer_mode": "safe_first",
+  "runtime_apply_default": false,
+  "status_labels": [
+    "Working",
+    "Limited",
+    "Needs testing",
+    "Root required",
+    "LSPosed scope required",
+    "Not available"
+  ],
+  "package_targets": [
+    {
+      "id": "android_framework",
+      "package": "android",
+      "customer_name": "Android Framework",
+      "area": "framework_visual_resources",
+      "default_status": "Needs testing",
+      "risk": "high",
+      "safe_customer_actions": [
+        "view_target_status",
+        "preview_owned_assets",
+        "export_support_report"
+      ],
+      "advanced_requirements": [
+        "root_status_checked",
+        "rollback_ready",
+        "device_profile_matched",
+        "compiled_overlay_tested"
+      ],
+      "apply_policy": "disabled_until_tested_overlay_exists"
+    },
+    {
+      "id": "system_ui",
+      "package": "com.android.systemui",
+      "customer_name": "System UI",
+      "area": "status_bar_quick_settings_notifications_lock_surface",
+      "default_status": "Needs testing",
+      "risk": "high",
+      "safe_customer_actions": [
+        "view_target_status",
+        "preview_owned_assets",
+        "check_lsposed_scope",
+        "export_support_report"
+      ],
+      "advanced_requirements": [
+        "root_status_checked",
+        "lsposed_scope_checked",
+        "rollback_ready",
+        "device_profile_matched",
+        "compiled_overlay_tested"
+      ],
+      "apply_policy": "disabled_until_tested_overlay_exists"
+    },
+    {
+      "id": "settings_ui",
+      "package": "com.android.settings",
+      "customer_name": "Settings UI",
+      "area": "settings_cards_about_phone_support_diagnostics",
+      "default_status": "Needs testing",
+      "risk": "medium",
+      "safe_customer_actions": [
+        "view_target_status",
+        "preview_owned_assets",
+        "open_settings_shortcuts",
+        "export_support_report"
+      ],
+      "advanced_requirements": [
+        "root_status_checked",
+        "lsposed_scope_checked_if_hooks_enabled",
+        "rollback_ready",
+        "device_profile_matched",
+        "compiled_overlay_tested"
+      ],
+      "apply_policy": "disabled_until_tested_overlay_exists"
+    }
+  ],
+  "folders": {
+    "android": "assets/Overlays/android",
+    "com.android.systemui": "assets/Overlays/com.android.systemui",
+    "com.android.settings": "assets/Overlays/com.android.settings",
+    "templates": "assets/Overlays/templates"
+  },
+  "blocked_actions": [
+    "fake_working_status",
+    "untested_customer_apply",
+    "forced_ads_or_paid_gate",
+    "irreversible_change_without_rollback"
+  ],
+  "diagnostics": {
+    "status_output": "/data/local/tmp/coloros-themes-rock/rootd-status.txt",
+    "required_checks": [
+      "device_profile",
+      "root_status",
+      "lsposed_scope_status",
+      "package_presence",
+      "overlay_readiness",
+      "rollback_readiness"
+    ]
+  }
+}
