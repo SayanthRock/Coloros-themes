@@ -40,6 +40,7 @@ INCLUDE_PATHS=(
   "themes"
   "theme-packs"
   "customer-options"
+  "assets"
   "docs"
   "scripts"
 )
