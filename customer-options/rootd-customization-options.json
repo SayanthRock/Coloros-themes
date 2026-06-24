@@ -1,0 +1,95 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "screen": "Rootd Customization",
+  "sourceSample": "rock theme .zip",
+  "sourcePolicy": "inspection_only",
+  "defaultMode": "working_only",
+  "customerMessage": "Rootd customization shows safe options first. Advanced options stay disabled until device, root, LSPosed, scope, and rollback checks pass.",
+  "sections": [
+    {
+      "id": "wallpaper",
+      "title": "Wallpaper",
+      "enabledByDefault": true,
+      "status": "Working",
+      "description": "Choose and apply a user-selected image with Android wallpaper APIs."
+    },
+    {
+      "id": "theme_preview",
+      "title": "Theme Preview",
+      "enabledByDefault": true,
+      "status": "Working",
+      "description": "Preview verified theme assets before any apply action."
+    },
+    {
+      "id": "theme_inner",
+      "title": "Theme Inner",
+      "enabledByDefault": false,
+      "status": "Needs testing",
+      "description": "Prepare verified systemless themeInner assets under rootd/system_ext/media/themeInner/."
+    },
+    {
+      "id": "icons",
+      "title": "Icons",
+      "enabledByDefault": false,
+      "status": "Needs testing",
+      "description": "Show launcher-supported icon options only after compatibility check."
+    },
+    {
+      "id": "lock_screen",
+      "title": "Lock Screen",
+      "enabledByDefault": false,
+      "status": "Needs testing",
+      "description": "Show lock screen guidance and supported actions only."
+    },
+    {
+      "id": "fonts",
+      "title": "Fonts",
+      "enabledByDefault": false,
+      "status": "Needs testing",
+      "description": "Use only owned or permitted font assets."
+    },
+    {
+      "id": "sounds",
+      "title": "Sounds",
+      "enabledByDefault": false,
+      "status": "Needs testing",
+      "description": "Use only owned or permitted sound assets."
+    },
+    {
+      "id": "performance_level",
+      "title": "Performance Level",
+      "enabledByDefault": true,
+      "status": "Limited",
+      "description": "Balanced and safe guidance are visible first."
+    },
+    {
+      "id": "system_ui",
+      "title": "System UI",
+      "enabledByDefault": false,
+      "status": "Not available",
+      "description": "Disabled until real-device testing confirms safety."
+    },
+    {
+      "id": "launcher_hooks",
+      "title": "Launcher Hooks",
+      "enabledByDefault": false,
+      "status": "Not available",
+      "description": "Disabled until LSPosed scope and device testing are verified."
+    },
+    {
+      "id": "backup_restore",
+      "title": "Backup and Restore",
+      "enabledByDefault": true,
+      "status": "Working",
+      "description": "Keep rollback and restore options visible."
+    },
+    {
+      "id": "support_report",
+      "title": "Support Report",
+      "enabledByDefault": true,
+      "status": "Working",
+      "description": "Export safe diagnostic text for support."
+    }
+  ]
+}
