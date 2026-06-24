@@ -15,6 +15,7 @@ This project is for legal customization using assets that you created, own, or h
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
 - A Rootd UI feature map for status-first APK behavior.
 - A Performance Level configuration for safe Off, Balanced, Battery Saver, Smooth, Performance, and Custom presets.
+- A working-only policy so problematic APK features stay hidden, blocked, or marked as Needs testing.
 
 ## Supported targets
 
@@ -36,8 +37,10 @@ Every feature shown in the APK should use a clear status label.
 | Label | Meaning |
 |---|---|
 | Working | Tested on a real matching device. |
+| Safe guidance | Opens Android settings or gives safe instructions only. |
 | Limited | Works only on specific ROMs, Android versions, or device models. |
 | Needs testing | Built but not verified enough for normal customers. |
+| Blocked | Hidden or disabled because the feature is problematic. |
 | Not available | Unsupported on the current device or ROM. |
 | Root required | Needs Magisk, KernelSU, APatch, or equivalent root access. |
 | LSPosed scope required | Needs LSPosed/Xposed scope for the target package. |
@@ -61,13 +64,15 @@ The uploaded `rock theme .zip` was inspected as a private sample. It appears to 
 
 Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-theme-analysis.md).
 
-## APK Rootd, Performance Level, and UI direction
+## APK Rootd, Performance Level, and working-only direction
 
 | Guide | Purpose |
 |---|---|
+| [`docs/WORKING_ONLY_APK_POLICY.md`](docs/WORKING_ONLY_APK_POLICY.md) | Defines what stays enabled, what is hidden, and how problematic APK/ZIP features are blocked. |
 | [`docs/APK_ROOTD_IMPROVEMENT_PLAN.md`](docs/APK_ROOTD_IMPROVEMENT_PLAN.md) | Status-first Rootd dashboard, root manager checks, LSPosed checks, scope checks, rollback, and support report. |
 | [`docs/PERFORMANCE_LEVEL_PLAN.md`](docs/PERFORMANCE_LEVEL_PLAN.md) | Safe Performance Level design for Off, Battery Saver, Balanced, Smooth, Performance, and Custom presets. |
 | [`docs/THEMES_UI_DESIGN_2026.md`](docs/THEMES_UI_DESIGN_2026.md) | 2026 APK UI style for themes, permissions, Rootd, Performance Level, compatibility, and customer-safe labels. |
+| [`customer-options/working-only-policy.json`](customer-options/working-only-policy.json) | Machine-readable working-only policy for future APK screens. |
 | [`customer-options/rootd-ui-feature-map.json`](customer-options/rootd-ui-feature-map.json) | Machine-readable feature map for future Rootd APK screens. |
 | [`customer-options/performance-levels.json`](customer-options/performance-levels.json) | Machine-readable Performance Level configuration for future APK screens. |
 
@@ -86,6 +91,7 @@ Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-t
 ├── theme-packs/
 ├── customer-options/
 │   ├── options.json
+│   ├── working-only-policy.json
 │   ├── rootd-ui-feature-map.json
 │   └── performance-levels.json
 ├── scripts/
@@ -98,6 +104,7 @@ Read the report in [`docs/uploaded-rock-theme-analysis.md`](docs/uploaded-rock-t
 │   ├── permissions.md
 │   ├── safety.md
 │   ├── uploaded-rock-theme-analysis.md
+│   ├── WORKING_ONLY_APK_POLICY.md
 │   ├── APK_ROOTD_IMPROVEMENT_PLAN.md
 │   ├── PERFORMANCE_LEVEL_PLAN.md
 │   ├── THEMES_UI_DESIGN_2026.md
@@ -184,11 +191,12 @@ These files can be used later by the APK update screen, GitHub release automatio
 | Wallpaper | User-selected image or owned theme package | Safe |
 | Home screen | Wallpaper API or OEM theme package | Device testing required |
 | Lock screen | Wallpaper API or OEM theme package | Device testing required |
-| Icons | Theme icon asset or launcher icon pack | Device testing required |
+| Icons | Theme scanner and launcher-supported guidance only | Needs testing |
 | Fonts | Owned font/theme asset | Device testing required |
 | Sounds | Owned ringtone/UI sound asset | Device testing required |
 | Preview images | Catalog previews and screenshots | Ready |
 | Battery/performance | Performance Level presets, diagnostics, shortcuts, and lag-fix guide | Safe, no fake booster claims |
+| APK system improvement | Working-only dashboard, status checks, safe settings shortcuts, and support report | Working-only |
 | Rollback | Uninstall script and customer guide | Documented |
 
 ## Install module ZIP
@@ -203,7 +211,7 @@ These files can be used later by the APK update screen, GitHub release automatio
 
 Only distribute themes, wallpapers, fonts, icons, sounds, previews, and UI files that you created, own, or have permission to share.
 
-Read the safety guide in [`docs/safety.md`](docs/safety.md) and the Android permission guide in [`docs/permissions.md`](docs/permissions.md).
+Read the safety guide in [`docs/safety.md`](docs/safety.md), the Android permission guide in [`docs/permissions.md`](docs/permissions.md), and the working-only APK policy in [`docs/WORKING_ONLY_APK_POLICY.md`](docs/WORKING_ONLY_APK_POLICY.md).
 
 ## GPL reference rule
 
