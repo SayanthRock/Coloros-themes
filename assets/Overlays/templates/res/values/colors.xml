@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="rock_customer_accent">#E2B884</color>
+    <color name="rock_customer_surface_dark">#121212</color>
+    <color name="rock_customer_surface_glass">#33FFFFFF</color>
+    <color name="rock_customer_text_primary">#FFFFFFFF</color>
+    <color name="rock_customer_text_secondary">#CCFFFFFF</color>
+</resources>
