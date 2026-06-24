@@ -1,0 +1,81 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "screen": "Performance Level",
+  "defaultLevel": "balanced",
+  "customerMessage": "Performance Level helps you choose a simple device behavior preset. Results depend on your phone, Android version, ROM, root status, and enabled modules. Use Balanced for normal daily use.",
+  "levels": [
+    {
+      "id": "off",
+      "title": "Off",
+      "summary": "Do not apply any performance preset.",
+      "recommendedForCustomers": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Working",
+      "risk": "Safe"
+    },
+    {
+      "id": "battery_saver",
+      "title": "Battery Saver",
+      "summary": "Show safer battery guidance and supported Android settings shortcuts.",
+      "recommendedForCustomers": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Limited",
+      "risk": "Safe guidance only"
+    },
+    {
+      "id": "balanced",
+      "title": "Balanced",
+      "summary": "Recommended daily profile for normal smoothness and safer defaults.",
+      "recommendedForCustomers": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Working",
+      "risk": "Safe"
+    },
+    {
+      "id": "smooth",
+      "title": "Smooth",
+      "summary": "Show display and refresh-rate guidance where supported.",
+      "recommendedForCustomers": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Limited",
+      "risk": "Device-specific"
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "summary": "Gaming or heavy-use profile. Must show heat and battery-drain warnings.",
+      "recommendedForCustomers": false,
+      "requiresRoot": true,
+      "requiresLsposed": false,
+      "defaultLabel": "Needs testing",
+      "risk": "Higher battery drain and heat possible"
+    },
+    {
+      "id": "custom",
+      "title": "Custom",
+      "summary": "Advanced user-controlled settings with reset to Balanced.",
+      "recommendedForCustomers": false,
+      "requiresRoot": true,
+      "requiresLsposed": true,
+      "defaultLabel": "Needs testing",
+      "risk": "Advanced users only"
+    }
+  ],
+  "requiredChecks": [
+    "device_brand",
+    "device_model",
+    "android_version",
+    "rom_skin",
+    "root_manager_status",
+    "module_status",
+    "lsposed_status",
+    "scope_status",
+    "safe_mode_state",
+    "rollback_available"
+  ]
+}
