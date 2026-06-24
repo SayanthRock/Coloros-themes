@@ -22,11 +22,20 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag, example: v0.5.6'
+        description: 'Version tag, example: v0.5.6-beta or v0.5.6'
         required: false
         default: ''
+      channel:
+        description: 'Release channel'
+        required: true
+        type: choice
+        options:
+          - beta
+          - stable
+          - nightly
+        default: beta
       publish:
-        description: 'Publish GitHub Release'
+        description: 'Create or update GitHub Release and upload files'
         required: true
         type: boolean
         default: true
@@ -43,10 +52,11 @@ permissions:
 env:
   APK_NAME: ColorOS-Customizer
   MODULE_ID: ColorOS-Themes-Rock
+  DEFAULT_BETA_VERSION: v0.5.6-beta
 
 jobs:
   build-and-publish:
-    name: Build and Publish Release
+    name: Build APK, Module, and Release Assets
     runs-on: ubuntu-latest
     timeout-minutes: 45
     steps:
@@ -72,23 +82,55 @@ jobs:
         with:
           gradle-version: 8.10.2
 
-      - name: Resolve version
+      - name: Resolve release metadata
         id: meta
         shell: bash
         run: |
+          set -euo pipefail
+
+          CHANNEL="${{ inputs.channel || 'beta' }}"
           VERSION="${{ inputs.version }}"
+
           if [[ -z "$VERSION" && "$GITHUB_REF" == refs/tags/* ]]; then
             VERSION="$GITHUB_REF_NAME"
           fi
-          if [[ -z "$VERSION" ]]; then
-            VERSION="v$(grep -E "versionName '" lsposed-helper/app/build.gradle | head -n 1 | sed -E "s/.*versionName '([^']+)'.*/\1/")"
+
+          if [[ -z "$VERSION" && "$CHANNEL" == "beta" && -f latestBeta.json ]]; then
+            VERSION="$(python3 - <<'PY'
+          import json
+          with open('latestBeta.json', 'r', encoding='utf-8') as fh:
+              print(json.load(fh).get('version', ''))
+          PY
+          )"
           fi
-          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-beta)?$ ]]; then
+
+          if [[ -z "$VERSION" && "$CHANNEL" == "stable" && -f latestStable.json ]]; then
+            VERSION="$(python3 - <<'PY'
+          import json
+          with open('latestStable.json', 'r', encoding='utf-8') as fh:
+              print(json.load(fh).get('version', ''))
+          PY
+          )"
+          fi
+
+          if [[ -z "$VERSION" ]]; then
+            VERSION="$DEFAULT_BETA_VERSION"
+          fi
+
+          if [[ ! "$VERSION" =~ ^v[0-9]+\.[0-9]+\.[0-9]+(-(beta|nightly))?$ ]]; then
             echo "Invalid version: $VERSION"
             exit 1
           fi
+
+          RELEASE_NAME="Sayanth Rock ColorOS ${CHANNEL} ${VERSION}"
+          ARTIFACT_NAME="Sayanth-Rock-ColorOS-${VERSION}"
+
           echo "version=$VERSION" >> "$GITHUB_OUTPUT"
+          echo "channel=$CHANNEL" >> "$GITHUB_OUTPUT"
+          echo "release_name=$RELEASE_NAME" >> "$GITHUB_OUTPUT"
+          echo "artifact_name=$ARTIFACT_NAME" >> "$GITHUB_OUTPUT"
           echo "MODULE_VERSION=$VERSION" >> "$GITHUB_ENV"
+          echo "RELEASE_CHANNEL=$CHANNEL" >> "$GITHUB_ENV"
 
       - name: Validate theme module
         run: bash scripts/validate-module.sh
@@ -107,27 +149,47 @@ jobs:
         shell: bash
         run: |
           set -euo pipefail
-          mkdir -p release/files
+          shopt -s nullglob
+
           VERSION="${{ steps.meta.outputs.version }}"
+          CHANNEL="${{ steps.meta.outputs.channel }}"
+          mkdir -p release/files
 
-          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/files/${APK_NAME}-${VERSION}-debug.apk"
+          DEBUG_APK="lsposed-helper/app/build/outputs/apk/debug/app-debug.apk"
+          RELEASE_UNSIGNED_APK="lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk"
+          RELEASE_APK="lsposed-helper/app/build/outputs/apk/release/app-release.apk"
 
-          if [[ -f lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk ]]; then
-            cp lsposed-helper/app/build/outputs/apk/release/app-release-unsigned.apk "release/files/${APK_NAME}-${VERSION}-release-unsigned.apk"
-          elif [[ -f lsposed-helper/app/build/outputs/apk/release/app-release.apk ]]; then
-            cp lsposed-helper/app/build/outputs/apk/release/app-release.apk "release/files/${APK_NAME}-${VERSION}-release.apk"
+          if [[ ! -f "$DEBUG_APK" ]]; then
+            echo "Debug APK not found: $DEBUG_APK"
+            exit 1
           fi
 
-          for file in dist/*.zip; do
-            cp "$file" release/files/
-          done
+          cp "$DEBUG_APK" "release/files/${APK_NAME}-${VERSION}-debug.apk"
+
+          if [[ -f "$RELEASE_APK" ]]; then
+            cp "$RELEASE_APK" "release/files/${APK_NAME}-${VERSION}-release.apk"
+          elif [[ -f "$RELEASE_UNSIGNED_APK" ]]; then
+            cp "$RELEASE_UNSIGNED_APK" "release/files/${APK_NAME}-${VERSION}-release-unsigned.apk"
+          else
+            echo "Release APK output was not produced"
+            exit 1
+          fi
+
+          module_files=(dist/*.zip)
+          if [[ ${#module_files[@]} -eq 0 ]]; then
+            echo "Module ZIP not found in dist/"
+            exit 1
+          fi
+          cp "${module_files[@]}" release/files/
 
           cat > release/files/BUILD_INFO.txt <<INFO
           Project: Sayanth Rock ColorOS Release
           Version: ${VERSION}
+          Channel: ${CHANNEL}
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
+          APK policy: working-only cleanup
           INFO
 
           (cd release/files && sha256sum * > SHA256SUMS.txt)
@@ -135,7 +197,7 @@ jobs:
       - name: Upload workflow artifact
         uses: actions/upload-artifact@v4
         with:
-          name: Sayanth-Rock-ColorOS-${{ steps.meta.outputs.version }}
+          name: ${{ steps.meta.outputs.artifact_name }}
           path: release/files/*
           if-no-files-found: error
           retention-days: 30
@@ -146,29 +208,32 @@ jobs:
           subject-path: 'release/files/*'
 
       - name: Create release notes
+        shell: bash
         run: |
           VERSION="${{ steps.meta.outputs.version }}"
+          CHANNEL="${{ steps.meta.outputs.channel }}"
           cat > RELEASE_NOTES.md <<INFO
-          # Sayanth Rock ColorOS Release ${VERSION}
+          # Sayanth Rock ColorOS ${CHANNEL} ${VERSION}
 
           ## Included files
           - Debug APK for direct testing
-          - Release APK output when produced by Gradle
+          - Release APK output from Gradle
           - ColorOS Themes Rock module ZIP
           - BUILD_INFO.txt
           - SHA256SUMS.txt
 
-          ## Free customer tools
-          - Wallpaper tools
-          - Feedback and support pages
-          - Safe mode guidance
-          - Diagnostics status page plan
-          - Feature labels: Working, Limited, Needs testing, Not available
+          ## New APK update
+          - Working-only customer dashboard
+          - Problematic APK/ZIP bundle imports blocked by default
+          - Safe wallpaper picker and wallpaper apply flow
+          - Performance Level: Balanced, Battery Saver guidance, Smooth guidance
+          - Root, LSPosed, scope, and system hooks shown with honest status labels
+          - Support report copy/share and rollback help kept visible
 
           ## Release rule
-          - Free customer tools stay available.
-          - Advanced or untested items must show clear status labels.
-          - Test on an OPPO, OnePlus, or realme phone before public sharing.
+          - Only working and safe tools are enabled by default.
+          - Problematic or untested features stay hidden, blocked, or marked as Needs testing.
+          - Test on an OPPO, OnePlus, or realme phone before sharing as stable.
           INFO
 
       - name: Publish GitHub Release with clobber upload
@@ -176,18 +241,27 @@ jobs:
         env:
           GH_TOKEN: ${{ github.token }}
           VERSION: ${{ steps.meta.outputs.version }}
+          RELEASE_NAME: ${{ steps.meta.outputs.release_name }}
         shell: bash
         run: |
           set -euo pipefail
           shopt -s nullglob
           files=(release/files/*)
+
           if [[ ${#files[@]} -eq 0 ]]; then
             echo "No files to upload"
             exit 1
           fi
-          if gh release view "$VERSION" >/dev/null 2>&1; then
-            gh release edit "$VERSION" --title "Sayanth Rock ColorOS Release ${VERSION}" --notes-file RELEASE_NOTES.md
-          else
-            gh release create "$VERSION" --target "$GITHUB_SHA" --title "Sayanth Rock ColorOS Release ${VERSION}" --notes-file RELEASE_NOTES.md
+
+          PRERELEASE_FLAG="--prerelease"
+          if [[ "$VERSION" != *"-beta" && "$VERSION" != *"-nightly" ]]; then
+            PRERELEASE_FLAG=""
           fi
+
+          if gh release view "$VERSION" >/dev/null 2>&1; then
+            gh release edit "$VERSION" --title "$RELEASE_NAME" --notes-file RELEASE_NOTES.md $PRERELEASE_FLAG
+          else
+            gh release create "$VERSION" --target "$GITHUB_SHA" --title "$RELEASE_NAME" --notes-file RELEASE_NOTES.md $PRERELEASE_FLAG
+          fi
+
           gh release upload "$VERSION" "${files[@]}" --clobber
