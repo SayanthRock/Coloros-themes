@@ -1,0 +1,35 @@
+{
+  "preset_id": "rootd_premium_customer_2026",
+  "name": "Rootd Premium Customer UI",
+  "status": "starter_ready",
+  "description": "A safe visual preset for customer previews and future tested overlays.",
+  "style": {
+    "ui_family": "premium_clean_liquid_glass",
+    "accent_color": "#E2B884",
+    "background": "charcoal_black",
+    "surface": "frosted_transparent",
+    "corner_radius": "large",
+    "typography": "strong_hierarchy",
+    "motion": "smooth_limited"
+  },
+  "customer_layers": [
+    {
+      "id": "quick_settings_surface",
+      "target_package": "com.android.systemui",
+      "status": "Needs testing",
+      "preview_only": true
+    },
+    {
+      "id": "settings_cards",
+      "target_package": "com.android.settings",
+      "status": "Needs testing",
+      "preview_only": true
+    },
+    {
+      "id": "framework_accent",
+      "target_package": "android",
+      "status": "Needs testing",
+      "preview_only": true
+    }
+  ]
+}
