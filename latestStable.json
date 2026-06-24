@@ -1,0 +1,26 @@
+{
+  "schema": 1,
+  "project": "ColorOS Themes Rock",
+  "packageId": "coloros_themes_rock",
+  "channel": "stable",
+  "version": "v0.5.4",
+  "versionCode": 9,
+  "status": "starter-support",
+  "releaseLevel": "Stable",
+  "recommendedForCustomers": true,
+  "requiresRoot": true,
+  "requiresLsposedForHooks": true,
+  "supportedFamilies": [
+    "OPPO ColorOS",
+    "OnePlus OxygenOS / ColorOS based builds",
+    "realme UI"
+  ],
+  "featureLabelsRequired": true,
+  "safetyMessage": "Use only features marked Working for your device. Advanced or untested features must show clear labels.",
+  "downloadUrl": "",
+  "changelog": [
+    "Customer-safe release metadata added.",
+    "Stable channel reserved for tested customer builds.",
+    "Root, LSPosed, scope, and rollback warnings required before advanced features."
+  ]
+}
