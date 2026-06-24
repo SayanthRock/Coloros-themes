@@ -23,6 +23,7 @@ ColorOS Customizer
 ├── Themes
 ├── Wallpapers
 ├── Rootd
+├── Performance Level
 ├── Permissions
 ├── Compatibility
 ├── Backup / Restore
@@ -43,12 +44,14 @@ Status: Device check required
 - Set wallpaper
 - Check root status
 - Check LSPosed scope
+- Choose performance level
 - Open rollback guide
 
 [Feature Sections]
 - Free tools
 - Root tools
 - LSPosed tools
+- Performance tools
 - Experimental tools
 ```
 
@@ -75,6 +78,35 @@ Rootd
 ├── Safe mode: Off / On
 └── Support report: Export
 ```
+
+## Performance Level screen
+
+Performance Level should use safe presets and clear labels.
+
+```text
+Performance Level
+├── Current level: Balanced
+├── Device profile: OPPO / OnePlus / realme
+├── Root status: Available / Not available
+├── LSPosed status: Active / Not required
+├── Presets
+│   ├── Off
+│   ├── Battery Saver
+│   ├── Balanced
+│   ├── Smooth
+│   ├── Performance
+│   └── Custom
+├── Safety label
+├── What will change
+├── Apply
+└── Reset to Balanced
+```
+
+Recommended first release behavior:
+
+- Off, Balanced, Battery Saver guidance, and Smooth guidance can be shown to normal customers.
+- Performance and Custom must stay marked as Needs testing until real-device verification is complete.
+- Root-only controls must show root, module, scope, and rollback checks first.
 
 ## Permission screen
 
@@ -126,11 +158,12 @@ Animation: short, smooth, only for state change
 1. Home.
 2. Permissions.
 3. Rootd.
-4. Theme Scanner.
-5. Compatibility.
-6. Backup / Restore.
-7. Logs.
-8. About.
+4. Performance Level.
+5. Theme Scanner.
+6. Compatibility.
+7. Backup / Restore.
+8. Logs.
+9. About.
 
 ## Customer message
 
