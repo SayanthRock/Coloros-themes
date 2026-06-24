@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <dimen name="rock_customer_card_radius">24dp</dimen>
+    <dimen name="rock_customer_card_padding">16dp</dimen>
+    <dimen name="rock_customer_panel_spacing">12dp</dimen>
+    <dimen name="rock_customer_icon_size">24dp</dimen>
+</resources>
