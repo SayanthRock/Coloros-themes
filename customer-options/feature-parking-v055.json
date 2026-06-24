@@ -1,0 +1,46 @@
+{
+  "version": "0.5.5",
+  "project": "ColorOS Themes Rock",
+  "purpose": "Show every planned customer feature with an honest working status instead of hiding broken or unfinished options.",
+  "appearance": {
+    "default_mode": "system",
+    "available_modes": ["system", "dark", "light"],
+    "accent_presets": [
+      {"id": "desert_sand", "name": "Desert Sand", "hex": "#E2B884"},
+      {"id": "oplus_green", "name": "OPlus Green", "hex": "#22C55E"},
+      {"id": "oxygen_blue", "name": "Oxygen Blue", "hex": "#3B82F6"},
+      {"id": "rock_gold", "name": "Rock Gold", "hex": "#F5C451"}
+    ]
+  },
+  "status_rules": {
+    "working": "Runs inside the helper APK now.",
+    "safe_shortcut": "Opens the supported Android or ColorOS settings page.",
+    "preview_only": "Saved locally and shown in support reports until a tested hook exists.",
+    "needs_root_scope": "Requires LSPosed scope selection and rooted-device testing.",
+    "needs_device_test": "Depends on ColorOS, realme UI, or OxygenOS class names and must not crash on miss.",
+    "not_supported": "Shown with explanation, not executed."
+  },
+  "features": [
+    {"id": "wallpaper_home_lock", "name": "Home and lock wallpaper", "area": "Theme Layers", "status": "working", "safe_default": true},
+    {"id": "image_picker_preview", "name": "Image picker preview", "area": "Theme Layers", "status": "working", "safe_default": true},
+    {"id": "theme_layer_status", "name": "Layer status cards", "area": "Theme Layers", "status": "working", "safe_default": true},
+    {"id": "dark_mode", "name": "Dark mode", "area": "Appearance", "status": "needs_app_integration", "safe_default": true},
+    {"id": "light_mode", "name": "Light mode", "area": "Appearance", "status": "needs_app_integration", "safe_default": true},
+    {"id": "system_color", "name": "System color mode", "area": "Appearance", "status": "needs_app_integration", "safe_default": true},
+    {"id": "accent_presets", "name": "Accent color presets", "area": "Appearance", "status": "needs_app_integration", "safe_default": true},
+    {"id": "refresh_rate_shortcut", "name": "Refresh rate shortcut", "area": "Performance", "status": "safe_shortcut", "safe_default": true},
+    {"id": "animation_settings_shortcut", "name": "Animation speed shortcut", "area": "Performance", "status": "safe_shortcut", "safe_default": true},
+    {"id": "battery_help", "name": "Battery help", "area": "Performance", "status": "working", "safe_default": true},
+    {"id": "about_phone_label", "name": "About phone label preview", "area": "Customization Preview", "status": "preview_only", "safe_default": true},
+    {"id": "ota_name_label", "name": "OTA display name preview", "area": "Customization Preview", "status": "preview_only", "safe_default": true},
+    {"id": "status_bar_blur_value", "name": "Status bar blur value", "area": "Customization Preview", "status": "preview_only", "safe_default": true},
+    {"id": "systemui_clock_style", "name": "SystemUI clock style", "area": "LSPosed", "status": "needs_root_scope", "safe_default": false},
+    {"id": "systemui_battery_style", "name": "SystemUI battery style", "area": "LSPosed", "status": "needs_root_scope", "safe_default": false},
+    {"id": "quick_tiles_layout", "name": "Quick tiles layout", "area": "LSPosed", "status": "needs_root_scope", "safe_default": false},
+    {"id": "settings_hidden_panels", "name": "Hidden settings panel launcher", "area": "Settings", "status": "safe_shortcut_or_needs_device_test", "safe_default": false},
+    {"id": "icon_pack_apply", "name": "Icon pack apply", "area": "Theme Layers", "status": "needs_device_test", "safe_default": false},
+    {"id": "lock_screen_layers", "name": "Lock screen layers", "area": "Theme Layers", "status": "needs_device_test", "safe_default": false},
+    {"id": "backup_restore", "name": "Backup and restore", "area": "Support", "status": "required_before_system_changes", "safe_default": true},
+    {"id": "support_report", "name": "Copy and share support report", "area": "Support", "status": "working", "safe_default": true}
+  ]
+}
