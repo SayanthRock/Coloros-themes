@@ -7,66 +7,48 @@ import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.net.Uri;
 import android.os.Bundle;
 import android.provider.Settings;
 import android.view.Gravity;
-import android.view.MotionEvent;
 import android.view.View;
 import android.widget.Button;
-import android.widget.CompoundButton;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
-import android.widget.Switch;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import java.io.IOException;
+import java.io.InputStream;
 
 /**
- * Free-first transparent liquid-glass sliding dashboard for ColorOS Themes Rock.
+ * Working-only customer dashboard for ColorOS Themes Rock.
  */
 public class MainActivity extends Activity {
 
     private static final int REQUEST_PICK_IMAGE = 1001;
 
-    private static final int TAB_DASHBOARD = 0;
-    private static final int TAB_THEME = 1;
-    private static final int TAB_TOOLS = 2;
-    private static final int TAB_SUPPORT = 3;
-    private static final int TAB_SETTINGS = 4;
-    private static final int TAB_COUNT = 5;
-
     private static final int COLOR_BG = 0xFF0F0F10;
-    private static final int COLOR_NAV_BG = 0xE6151517;
-    private static final int COLOR_CARD = 0xB81A1A1D;
-    private static final int COLOR_CARD_SOFT = 0xAA242429;
+    private static final int COLOR_CARD = 0xFF1A1A1D;
+    private static final int COLOR_CARD_SOFT = 0xFF242429;
     private static final int COLOR_ACCENT = 0xFFE2B884;
-    private static final int COLOR_ACCENT_SOFT = 0xFFF0D2A8;
-    private static final int COLOR_ACCENT_GLOW = 0x44E2B884;
     private static final int COLOR_TEXT = 0xFFF5F2EA;
     private static final int COLOR_MUTED = 0xFFB9B1A3;
     private static final int COLOR_BORDER = 0x4DFFFFFF;
     private static final int COLOR_SUCCESS = 0xFF8FD694;
     private static final int COLOR_WARNING = 0xFFFFCC66;
-
-    private static final String PREFS_UI = "coloros_customizer_ui";
+    private static final int COLOR_DANGER = 0xFFFF7A7A;
 
     private LinearLayout root;
-    private int currentTab = TAB_DASHBOARD;
-    private float touchStartX;
-    private float touchStartY;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().setStatusBarColor(COLOR_BG);
-        getWindow().setNavigationBarColor(COLOR_NAV_BG);
+        getWindow().setNavigationBarColor(COLOR_BG);
         render();
     }
 
@@ -80,25 +62,19 @@ public class MainActivity extends Activity {
                 try {
                     getContentResolver().takePersistableUriPermission(uri, readFlag);
                 } catch (SecurityException | IllegalArgumentException ignored) {
-                    // Some picker apps do not grant persistable access.
+                    // Some picker apps do not support persistable access.
                 }
             }
             CustomizationManager.saveImageUri(this, uri);
             toast("Image selected");
-            currentTab = TAB_THEME;
             render();
         }
     }
 
     private void render() {
-        LinearLayout app = new LinearLayout(this);
-        app.setOrientation(LinearLayout.VERTICAL);
-        app.setBackground(rounded(COLOR_BG, 0, COLOR_BG));
-
         ScrollView scrollView = new ScrollView(this);
         scrollView.setFillViewport(true);
         scrollView.setBackgroundColor(COLOR_BG);
-        installSlideGesture(scrollView);
 
         root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
@@ -108,282 +84,115 @@ public class MainActivity extends Activity {
                 ScrollView.LayoutParams.WRAP_CONTENT
         ));
 
-        addTopBar();
-        addSlideIndicator();
-        renderCurrentPage();
+        addHeader();
+        addWorkingOnlyDashboard();
+        addThemeTools();
+        addPerformanceLevel();
+        addSystemImprovement();
+        addSupportAndRollback();
+        addDeviceReport();
 
-        app.addView(scrollView, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                0,
-                1f
-        ));
-        addSlidingNavigation(app);
-        setContentView(app);
+        setContentView(scrollView);
     }
 
-    private void installSlideGesture(View view) {
-        view.setOnTouchListener(new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View touched, MotionEvent event) {
-                if (event.getAction() == MotionEvent.ACTION_DOWN) {
-                    touchStartX = event.getX();
-                    touchStartY = event.getY();
-                } else if (event.getAction() == MotionEvent.ACTION_UP) {
-                    float dx = event.getX() - touchStartX;
-                    float dy = event.getY() - touchStartY;
-                    if (Math.abs(dx) > dp(90) && Math.abs(dx) > Math.abs(dy) * 1.4f) {
-                        if (dx < 0) {
-                            nextPage();
-                        } else {
-                            previousPage();
-                        }
-                    }
-                }
-                return false;
-            }
-        });
+    private void addHeader() {
+        TextView title = text("ColorOS Themes Rock", 30, COLOR_TEXT, true);
+        root.addView(title, matchWrap());
+
+        TextView subtitle = text("Working-only APK tools for OPPO, OnePlus, and realme customization.", 15, COLOR_MUTED, false);
+        subtitle.setPadding(0, dp(6), 0, dp(18));
+        root.addView(subtitle, matchWrap());
     }
 
-    private void renderCurrentPage() {
-        if (currentTab == TAB_THEME) {
-            renderThemePage();
-        } else if (currentTab == TAB_TOOLS) {
-            renderToolsPage();
-        } else if (currentTab == TAB_SUPPORT) {
-            renderSupportPage();
-        } else if (currentTab == TAB_SETTINGS) {
-            renderSettingsPage();
-        } else {
-            renderDashboardPage();
-        }
-    }
-
-    private void addTopBar() {
-        LinearLayout bar = new LinearLayout(this);
-        bar.setOrientation(LinearLayout.HORIZONTAL);
-        bar.setGravity(Gravity.CENTER_VERTICAL);
-        bar.setPadding(0, dp(4), 0, dp(14));
-
-        LinearLayout titleBox = new LinearLayout(this);
-        titleBox.setOrientation(LinearLayout.VERTICAL);
-
-        TextView title = text(titleForTab(), currentTab == TAB_DASHBOARD ? 30 : 26, COLOR_TEXT, true);
-        TextView subtitle = text(subtitleForTab(), 14, COLOR_MUTED, false);
-        titleBox.addView(title);
-        titleBox.addView(subtitle);
-        bar.addView(titleBox, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-        addHeaderPill(bar, "Free", COLOR_SUCCESS, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_DASHBOARD;
-                render();
-            }
-        });
-        addHeaderPill(bar, "↻", COLOR_ACCENT, refreshClick());
-
-        root.addView(bar, matchWrap());
-    }
-
-    private String titleForTab() {
-        if (currentTab == TAB_THEME) return "Theme Layers";
-        if (currentTab == TAB_TOOLS) return "Performance";
-        if (currentTab == TAB_SUPPORT) return "Support";
-        if (currentTab == TAB_SETTINGS) return "More";
-        return "ColorOS Rock";
-    }
-
-    private String subtitleForTab() {
-        if (currentTab == TAB_THEME) return "Liquid layer customization";
-        if (currentTab == TAB_TOOLS) return "Startup, display, and quick entries";
-        if (currentTab == TAB_SUPPORT) return "Report, backup, and rollback help";
-        if (currentTab == TAB_SETTINGS) return "Free mode and UI preferences";
-        return "Sliding liquid-glass customization dashboard";
-    }
-
-    private void renderDashboardPage() {
-        addLiquidHeroCard();
-        addFreeModeCard();
-        addSectionTitle("Sliding pages", "Swipe left or right, or use the bottom slider");
-        addFeatureCard("Theme Layers", "Wallpaper, lock screen, icons, and visual layers.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_THEME;
-                render();
-            }
-        });
-        addFeatureCard("Performance", "Startup-focused layout, display shortcuts, and lag checklist.", "Fast", COLOR_ACCENT, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_TOOLS;
-                render();
-            }
-        });
-        addFeatureCard("Safety", "Backup, restore, reports, and rollback guidance.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_SUPPORT;
-                render();
-            }
-        });
-        addDeviceCard();
-    }
-
-    private void renderThemePage() {
-        addSectionTitle("Wallpaper manager", "Choose one image and apply it where supported");
-        addActionButton("Select image", true, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openImagePicker();
-            }
-        });
-        addActionButton("Apply to Home + Lock screen", false, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                applySelectedWallpaper(WallpaperManager.FLAG_SYSTEM | WallpaperManager.FLAG_LOCK);
-            }
-        });
-        addActionButton("Apply to Lock screen only", false, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                applySelectedWallpaper(WallpaperManager.FLAG_LOCK);
-            }
-        });
-        addActionButton("Open wallpaper settings", false, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent("android.settings.WALLPAPER_SETTINGS"));
-            }
-        });
-        addSelectedImagePreview();
-
-        addSectionTitle("Layer customization", "Every layer has a status label and clean fallback");
-        addLayerCard("Base Layer", "Dark transparent surface, liquid glass background, and premium spacing.", "Ready", COLOR_SUCCESS);
-        addLayerCard("Wallpaper Layer", "Home and lock wallpaper picker with preview.", "Safe", COLOR_SUCCESS);
-        addLayerCard("Icon Layer", "Launcher-supported icon options where available.", "Needs test", COLOR_WARNING);
-        addLayerCard("Lock Layer", "Lock screen behavior depends on the device software.", "Needs test", COLOR_WARNING);
-        addLayerCard("Status Layer", "Clear badges for Safe, Needs test, Required, and Not supported.", "Ready", COLOR_SUCCESS);
-        addLayerCard("Support Layer", "Reports, backup notes, and rollback path stay visible.", "Ready", COLOR_SUCCESS);
-    }
-
-    private void renderToolsPage() {
-        addSectionTitle("Startup performance", "Fast launch, light effects, and no heavy background animation");
-        addFeatureCard("Lightweight Liquid Glass", "Transparent cards use simple drawables for smooth startup.", "Fast", COLOR_ACCENT, toastClick("Liquid glass mode is lightweight"));
-        addFeatureCard("Clean Customer Flow", "Customer pages use real tools, status labels, and support actions only.", "Clean", COLOR_SUCCESS, toastClick("Clean customer flow enabled"));
-        addFeatureCard("Minimal Motion", "Sliding page changes avoid heavy animation and keep the app responsive.", "Fast", COLOR_ACCENT, toastClick("Minimal motion enabled"));
-
-        addSectionTitle("Display controls", "Use safe shortcuts first");
-        addFeatureCard("Refresh Rate", "Open display settings for Auto, High, or Standard refresh rate options.", "Needs test", COLOR_WARNING, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
-            }
-        });
-        addFeatureCard("Animation Speed", "Open developer animation settings only when the user wants it.", "Needs permission", COLOR_WARNING, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
-            }
-        });
-        addFeatureCard("Battery Help", "Use honest guidance and avoid fake booster claims.", "Safe", COLOR_SUCCESS, toastClick("Battery checklist ready"));
-
-        addSectionTitle("Quick entries", "Useful settings shortcuts for customers");
-        addSmallCard("System settings", "Open Android Settings", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_SETTINGS));
-            }
-        });
-        addSmallCard("App settings", "Open installed app settings", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_APPLICATION_SETTINGS));
-            }
-        });
-        addSmallCard("Home settings", "Open launcher or default home options", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_HOME_SETTINGS));
-            }
-        });
-    }
-
-    private void renderSupportPage() {
-        addSectionTitle("Support report", "Copy or share this when a customer reports a problem");
-        addPlainCard("Latest report\n" + BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this));
-        addActionButton("Copy support report", true, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                copyReport();
-            }
-        });
-        addActionButton("Share support report", false, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                shareReport();
-            }
-        });
-
-        addSectionTitle("Safety", "Make backup and rollback easy to find");
-        addFeatureCard("Backup and Restore", "Keep customer data and theme settings easy to recover.", "Required", COLOR_ACCENT, toastClick("Backup and restore guide ready"));
-        addFeatureCard("Safe Disable", "Show customers how to turn off advanced features if something fails.", "Required", COLOR_ACCENT, toastClick("Safe disable guide ready"));
-        addFeatureCard("Rollback Help", "Use clear steps instead of risky hidden changes.", "Safe", COLOR_SUCCESS, toastClick("Rollback help ready"));
-    }
-
-    private void renderSettingsPage() {
-        addSectionTitle("Free mode", "Normal customer tools stay free and easy to use");
-        addSwitchRow("Free Mode Enabled", "Show free-first labels across the app", "free_mode", true);
-        addSwitchRow("Hide paid labels", "Avoid premium lock wording", "hide_paid_labels", true);
-        addSwitchRow("Show status badges", "Display Safe, Needs test, Experimental, or Not supported", "status_badges", true);
-
-        addDivider();
-        addSectionTitle("Liquid glass style", "Transparent layer effect without startup lag");
-        addSwitchRow("Transparent glass cards", "Use rounded translucent cards with subtle borders", "transparent_glass", true);
-        addSwitchRow("Blur-style depth", "Use lightweight depth effect instead of heavy live blur", "blur_style_depth", true);
-        addSwitchRow("Sliding app mode", "Use swipe pages and bottom slider navigation", "sliding_app", true);
-        addSwitchRow("Compact startup", "Keep first screen fast and focused", "compact_startup", true);
-
-        addDivider();
-        addSectionTitle("Customization preview", "Safe local labels for reports and previews");
-        addStatusBarBlurSettingsCard();
-        addAboutAndOtaCard();
-    }
-
-    private void addLiquidHeroCard() {
+    private void addWorkingOnlyDashboard() {
         LinearLayout card = card(true);
-        card.setPadding(dp(22), dp(22), dp(22), dp(22));
-        card.addView(badge("Free Liquid Glass", COLOR_SUCCESS));
-        TextView title = text("Sliding App Model", 28, COLOR_TEXT, true);
-        title.setPadding(0, dp(14), 0, dp(6));
-        card.addView(title);
-        card.addView(text("Transparent liquid-glass dashboard for OPPO, OnePlus, and realme customization. Built for free customer tools, smooth startup, clean layers, and reliable support.", 16, COLOR_MUTED, false));
-        card.addView(cardButton("Open Theme Layers", true, new View.OnClickListener() {
+        card.addView(badge("Working only", COLOR_SUCCESS));
+        card.addView(cardTitle("Safe customer dashboard"));
+        card.addView(cardBody("Problematic, unsupported, and untested features are not shown as working. Keep only safe tools, clear status labels, and rollback guidance."));
+        card.addView(cardButton("Refresh status", true, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                currentTab = TAB_THEME;
                 render();
+                toast("Status refreshed");
             }
         }));
         root.addView(card, cardParams());
     }
 
-    private void addFreeModeCard() {
-        LinearLayout card = card(false);
-        card.addView(cardTitle("Free-first policy"));
-        card.addView(cardBody("No forced payment screen. No fake premium locks. No confusing trial labels. Optional support can stay separate from core customer tools."));
-        root.addView(card, cardParams());
+    private void addThemeTools() {
+        addSectionTitle("Theme tools", "Safe tools stay available");
+        addFeatureCard("Select wallpaper", "Choose an image from the Android picker.", "Working", COLOR_SUCCESS, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openImagePicker();
+            }
+        });
+        addFeatureCard("Apply wallpaper", "Apply selected image to Home and Lock screen where Android allows it.", "Working", COLOR_SUCCESS, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                applySelectedWallpaper(WallpaperManager.FLAG_SYSTEM | WallpaperManager.FLAG_LOCK);
+            }
+        });
+        addFeatureCard("Theme package import", "Disabled until ownership, format, and compatibility are verified.", "Needs testing", COLOR_WARNING, toastClick("Theme import is disabled until verified"));
+        addFeatureCard("Problematic ZIP assets", "Compiled APK, Xposed metadata, native binaries, and signing files are blocked from import.", "Blocked", COLOR_DANGER, toastClick("Unsafe ZIP assets are blocked"));
+        addSelectedImagePreview();
     }
 
-    private void addDeviceCard() {
-        addPlainCard(BatteryOptimizationAdvisor.supportReport(this));
+    private void addPerformanceLevel() {
+        addSectionTitle("Performance Level", "Safe presets first");
+        addFeatureCard("Balanced", "Default daily profile. Keeps safe tools visible and avoids risky root actions.", "Working", COLOR_SUCCESS, toastClick("Balanced is recommended"));
+        addFeatureCard("Battery Saver", "Shows Android battery settings and safe guidance only.", "Safe guidance", COLOR_SUCCESS, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_BATTERY_SAVER_SETTINGS));
+            }
+        });
+        addFeatureCard("Smooth", "Shows display and refresh-rate settings where supported.", "Limited", COLOR_WARNING, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                openSettings(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
+            }
+        });
+        addFeatureCard("Performance and Custom", "Hidden from normal use until tested on real devices with rollback ready.", "Needs testing", COLOR_WARNING, toastClick("Performance and Custom need testing"));
+    }
+
+    private void addSystemImprovement() {
+        addSectionTitle("APK system improvement", "Status first, action second");
+        addFeatureCard("Device status", "Show model, Android version, and support report.", "Working", COLOR_SUCCESS, toastClick("Device status ready"));
+        addFeatureCard("Root status", "Show root requirement honestly. Do not claim root is active unless detected.", "Root required", COLOR_WARNING, toastClick("Root status guide ready"));
+        addFeatureCard("LSPosed scope", "Hooks stay unavailable until LSPosed and scope are verified.", "LSPosed scope required", COLOR_WARNING, toastClick("LSPosed scope guide ready"));
+        addFeatureCard("System hooks", "Problematic hooks stay disabled until device testing is complete.", "Not available", COLOR_DANGER, toastClick("System hooks are disabled"));
+    }
+
+    private void addSupportAndRollback() {
+        addSectionTitle("Support and rollback", "Keep recovery steps visible");
+        addFeatureCard("Copy support report", "Copy device and module status for issue reports.", "Working", COLOR_SUCCESS, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                copyReport();
+            }
+        });
+        addFeatureCard("Share support report", "Share safe diagnostic text only. No personal files are included.", "Working", COLOR_SUCCESS, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                shareReport();
+            }
+        });
+        addFeatureCard("Rollback help", "Disable problematic features and return to safe defaults.", "Required", COLOR_ACCENT, toastClick("Rollback guide ready"));
+    }
+
+    private void addDeviceReport() {
+        addSectionTitle("Latest report", "Safe diagnostic text");
+        addPlainCard(BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this));
     }
 
     private void addSelectedImagePreview() {
         Uri imageUri = CustomizationManager.selectedImageUri(this);
         if (imageUri == null) {
-            addPlainCard("No image selected yet. Tap Select image to choose a wallpaper.");
+            addPlainCard("No image selected yet. Tap Select wallpaper to choose an image.");
             return;
         }
+
         LinearLayout card = card(false);
         card.addView(cardTitle("Selected image preview"));
         ImageView preview = new ImageView(this);
@@ -399,53 +208,6 @@ public class MainActivity extends Activity {
         card.addView(preview, imageParams);
         card.addView(cardBody(CustomizationManager.selectedImageLabel(this)));
         root.addView(card, cardParams());
-    }
-
-    private void addStatusBarBlurSettingsCard() {
-        LinearLayout card = card(false);
-        card.addView(cardTitle("Status bar blur preview"));
-        card.addView(cardBody("Blur strength: " + CustomizationManager.statusBarBlurAmount(this) + "%\n" + CustomizationManager.statusBarBlurModeLabel(this)));
-        card.addView(cardButton("Decrease blur", false, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomizationManager.decreaseStatusBarBlur(MainActivity.this);
-                render();
-            }
-        }));
-        card.addView(cardButton("Increase blur", true, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomizationManager.increaseStatusBarBlur(MainActivity.this);
-                render();
-            }
-        }));
-        root.addView(card, cardParams());
-    }
-
-    private void addAboutAndOtaCard() {
-        LinearLayout card = card(false);
-        card.addView(cardTitle("About phone and OTA labels"));
-        card.addView(cardBody("Local helper labels are saved for preview and customer support reports."));
-
-        final EditText about = input("About phone label", CustomizationManager.aboutPhoneName(this));
-        card.addView(about);
-        final EditText ota = input("OTA display name", CustomizationManager.otaName(this));
-        card.addView(ota);
-
-        card.addView(cardButton("Save style labels", true, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                CustomizationManager.setAboutPhoneName(MainActivity.this, about.getText().toString());
-                CustomizationManager.setOtaName(MainActivity.this, ota.getText().toString());
-                toast("Style labels saved");
-                render();
-            }
-        }));
-        root.addView(card, cardParams());
-    }
-
-    private void addLayerCard(String title, String subtitle, String status, int statusColor) {
-        addFeatureCard(title, subtitle, status, statusColor, toastClick(title + " ready"));
     }
 
     private void addFeatureCard(String title, String subtitle, String status, int statusColor, View.OnClickListener listener) {
@@ -465,33 +227,30 @@ public class MainActivity extends Activity {
         root.addView(card, cardParams());
     }
 
-    private void addSmallCard(String title, String subtitle, View.OnClickListener listener) {
-        LinearLayout card = card(false);
-        card.setOnClickListener(listener);
-        card.addView(cardTitle(title));
-        card.addView(cardBody(subtitle));
-        root.addView(card, cardParams());
-    }
-
     private void addPlainCard(String body) {
         LinearLayout card = card(false);
         card.addView(cardBody(body));
         root.addView(card, cardParams());
     }
 
-    private void addActionButton(String text, boolean primary, View.OnClickListener listener) {
-        Button button = createButton(text, primary);
-        button.setOnClickListener(listener);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, dp(4), 0, dp(10));
-        root.addView(button, params);
+    private void addSectionTitle(String title, String subtitle) {
+        TextView titleView = text(title, 15, COLOR_ACCENT, true);
+        titleView.setPadding(0, dp(10), 0, dp(4));
+        root.addView(titleView, matchWrap());
+        TextView subtitleView = text(subtitle, 14, COLOR_MUTED, false);
+        subtitleView.setPadding(0, 0, 0, dp(14));
+        root.addView(subtitleView, matchWrap());
     }
 
     private Button cardButton(String text, boolean primary, View.OnClickListener listener) {
-        Button button = createButton(text, primary);
+        Button button = new Button(this);
+        button.setText(text);
+        button.setAllCaps(false);
+        button.setTextSize(15);
+        button.setTypeface(Typeface.DEFAULT_BOLD);
+        button.setPadding(dp(16), dp(12), dp(16), dp(12));
+        button.setTextColor(primary ? COLOR_BG : COLOR_TEXT);
+        button.setBackground(rounded(primary ? COLOR_ACCENT : COLOR_CARD_SOFT, dp(22), primary ? COLOR_ACCENT : COLOR_BORDER));
         button.setOnClickListener(listener);
         LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
@@ -502,23 +261,11 @@ public class MainActivity extends Activity {
         return button;
     }
 
-    private Button createButton(String text, boolean primary) {
-        Button button = new Button(this);
-        button.setText(text);
-        button.setAllCaps(false);
-        button.setTextSize(15);
-        button.setTypeface(Typeface.DEFAULT_BOLD);
-        button.setPadding(dp(16), dp(12), dp(16), dp(12));
-        button.setTextColor(primary ? COLOR_BG : COLOR_TEXT);
-        button.setBackground(rounded(primary ? COLOR_ACCENT : COLOR_CARD_SOFT, dp(22), primary ? COLOR_ACCENT_SOFT : COLOR_BORDER));
-        return button;
-    }
-
     private LinearLayout card(boolean elevated) {
         LinearLayout card = new LinearLayout(this);
         card.setOrientation(LinearLayout.VERTICAL);
         card.setPadding(dp(18), dp(18), dp(18), dp(18));
-        card.setBackground(rounded(elevated ? COLOR_CARD_SOFT : COLOR_CARD, dp(26), elevated ? COLOR_ACCENT_GLOW : COLOR_BORDER));
+        card.setBackground(rounded(elevated ? COLOR_CARD_SOFT : COLOR_CARD, dp(24), elevated ? COLOR_ACCENT : COLOR_BORDER));
         return card;
     }
 
@@ -532,7 +279,7 @@ public class MainActivity extends Activity {
 
     private TextView cardTitle(String text) {
         TextView view = text(text, 20, COLOR_TEXT, true);
-        view.setPadding(0, 0, 0, dp(8));
+        view.setPadding(0, dp(12), 0, dp(8));
         return view;
     }
 
@@ -542,152 +289,101 @@ public class MainActivity extends Activity {
         return view;
     }
 
-    private EditText input(String hint, String value) {
-        EditText input = new EditText(this);
-        input.setSingleLine(true);
-        input.setHint(hint);
-        input.setText(value);
-        input.setTextSize(16);
-        input.setTextColor(COLOR_TEXT);
-        input.setHintTextColor(COLOR_MUTED);
-        input.setBackground(rounded(COLOR_CARD_SOFT, dp(16), COLOR_BORDER));
-        input.setPadding(dp(14), dp(12), dp(14), dp(12));
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
+    private TextView text(String text, int sp, int color, boolean bold) {
+        TextView view = new TextView(this);
+        view.setText(text);
+        view.setTextSize(sp);
+        view.setTextColor(color);
+        view.setTypeface(Typeface.DEFAULT, bold ? Typeface.BOLD : Typeface.NORMAL);
+        return view;
+    }
+
+    private GradientDrawable rounded(int color, int radius, int strokeColor) {
+        GradientDrawable drawable = new GradientDrawable();
+        drawable.setColor(color);
+        drawable.setCornerRadius(radius);
+        drawable.setStroke(dp(1), strokeColor);
+        return drawable;
+    }
+
+    private LinearLayout.LayoutParams matchWrap() {
+        return new LinearLayout.LayoutParams(
                 LinearLayout.LayoutParams.MATCH_PARENT,
                 LinearLayout.LayoutParams.WRAP_CONTENT
         );
-        params.setMargins(0, dp(10), 0, 0);
-        input.setLayoutParams(params);
-        return input;
     }
 
-    private void addSlidingNavigation(LinearLayout app) {
-        LinearLayout dock = new LinearLayout(this);
-        dock.setOrientation(LinearLayout.VERTICAL);
-        dock.setPadding(dp(10), dp(8), dp(10), dp(8));
-        dock.setBackgroundColor(COLOR_NAV_BG);
-
-        LinearLayout arrows = new LinearLayout(this);
-        arrows.setOrientation(LinearLayout.HORIZONTAL);
-        arrows.setGravity(Gravity.CENTER_VERTICAL);
-        addSliderButton(arrows, "‹", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                previousPage();
-            }
-        });
-        addNavItem(arrows, TAB_DASHBOARD, "⌂", "Home");
-        addNavItem(arrows, TAB_THEME, "◈", "Layers");
-        addNavItem(arrows, TAB_TOOLS, "⚙", "Speed");
-        addNavItem(arrows, TAB_SUPPORT, "▣", "Help");
-        addNavItem(arrows, TAB_SETTINGS, "●", "More");
-        addSliderButton(arrows, "›", new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                nextPage();
-            }
-        });
-
-        dock.addView(arrows, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(74)
-        ));
-        app.addView(dock, new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(90)
-        ));
+    private LinearLayout.LayoutParams cardParams() {
+        LinearLayout.LayoutParams params = matchWrap();
+        params.setMargins(0, 0, 0, dp(14));
+        return params;
     }
 
-    private void addNavItem(LinearLayout nav, final int tab, String icon, String label) {
-        boolean selected = currentTab == tab;
-        LinearLayout item = new LinearLayout(this);
-        item.setOrientation(LinearLayout.VERTICAL);
-        item.setGravity(Gravity.CENTER);
-        item.setPadding(dp(3), dp(3), dp(3), dp(3));
-        item.setBackground(selected ? rounded(COLOR_CARD_SOFT, dp(28), COLOR_ACCENT_GLOW) : null);
-        item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = tab;
-                render();
-            }
-        });
-
-        TextView iconView = text(icon, 22, selected ? COLOR_ACCENT : COLOR_MUTED, true);
-        iconView.setGravity(Gravity.CENTER);
-        TextView labelView = text(label, 11, selected ? COLOR_TEXT : COLOR_MUTED, true);
-        labelView.setGravity(Gravity.CENTER);
-        item.addView(iconView);
-        item.addView(labelView);
-
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.MATCH_PARENT, 1f);
-        params.setMargins(dp(1), 0, dp(1), 0);
-        nav.addView(item, params);
-    }
-
-    private void addSliderButton(LinearLayout nav, String label, View.OnClickListener listener) {
-        TextView button = text(label, 26, COLOR_ACCENT, true);
-        button.setGravity(Gravity.CENTER);
-        button.setBackground(rounded(COLOR_CARD, dp(24), COLOR_BORDER));
-        button.setOnClickListener(listener);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(34), dp(54));
-        params.setMargins(dp(2), dp(10), dp(2), dp(10));
-        nav.addView(button, params);
-    }
-
-    private void addSlideIndicator() {
-        LinearLayout dots = new LinearLayout(this);
-        dots.setOrientation(LinearLayout.HORIZONTAL);
-        dots.setGravity(Gravity.CENTER);
-        dots.setPadding(0, 0, 0, dp(16));
-        for (int i = 0; i < TAB_COUNT; i++) {
-            TextView dot = new TextView(this);
-            dot.setText(currentTab == i ? "━━━━" : "━━");
-            dot.setTextSize(12);
-            dot.setTextColor(currentTab == i ? COLOR_ACCENT : COLOR_BORDER);
-            dot.setGravity(Gravity.CENTER);
-            final int target = i;
-            dot.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    currentTab = target;
-                    render();
-                }
-            });
-            dots.addView(dot, new LinearLayout.LayoutParams(dp(currentTab == i ? 38 : 24), dp(20)));
+    private void openImagePicker() {
+        try {
+            startActivityForResult(CustomizationManager.imagePickerIntent(), REQUEST_PICK_IMAGE);
+        } catch (ActivityNotFoundException failure) {
+            toast("No image picker found");
         }
-        root.addView(dots, matchWrap());
     }
 
-    private void addHeaderPill(LinearLayout bar, String label, int color, View.OnClickListener listener) {
-        TextView action = text(label, label.length() > 2 ? 12 : 18, COLOR_BG, true);
-        action.setGravity(Gravity.CENTER);
-        action.setPadding(dp(10), 0, dp(10), 0);
-        action.setBackground(rounded(color, dp(999), color));
-        action.setOnClickListener(listener);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(label.length() > 2 ? dp(62) : dp(44), dp(36));
-        params.setMargins(dp(8), 0, 0, 0);
-        bar.addView(action, params);
-    }
+    private void applySelectedWallpaper(int flags) {
+        Uri imageUri = CustomizationManager.selectedImageUri(this);
+        if (imageUri == null) {
+            toast("Select an image first");
+            return;
+        }
 
-    private void nextPage() {
-        currentTab = (currentTab + 1) % TAB_COUNT;
-        render();
-    }
-
-    private void previousPage() {
-        currentTab = (currentTab - 1 + TAB_COUNT) % TAB_COUNT;
-        render();
-    }
-
-    private View.OnClickListener refreshClick() {
-        return new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                toast("Page refreshed");
-                render();
+        InputStream input = null;
+        try {
+            input = getContentResolver().openInputStream(imageUri);
+            if (input == null) {
+                toast("Cannot open selected image");
+                return;
             }
-        };
+            WallpaperManager.getInstance(this).setStream(input, null, true, flags);
+            toast("Wallpaper applied");
+        } catch (IOException | SecurityException failure) {
+            toast("Wallpaper apply failed");
+        } finally {
+            if (input != null) {
+                try {
+                    input.close();
+                } catch (IOException ignored) {
+                    // Nothing else to close.
+                }
+            }
+        }
+    }
+
+    private void openSettings(Intent intent) {
+        try {
+            startActivity(intent);
+        } catch (ActivityNotFoundException failure) {
+            toast("Settings screen not available");
+        }
+    }
+
+    private void copyReport() {
+        String report = BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this);
+        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
+        if (clipboard != null) {
+            clipboard.setPrimaryClip(ClipData.newPlainText("ColorOS Themes Rock report", report));
+            toast("Report copied");
+        }
+    }
+
+    private void shareReport() {
+        String report = BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this);
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("text/plain");
+        share.putExtra(Intent.EXTRA_SUBJECT, "ColorOS Themes Rock support report");
+        share.putExtra(Intent.EXTRA_TEXT, report);
+        try {
+            startActivity(Intent.createChooser(share, "Share support report"));
+        } catch (ActivityNotFoundException failure) {
+            toast("No share app found");
+        }
     }
 
     private View.OnClickListener toastClick(final String message) {
@@ -699,156 +395,8 @@ public class MainActivity extends Activity {
         };
     }
 
-    private void addDivider() {
-        View line = new View(this);
-        line.setBackgroundColor(COLOR_BORDER);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                dp(1)
-        );
-        params.setMargins(0, dp(18), 0, dp(20));
-        root.addView(line, params);
-    }
-
-    private void addSwitchRow(String title, String subtitle, final String key, boolean defaultValue) {
-        LinearLayout row = new LinearLayout(this);
-        row.setOrientation(LinearLayout.HORIZONTAL);
-        row.setGravity(Gravity.CENTER_VERTICAL);
-        row.setPadding(0, dp(16), 0, dp(16));
-
-        LinearLayout left = new LinearLayout(this);
-        left.setOrientation(LinearLayout.VERTICAL);
-        left.addView(text(title, 18, COLOR_TEXT, true));
-        if (subtitle != null && !subtitle.trim().isEmpty()) {
-            TextView sub = text(subtitle, 14, COLOR_MUTED, false);
-            sub.setPadding(0, dp(3), 0, 0);
-            left.addView(sub);
-        }
-        row.addView(left, new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
-
-        Switch option = new Switch(this);
-        option.setChecked(prefBool(key, defaultValue));
-        option.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
-                saveBool(key, isChecked);
-                toast("Saved");
-            }
-        });
-        row.addView(option);
-        root.addView(row, matchWrap());
-    }
-
-    private void addSectionTitle(String title, String subtitle) {
-        TextView titleView = text(title, 15, COLOR_ACCENT, true);
-        titleView.setPadding(0, dp(10), 0, dp(4));
-        root.addView(titleView, matchWrap());
-        if (subtitle != null) {
-            TextView subtitleView = text(subtitle, 14, COLOR_MUTED, false);
-            subtitleView.setPadding(0, 0, 0, dp(14));
-            root.addView(subtitleView, matchWrap());
-        }
-    }
-
-    private void openImagePicker() {
-        try {
-            startActivityForResult(CustomizationManager.imagePickerIntent(), REQUEST_PICK_IMAGE);
-        } catch (ActivityNotFoundException failure) {
-            toast("No image picker found");
-        }
-    }
-
-    private void applySelectedWallpaper(int target) {
-        try {
-            String message = CustomizationManager.applyWallpaper(this, target);
-            Toast.makeText(this, message, Toast.LENGTH_LONG).show();
-        } catch (IOException failure) {
-            Toast.makeText(this, "Wallpaper failed: image cannot be read", Toast.LENGTH_LONG).show();
-        } catch (RuntimeException failure) {
-            Toast.makeText(this, "Wallpaper failed on this device", Toast.LENGTH_LONG).show();
-        }
-    }
-
-    private void openSettings(Intent intent) {
-        try {
-            startActivity(intent);
-        } catch (ActivityNotFoundException firstFailure) {
-            try {
-                startActivity(new Intent(Settings.ACTION_SETTINGS));
-            } catch (ActivityNotFoundException secondFailure) {
-                toast("Settings page not available on this device");
-            }
-        }
-    }
-
-    private void copyReport() {
-        ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-        if (clipboard != null) {
-            clipboard.setPrimaryClip(ClipData.newPlainText(
-                    "ColorOS Themes Rock Support Report",
-                    BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this)
-            ));
-            toast("Support report copied");
-        }
-    }
-
-    private void shareReport() {
-        Intent shareIntent = new Intent(Intent.ACTION_SEND);
-        shareIntent.setType("text/plain");
-        shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ColorOS Themes Rock Support Report");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this));
-        try {
-            startActivity(Intent.createChooser(shareIntent, "Share report"));
-        } catch (ActivityNotFoundException failure) {
-            toast("No share app found");
-        }
-    }
-
-    private TextView text(String value, int sp, int color, boolean bold) {
-        TextView view = new TextView(this);
-        view.setText(value);
-        view.setTextSize(sp);
-        view.setTextColor(color);
-        view.setTypeface(Typeface.DEFAULT, bold ? Typeface.BOLD : Typeface.NORMAL);
-        view.setIncludeFontPadding(true);
-        return view;
-    }
-
-    private GradientDrawable rounded(int fillColor, int radius, int strokeColor) {
-        GradientDrawable drawable = new GradientDrawable();
-        drawable.setColor(fillColor);
-        drawable.setCornerRadius(radius);
-        drawable.setStroke(dp(1), strokeColor);
-        return drawable;
-    }
-
-    private LinearLayout.LayoutParams cardParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, 0, 0, dp(16));
-        return params;
-    }
-
-    private LinearLayout.LayoutParams matchWrap() {
-        return new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-    }
-
-    private boolean prefBool(String key, boolean defaultValue) {
-        SharedPreferences prefs = getSharedPreferences(PREFS_UI, Context.MODE_PRIVATE);
-        return prefs.getBoolean(key, defaultValue);
-    }
-
-    private void saveBool(String key, boolean value) {
-        getSharedPreferences(PREFS_UI, Context.MODE_PRIVATE).edit().putBoolean(key, value).apply();
-    }
-
-    private void toast(String value) {
-        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
+    private void toast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 
     private int dp(int value) {
