@@ -15,6 +15,9 @@ on:
       - 'customer-options/**'
       - 'docs/**'
       - 'module.prop'
+      - 'latestStable.json'
+      - 'latestBeta.json'
+      - 'latestNightly.json'
       - '.github/workflows/publish-github-release.yml'
   workflow_dispatch:
     inputs:
