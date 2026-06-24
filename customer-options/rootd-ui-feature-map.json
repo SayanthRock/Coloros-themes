@@ -59,6 +59,15 @@
       "action": "Inspect ZIP and theme packages before import"
     },
     {
+      "id": "performance_level",
+      "title": "Performance Level",
+      "free": true,
+      "requiresRoot": false,
+      "requiresLsposed": false,
+      "defaultLabel": "Limited",
+      "action": "Show Off, Battery Saver, Balanced, Smooth, Performance, and Custom presets with safety labels"
+    },
+    {
       "id": "systemui_hooks",
       "title": "SystemUI hooks",
       "free": false,
