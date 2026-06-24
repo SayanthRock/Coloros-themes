@@ -1,0 +1,73 @@
+{
+  "name": "UI 2026 Standard Premium",
+  "version": 1,
+  "free_customer_tools": true,
+  "premium_meaning": "premium design quality, not paid lock",
+  "default_accent": "desert_sand",
+  "appearance_modes": [
+    "system",
+    "dark",
+    "light"
+  ],
+  "status_labels": [
+    "Working",
+    "Limited",
+    "Needs testing",
+    "Not available"
+  ],
+  "pages": [
+    {
+      "id": "home",
+      "title": "Home",
+      "goal": "quick customer dashboard",
+      "upgrade": "add hero card, status grid, and one-tap actions"
+    },
+    {
+      "id": "theme_layers",
+      "title": "Theme Layers",
+      "goal": "wallpaper and visual layer tools",
+      "upgrade": "improve labels and show safe fallbacks"
+    },
+    {
+      "id": "performance",
+      "title": "Performance",
+      "goal": "battery, display, and settings guidance",
+      "upgrade": "add battery, memory, CPU, refresh-rate, and performance cards"
+    },
+    {
+      "id": "support",
+      "title": "Support",
+      "goal": "feedback, after-sale, reports, and rollback",
+      "upgrade": "add Feedback, AfterSale, Safe Mode, copy report, and share report cards"
+    },
+    {
+      "id": "more",
+      "title": "More",
+      "goal": "appearance and preferences",
+      "upgrade": "connect dark, light, system mode, and accent presets"
+    }
+  ],
+  "working_feature_upgrades": [
+    "wallpaper_picker",
+    "home_lock_wallpaper_apply",
+    "support_report_copy",
+    "support_report_share",
+    "settings_shortcuts",
+    "display_settings_shortcut",
+    "app_settings_shortcut",
+    "feature_status_labels"
+  ],
+  "new_cards": [
+    "root_status",
+    "lsposed_status",
+    "scope_status",
+    "battery_level",
+    "cpu_core_count",
+    "memory_status",
+    "display_refresh_rate",
+    "performance_level",
+    "feedback",
+    "after_sale",
+    "safe_mode"
+  ]
+}
