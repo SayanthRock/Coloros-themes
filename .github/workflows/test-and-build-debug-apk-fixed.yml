@@ -1,6 +1,12 @@
-name: Test and Build Debug APK Fixed
+name: Build ColorOS Customizer APK
 
 on:
+  pull_request:
+    branches:
+      - main
+    paths:
+      - 'lsposed-helper/**'
+      - '.github/workflows/test-and-build-debug-apk-fixed.yml'
   push:
     branches:
       - main
@@ -10,7 +16,7 @@ on:
   workflow_dispatch:
 
 concurrency:
-  group: test-and-build-debug-apk-fixed-${{ github.ref }}
+  group: build-coloros-customizer-apk-${{ github.ref }}
   cancel-in-progress: true
 
 permissions:
@@ -21,7 +27,7 @@ env:
 
 jobs:
   debug-apk:
-    name: Android CI Debug Fixed
+    name: Test and Build Debug APK
     runs-on: ubuntu-latest
     timeout-minutes: 35
     steps:
@@ -45,9 +51,17 @@ jobs:
         with:
           gradle-version: 8.10.2
 
-      - name: Validate Gradle Runtime
+      - name: Validate Gradle runtime
         working-directory: lsposed-helper
         run: gradle --version
+
+      - name: Validate Android project files
+        run: |
+          test -f lsposed-helper/settings.gradle
+          test -f lsposed-helper/build.gradle
+          test -f lsposed-helper/app/build.gradle
+          test -f lsposed-helper/app/src/main/AndroidManifest.xml
+          test -f lsposed-helper/app/src/main/assets/xposed_init
 
       - name: Run unit tests
         working-directory: lsposed-helper
@@ -58,9 +72,16 @@ jobs:
         run: gradle :app:assembleDebug --no-daemon --stacktrace
 
       - name: Collect debug APK
+        shell: bash
         run: |
+          set -euo pipefail
           mkdir -p release/debug-apk
-          cp lsposed-helper/app/build/outputs/apk/debug/app-debug.apk "release/debug-apk/${APP_NAME}-debug.apk"
+          apk_path="lsposed-helper/app/build/outputs/apk/debug/app-debug.apk"
+          if [[ ! -f "$apk_path" ]]; then
+            echo "Missing debug APK: $apk_path"
+            exit 1
+          fi
+          cp "$apk_path" "release/debug-apk/${APP_NAME}-debug.apk"
           cat > release/debug-apk/BUILD_INFO.txt <<INFO
           Project: ColorOS Customizer
           Build: debug APK
