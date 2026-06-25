@@ -1,39 +1,42 @@
 # ColorOS Customizer APK
 
-Safe customer helper APK for OPPO, OnePlus, and realme theme, wallpaper, and battery support.
+Safe customer helper APK for OPPO, OnePlus, and realme theme, wallpaper, permission, root-status, LSPosed-status, and support guidance.
 
 ## Current version
 
-`0.3.3`
+`0.5.4`
 
 ## What changed
 
-- Added polished UI update.
-- Added status bar blur increase and decrease controls.
-- Added fallback mode for phones without native blur support.
-- Added blur visibility switch and blur amount display.
-- Added Customization Center.
-- Added open image picker option.
-- Added selected image preview.
-- Added Home screen wallpaper button.
-- Added Lock screen wallpaper button.
-- Added Home + Lock wallpaper button.
-- Added About phone helper label.
-- Added custom display name setting with `Sayanth Rock` default.
-- Added on/off switches for custom name and image background preview.
-- Added full support report copy.
+- Aligned APK version with the module release version.
+- Kept polished liquid-glass UI update.
+- Kept status bar blur increase and decrease controls.
+- Kept fallback mode for phones without native blur support.
+- Kept blur visibility switch and blur amount display.
+- Kept Customization Center.
+- Kept open image picker option.
+- Kept selected image preview.
+- Kept Home screen wallpaper button.
+- Kept Lock screen wallpaper button.
+- Kept Home + Lock wallpaper button.
+- Kept About phone helper label.
+- Kept custom display name setting with `Sayanth Rock` default.
+- Kept on/off switches for custom name and image background preview.
+- Kept full support report copy.
 - Kept battery status and settings shortcuts.
-- Updated GitHub Actions APK artifact name to `ColorOS-Customizer`.
+- Kept GitHub Actions APK artifact name as `ColorOS-Customizer`.
 
 ## Safe approach
 
 The APK uses public Android image picking and wallpaper APIs. Custom text values are stored as helper settings and shown in reports first. Theme Store behavior remains customer-safe.
 
+Root, LSPosed, and overlay features must remain status-first: detect support, show clear labels, and avoid hidden or risky system changes until tested on the exact device and ROM.
+
 ## Build APK locally
 
 ```bash
 cd lsposed-helper
-gradle :app:assembleDebug --no-daemon --stacktrace
+gradle :app:testDebugUnitTest :app:assembleDebug --no-daemon --stacktrace
 ```
 
 Output:
