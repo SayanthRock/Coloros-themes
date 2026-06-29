@@ -1,10 +1,10 @@
 {
   "schema": 1,
-  "project": "ColorOS Themes Rock",
-  "packageId": "coloros_themes_rock",
+  "project": "ColorOS Toolbox",
+  "packageId": "coloros_toolbox",
   "channel": "stable",
-  "version": "v0.5.4",
-  "versionCode": 9,
+  "version": "v0.6.0",
+  "versionCode": 12,
   "status": "starter-support",
   "releaseLevel": "Stable",
   "recommendedForCustomers": true,
@@ -16,11 +16,13 @@
     "realme UI"
   ],
   "featureLabelsRequired": true,
-  "safetyMessage": "Use only features marked Working for your device. Advanced or untested features must show clear labels.",
+  "safetyMessage": "Use only tweaks marked working or tested for your ROM. Recheck LSPosed scopes and reboot after a system update.",
   "downloadUrl": "",
   "changelog": [
-    "Customer-safe release metadata added.",
-    "Stable channel reserved for tested customer builds.",
-    "Root, LSPosed, scope, and rollback warnings required before advanced features."
+    "Renamed helper app to ColorOS Toolbox.",
+    "Added a lightweight toolbox launcher with clear tweak toggles.",
+    "Added safe scope refresh guidance for broken tweaks after ROM updates.",
+    "Added basic update checking and changelog display from public release metadata.",
+    "Added Malayalam localization scaffold for the main toolbox screen."
   ]
 }
