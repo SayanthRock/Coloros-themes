@@ -1,6 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
+    <uses-permission android:name="android.permission.INTERNET" />
+
     <!-- Wallpaper customization -->
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
 
@@ -21,6 +23,16 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
+    <queries>
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="me.weishu.kernelsu" />
+        <package android:name="io.github.rifsxd.ksunext" />
+        <package android:name="me.bmax.apatch" />
+        <package android:name="org.lsposed.manager" />
+        <package android:name="io.github.lsposed.manager" />
+        <package android:name="io.github.libxposed.manager" />
+    </queries>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -33,19 +45,23 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Free-first ColorOS customization, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
+            android:value="Community ColorOS toolbox for practical tweaks, scope guidance, refresh actions, and safe LSPosed-first behavior" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".ToolboxActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
         <activity
             android:name=".PermissionCenterActivity"
