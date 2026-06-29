@@ -21,6 +21,16 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
+    <queries>
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="me.weishu.kernelsu" />
+        <package android:name="io.github.rifsxd.ksunext" />
+        <package android:name="me.bmax.apatch" />
+        <package android:name="org.lsposed.manager" />
+        <package android:name="io.github.lsposed.manager" />
+        <package android:name="io.github.libxposed.manager" />
+    </queries>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -33,7 +43,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Free-first ColorOS customization, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
+            android:value="Setup-first ColorOS customization helper for Magisk, KernelSU, APatch, LSPosed scopes, ROM modules, and supported UI tweaks" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
