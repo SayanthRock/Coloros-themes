@@ -13,6 +13,8 @@ This project is for legal customization using assets that you created, own, or h
 - A Rootd customer foundation for status-first package targets: `android`, `com.android.systemui`, and `com.android.settings`.
 - Customer overlay assets under `assets/Overlays/` for safe previews, presets, templates, support reports, and future tested overlay APK work.
 - A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
+- A setup-first APK experience for Magisk, KernelSU, APatch, LSPosed scopes, ROM-specific module profiles, module flashing guidance, and reboot verification.
+- Main UI tweak focus areas: lock screen, status bar, quick settings, launcher, System UI, and supported lock screen weather features.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
 
@@ -43,6 +45,32 @@ Every feature shown in the APK should use a clear status label.
 | LSPosed scope required | Needs LSPosed/Xposed scope for the target package. |
 
 Free customer tools should stay visible. Advanced or untested items must show clear labels so customers know what works, what needs testing, and what is not available on their device.
+
+## Setup-first customer flow
+
+The ColorOS Customizer APK now starts with a guided setup path:
+
+1. Detect a root manager such as Magisk, KernelSU, KernelSU Next, APatch, or a compatible module manager.
+2. Check safe root indicators and show a readable status report.
+3. Open LSPosed or a compatible manager when installed.
+4. Tell users exactly which scopes to enable.
+5. Generate a ROM Module Profile from brand, model, device, product, build display, Android release, Android SDK, ROM family, and detected managers.
+6. Guide the user to flash the generated module ZIP.
+7. Ask for a reboot after flashing or changing LSPosed scope.
+8. Verify with the support report after boot.
+
+Full details are in [`docs/SETUP_WIZARD.md`](docs/SETUP_WIZARD.md).
+
+## Main APK focus
+
+| Area | APK experience |
+|---|---|
+| Lock screen | Clock, wallpaper, media surface, and weather guidance where supported. |
+| Status bar | Icon spacing, blur preference, status label support, and safe profile export. |
+| Quick settings | Tile shape, transparency preference, header and brightness surface guidance. |
+| Launcher | Grid, folder preview, icon-layer compatibility, and supported launcher notes. |
+| System UI | SystemUI scope labels, notification surface guidance, and fallback status. |
+| Weather lock screen | OPlus, ColorOS, realme, or HeyTap weather package guidance where supported. |
 
 ## Rootd customer overlay targets
 
@@ -100,6 +128,7 @@ Use these only when sharing rights are clear.
 │   ├── compatibility.md
 │   ├── permissions.md
 │   ├── safety.md
+│   ├── SETUP_WIZARD.md
 │   ├── THEME_MODULE_BUILDER.md
 │   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
 │   ├── ROOTD_CUSTOMER_FOUNDATION.md
@@ -170,7 +199,7 @@ APK and combined release automation is handled by:
 ## Release channels
 
 | Channel | File | Intended use |
-|---|---|---|
+|---|---|
 | Stable | `latestStable.json` | Tested public customer builds. |
 | Beta | `latestBeta.json` | Broader testing before stable. |
 | Nightly | `latestNightly.json` | Experimental development builds. |
@@ -197,10 +226,12 @@ These files can be used later by the APK update screen, GitHub release automatio
 ## Install module ZIP
 
 1. Download the latest module ZIP artifact or GitHub Release asset.
-2. Open Magisk, KernelSU, or APatch.
-3. Flash the module ZIP.
-4. Reboot.
-5. Test on one device before sharing with customers.
+2. Open Magisk, KernelSU, APatch, or a compatible module manager.
+3. Flash the generated ROM-specific module ZIP.
+4. Enable the ColorOS Customizer APK in LSPosed or a compatible framework.
+5. Scope only the required packages shown in the setup guide.
+6. Reboot.
+7. Open the app and copy the support report if something fails.
 
 ## Safety rule
 
