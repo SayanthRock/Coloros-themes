@@ -6,6 +6,8 @@
     <string name="section_status">നില</string>
     <string name="section_tools">ടൂളുകൾ</string>
     <string name="section_tools_subtitle">മാനേജറുകൾ തുറക്കുക, തകരാറായ സ്കോപ്പുകൾ റിഫ്രെഷ് ചെയ്യുക, സപ്പോർട്ട് വിവരങ്ങൾ കോപ്പി ചെയ്യുക.</string>
+    <string name="section_problem_solver">റൂട്ട് സെറ്റപ്പ് Problem Solver</string>
+    <string name="section_problem_solver_subtitle">റൂട്ട് സെറ്റപ്പ്, റിഫ്രെഷ്, optimization, rollback, issue report എന്നിവയ്ക്കുള്ള guide.</string>
     <string name="section_tweaks">ട്വീക്കുകൾ</string>
     <string name="section_tweaks_subtitle">ഓരോ ട്വീക്കും System UI അല്ലെങ്കിൽ app scope access വേണമോ എന്ന് വ്യക്തമായി കാണിക്കും.</string>
     <string name="section_updates">അപ്ഡേറ്റുകൾ</string>
@@ -17,6 +19,10 @@
     <string name="action_refresh_scope">പ്രശ്നമുള്ള സ്കോപ്പ് റിഫ്രെഷ് ചെയ്യുക</string>
     <string name="action_open_permissions">Permission Center തുറക്കുക</string>
     <string name="action_check_updates">അപ്ഡേറ്റ് പരിശോധിക്കുക</string>
+    <string name="action_root_setup_plan">റൂട്ട് സെറ്റപ്പ് പ്ലാൻ</string>
+    <string name="action_fix_current_matters">നിലവിലെ പ്രശ്നങ്ങൾ fix ചെയ്യുക</string>
+    <string name="action_optimize_refresh">Optimize ചെയ്ത് റിഫ്രെഷ് ചെയ്യുക</string>
+    <string name="action_copy_solver_report">Solver report കോപ്പി ചെയ്യുക</string>
     <string name="message_no_root_manager">പിന്തുണയുള്ള root manager കണ്ടെത്തിയില്ല</string>
     <string name="message_no_lsposed">LSPosed മാനേജർ കണ്ടെത്തിയില്ല</string>
     <string name="message_saved">സേവ് ചെയ്തു</string>
