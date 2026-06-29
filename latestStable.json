@@ -3,8 +3,8 @@
   "project": "ColorOS Toolbox",
   "packageId": "coloros_toolbox",
   "channel": "stable",
-  "version": "v0.6.0",
-  "versionCode": 12,
+  "version": "v0.6.1",
+  "versionCode": 13,
   "status": "starter-support",
   "releaseLevel": "Stable",
   "recommendedForCustomers": true,
@@ -16,13 +16,14 @@
     "realme UI"
   ],
   "featureLabelsRequired": true,
-  "safetyMessage": "Use only tweaks marked working or tested for your ROM. Recheck LSPosed scopes and reboot after a system update.",
+  "safetyMessage": "Root setup enables advanced guided repair, scope refresh, diagnostics, and rollback. It does not guarantee unsupported private ROM hooks will work on every firmware build.",
   "downloadUrl": "",
   "changelog": [
-    "Renamed helper app to ColorOS Toolbox.",
-    "Added a lightweight toolbox launcher with clear tweak toggles.",
-    "Added safe scope refresh guidance for broken tweaks after ROM updates.",
-    "Added basic update checking and changelog display from public release metadata.",
-    "Added Malayalam localization scaffold for the main toolbox screen."
+    "Added Root Setup Problem Solver section to the toolbox.",
+    "Added guided root setup plan for Magisk, KernelSU, APatch, and compatible managers.",
+    "Added Fix current matters checklist for module, scope, reboot, and tweak isolation issues.",
+    "Added Optimize and refresh workflow for broken tweaks after ROM updates.",
+    "Added full solver report export with root, LSPosed, scope, ROM, and feature state details.",
+    "Updated localization strings for the new problem solver actions."
   ]
 }
