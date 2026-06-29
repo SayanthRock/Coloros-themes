@@ -13,7 +13,7 @@ This project is for legal customization using assets that you created, own, or h
 - A Rootd customer foundation for status-first package targets: `android`, `com.android.systemui`, and `com.android.settings`.
 - Customer overlay assets under `assets/Overlays/` for safe previews, presets, templates, support reports, and future tested overlay APK work.
 - A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
-- A setup-first APK experience for Magisk, KernelSU, APatch, LSPosed scopes, ROM-specific module profiles, module flashing guidance, and reboot verification.
+- A setup-first APK foundation for Magisk, KernelSU, APatch, LSPosed scopes, ROM-specific module profiles, module flashing guidance, and reboot verification.
 - Main UI tweak focus areas: lock screen, status bar, quick settings, launcher, System UI, and supported lock screen weather features.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
@@ -48,7 +48,7 @@ Free customer tools should stay visible. Advanced or untested items must show cl
 
 ## Setup-first customer flow
 
-The ColorOS Customizer APK now starts with a guided setup path:
+The ColorOS Customizer APK is being moved toward a guided setup path:
 
 1. Detect a root manager such as Magisk, KernelSU, KernelSU Next, APatch, or a compatible module manager.
 2. Check safe root indicators and show a readable status report.
