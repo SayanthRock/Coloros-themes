@@ -1,4 +1,38 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name">ColorOS Customizer</string>
+    <string name="app_name">ColorOS Toolbox</string>
+    <string name="toolbox_badge">Community tool</string>
+    <string name="toolbox_subtitle">Lightweight LSPosed toolbox for ColorOS, OxygenOS, and realme UI tweaks.</string>
+    <string name="section_status">Status</string>
+    <string name="section_tools">Tools</string>
+    <string name="section_tools_subtitle">Open managers, refresh broken scopes, and copy support details.</string>
+    <string name="section_tweaks">Tweaks</string>
+    <string name="section_tweaks_subtitle">Each toggle clearly shows whether it needs System UI or app scope access.</string>
+    <string name="section_updates">Updates</string>
+    <string name="section_updates_subtitle">Basic release metadata and changelog support.</string>
+    <string name="updates_note">Checks the public stable metadata JSON and shows the latest changelog.</string>
+    <string name="action_copy_report">Copy support report</string>
+    <string name="action_open_root_manager">Open root manager</string>
+    <string name="action_open_lsposed">Open LSPosed</string>
+    <string name="action_refresh_scope">Refresh affected scope</string>
+    <string name="action_open_permissions">Open permission center</string>
+    <string name="action_check_updates">Check updates</string>
+    <string name="message_no_root_manager">No supported root manager found</string>
+    <string name="message_no_lsposed">No LSPosed-compatible manager found</string>
+    <string name="message_saved">Saved</string>
+    <string name="message_copied">Copied</string>
+    <string name="badge_needs_test">Needs test</string>
+    <string name="badge_scope_required">Scope required</string>
+    <string name="tweak_lockscreen">Lock screen tweaks</string>
+    <string name="tweak_lockscreen_desc">Lock screen clock, media surface, wallpaper behavior, and quality-of-life layout adjustments. Some ROM builds need extra testing.</string>
+    <string name="tweak_statusbar">Status bar tweaks</string>
+    <string name="tweak_statusbar_desc">Status bar spacing, icon behavior, and polish features. Requires System UI scope to work.</string>
+    <string name="tweak_qs">Quick settings tweaks</string>
+    <string name="tweak_qs_desc">Quick settings tile and panel improvements. Requires System UI scope to work.</string>
+    <string name="tweak_launcher">Launcher tweaks</string>
+    <string name="tweak_launcher_desc">Launcher spacing and behavior helpers for supported launcher packages. OEM differences mean this needs testing.</string>
+    <string name="tweak_systemui">System UI tweaks</string>
+    <string name="tweak_systemui_desc">Notification and panel quality-of-life changes. Requires System UI scope and a reboot after scope changes.</string>
+    <string name="tweak_weather">Weather lock screen</string>
+    <string name="tweak_weather_desc">Weather-related lock screen features where the ROM exposes compatible weather packages.</string>
 </resources>
