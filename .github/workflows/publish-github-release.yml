@@ -22,7 +22,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Version tag, example: v0.5.6'
+        description: 'Version tag, example: v0.6.0'
         required: false
         default: ''
       publish:
@@ -128,6 +128,7 @@ jobs:
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
+          Android target policy: Android 15 supported, Android 16/17 device testing required
           INFO
 
           (cd release/files && sha256sum * > SHA256SUMS.txt)
@@ -158,11 +159,19 @@ jobs:
           - BUILD_INFO.txt
           - SHA256SUMS.txt
 
+          ## Added in this line
+          - Android 15 support label
+          - Android 16 forward-compatible label
+          - Android 17 preview-safe label
+          - Rootd Health page in the helper APK
+          - Systemless-only module policy
+          - Improved support report and rollback metadata
+
           ## Free customer tools
           - Wallpaper tools
           - Feedback and support pages
           - Safe mode guidance
-          - Diagnostics status page plan
+          - Diagnostics status page
           - Feature labels: Working, Limited, Needs testing, Not available
 
           ## Release rule
