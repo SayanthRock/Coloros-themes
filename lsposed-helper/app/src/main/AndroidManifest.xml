@@ -21,6 +21,15 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
+    <!-- Package visibility for read-only Rootd/LSPosed diagnostics on Android 11+. -->
+    <queries>
+        <package android:name="com.topjohnwu.magisk" />
+        <package android:name="me.weishu.kernelsu" />
+        <package android:name="me.bmax.apatch" />
+        <package android:name="org.lsposed.manager" />
+        <package android:name="org.lsposed.manager.debug" />
+    </queries>
+
     <application
         android:allowBackup="false"
         android:icon="@mipmap/ic_launcher"
@@ -33,7 +42,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Free-first ColorOS customization, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
+            android:value="Free-first Android 15/16/17 ColorOS customization, Rootd diagnostics, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />

@@ -29,7 +29,7 @@ import android.widget.Toast;
 import java.io.IOException;
 
 /**
- * Free-first transparent liquid-glass sliding dashboard for ColorOS Themes Rock.
+ * Free-first transparent liquid-glass dashboard for ColorOS Themes Rock.
  */
 public class MainActivity extends Activity {
 
@@ -38,9 +38,10 @@ public class MainActivity extends Activity {
     private static final int TAB_DASHBOARD = 0;
     private static final int TAB_THEME = 1;
     private static final int TAB_TOOLS = 2;
-    private static final int TAB_SUPPORT = 3;
-    private static final int TAB_SETTINGS = 4;
-    private static final int TAB_COUNT = 5;
+    private static final int TAB_ROOTD = 3;
+    private static final int TAB_SUPPORT = 4;
+    private static final int TAB_SETTINGS = 5;
+    private static final int TAB_COUNT = 6;
 
     private static final int COLOR_BG = 0xFF0F0F10;
     private static final int COLOR_NAV_BG = 0xE6151517;
@@ -54,6 +55,7 @@ public class MainActivity extends Activity {
     private static final int COLOR_BORDER = 0x4DFFFFFF;
     private static final int COLOR_SUCCESS = 0xFF8FD694;
     private static final int COLOR_WARNING = 0xFFFFCC66;
+    private static final int COLOR_DANGER = 0xFFFF8A80;
 
     private static final String PREFS_UI = "coloros_customizer_ui";
 
@@ -149,6 +151,8 @@ public class MainActivity extends Activity {
             renderThemePage();
         } else if (currentTab == TAB_TOOLS) {
             renderToolsPage();
+        } else if (currentTab == TAB_ROOTD) {
+            renderRootdPage();
         } else if (currentTab == TAB_SUPPORT) {
             renderSupportPage();
         } else if (currentTab == TAB_SETTINGS) {
@@ -188,45 +192,30 @@ public class MainActivity extends Activity {
     private String titleForTab() {
         if (currentTab == TAB_THEME) return "Theme Layers";
         if (currentTab == TAB_TOOLS) return "Performance";
+        if (currentTab == TAB_ROOTD) return "Rootd Health";
         if (currentTab == TAB_SUPPORT) return "Support";
         if (currentTab == TAB_SETTINGS) return "More";
         return "ColorOS Rock";
     }
 
     private String subtitleForTab() {
-        if (currentTab == TAB_THEME) return "Liquid layer customization";
+        if (currentTab == TAB_THEME) return "Wallpaper, overlays, and safe theme layers";
         if (currentTab == TAB_TOOLS) return "Startup, display, and quick entries";
-        if (currentTab == TAB_SUPPORT) return "Report, backup, and rollback help";
+        if (currentTab == TAB_ROOTD) return "Systemless root checks for OPPO, realme, OnePlus";
+        if (currentTab == TAB_SUPPORT) return "Reports, backup, rollback, and customer help";
         if (currentTab == TAB_SETTINGS) return "Free mode and UI preferences";
-        return "Sliding liquid-glass customization dashboard";
+        return "Android 15/16/17 ready theme dashboard";
     }
 
     private void renderDashboardPage() {
         addLiquidHeroCard();
         addFreeModeCard();
-        addSectionTitle("Sliding pages", "Swipe left or right, or use the bottom slider");
-        addFeatureCard("Theme Layers", "Wallpaper, lock screen, icons, and visual layers.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_THEME;
-                render();
-            }
-        });
-        addFeatureCard("Performance", "Startup-focused layout, display shortcuts, and lag checklist.", "Fast", COLOR_ACCENT, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_TOOLS;
-                render();
-            }
-        });
-        addFeatureCard("Safety", "Backup, restore, reports, and rollback guidance.", "Safe", COLOR_SUCCESS, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_SUPPORT;
-                render();
-            }
-        });
-        addDeviceCard();
+        addSectionTitle("Device compatibility", "Status-first support for OPPO, OnePlus, realme, Android 15, Android 16, and Android 17");
+        addPlainCard(DeviceCompatibility.supportReport(this));
+        addFeatureCard("Theme Layers", "Wallpaper, lock screen, icons, overlays, and visual layer labels.", "Safe", COLOR_SUCCESS, tabClick(TAB_THEME));
+        addFeatureCard("Rootd Health", "Detect root managers, LSPosed manager visibility, module targets, and systemless safety state.", "Root", COLOR_ACCENT, tabClick(TAB_ROOTD));
+        addFeatureCard("Performance", "Startup-focused layout, display shortcuts, and lag checklist.", "Fast", COLOR_ACCENT, tabClick(TAB_TOOLS));
+        addFeatureCard("Support", "Backup, restore, reports, safe-disable, and rollback guidance.", "Safe", COLOR_SUCCESS, tabClick(TAB_SUPPORT));
     }
 
     private void renderThemePage() {
@@ -261,9 +250,12 @@ public class MainActivity extends Activity {
         addLayerCard("Base Layer", "Dark transparent surface, liquid glass background, and premium spacing.", "Ready", COLOR_SUCCESS);
         addLayerCard("Wallpaper Layer", "Home and lock wallpaper picker with preview.", "Safe", COLOR_SUCCESS);
         addLayerCard("Icon Layer", "Launcher-supported icon options where available.", "Needs test", COLOR_WARNING);
-        addLayerCard("Lock Layer", "Lock screen behavior depends on the device software.", "Needs test", COLOR_WARNING);
-        addLayerCard("Status Layer", "Clear badges for Safe, Needs test, Required, and Not supported.", "Ready", COLOR_SUCCESS);
-        addLayerCard("Support Layer", "Reports, backup notes, and rollback path stay visible.", "Ready", COLOR_SUCCESS);
+        addLayerCard("Lock Layer", "Lock screen behavior depends on ColorOS/realme UI/OxygenOS version.", "Needs test", COLOR_WARNING);
+        addLayerCard("System UI Layer", "Status bar, quick settings, notification and lock surface overlay targets stay labelled until tested.", "Root", COLOR_ACCENT);
+        addLayerCard("Settings Layer", "About phone and settings visual labels use local preview first, then tested overlay work later.", "Preview", COLOR_SUCCESS);
+
+        addSectionTitle("Android 15/16/17 theme policy", "No fake universal claim. Every ROM gets status labels.");
+        addPlainCard("Android status: " + DeviceCompatibility.androidGenerationLabel() + "\n" + DeviceCompatibility.androidSupportStatus());
     }
 
     private void renderToolsPage() {
@@ -273,13 +265,13 @@ public class MainActivity extends Activity {
         addFeatureCard("Minimal Motion", "Sliding page changes avoid heavy animation and keep the app responsive.", "Fast", COLOR_ACCENT, toastClick("Minimal motion enabled"));
 
         addSectionTitle("Display controls", "Use safe shortcuts first");
-        addFeatureCard("Refresh Rate", "Open display settings for Auto, High, or Standard refresh rate options.", "Needs test", COLOR_WARNING, new View.OnClickListener() {
+        addFeatureCard("Refresh Rate", "Open display settings for Auto, High, or Standard refresh rate options.", "Settings", COLOR_ACCENT, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openSettings(new Intent(Settings.ACTION_DISPLAY_SETTINGS));
             }
         });
-        addFeatureCard("Animation Speed", "Open developer animation settings only when the user wants it.", "Needs permission", COLOR_WARNING, new View.OnClickListener() {
+        addFeatureCard("Animation Speed", "Open developer animation settings only when the user wants it.", "Manual", COLOR_WARNING, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 openSettings(new Intent(Settings.ACTION_APPLICATION_DEVELOPMENT_SETTINGS));
@@ -308,9 +300,25 @@ public class MainActivity extends Activity {
         });
     }
 
+    private void renderRootdPage() {
+        addSectionTitle("Rootd system health", "Read-only checks first. Systemless module changes only.");
+        addPlainCard(DeviceCompatibility.rootdChecklist(this));
+        addFeatureCard("Root manager", DeviceCompatibility.rootManagerLabel(this), DeviceCompatibility.hasRootManager(this) ? "Detected" : "Missing", DeviceCompatibility.hasRootManager(this) ? COLOR_SUCCESS : COLOR_WARNING, toastClick("Root manager status refreshed"));
+        addFeatureCard("LSPosed scope", DeviceCompatibility.lsposedLabel(this), DeviceCompatibility.hasLsposedManager(this) ? "Detected" : "Needs test", DeviceCompatibility.hasLsposedManager(this) ? COLOR_SUCCESS : COLOR_WARNING, toastClick("LSPosed status refreshed"));
+        addFeatureCard("Systemless theme path", "/system_ext/media/themeInner is mounted through the module package, not directly rewritten by the APK.", "Safe", COLOR_SUCCESS, toastClick("Systemless path policy active"));
+        addFeatureCard("Overlay targets", "android, com.android.systemui, and com.android.settings stay status-first until tested on the exact ROM.", "Needs test", COLOR_WARNING, toastClick("Overlay target map ready"));
+        addFeatureCard("Danger zone blocked", "Direct /system, /vendor, /product, and /system_ext writes are not performed from this APK.", "Blocked", COLOR_DANGER, toastClick("Unsafe direct system writes are blocked"));
+        addActionButton("Copy Rootd report", true, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                copyText("ColorOS Themes Rock Rootd Report", DeviceCompatibility.rootdChecklist(MainActivity.this));
+            }
+        });
+    }
+
     private void renderSupportPage() {
         addSectionTitle("Support report", "Copy or share this when a customer reports a problem");
-        addPlainCard("Latest report\n" + BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this));
+        addPlainCard("Latest report\n" + completeSupportReport());
         addActionButton("Copy support report", true, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -325,16 +333,23 @@ public class MainActivity extends Activity {
         });
 
         addSectionTitle("Safety", "Make backup and rollback easy to find");
-        addFeatureCard("Backup and Restore", "Keep customer data and theme settings easy to recover.", "Required", COLOR_ACCENT, toastClick("Backup and restore guide ready"));
-        addFeatureCard("Safe Disable", "Show customers how to turn off advanced features if something fails.", "Required", COLOR_ACCENT, toastClick("Safe disable guide ready"));
-        addFeatureCard("Rollback Help", "Use clear steps instead of risky hidden changes.", "Safe", COLOR_SUCCESS, toastClick("Rollback help ready"));
+        addFeatureCard("Backup and Restore", "Keep customer data and theme settings easy to recover before root/module testing.", "Required", COLOR_ACCENT, toastClick("Backup and restore guide ready"));
+        addFeatureCard("Safe Disable", "Disable flag and uninstall flow stay visible for recovery.", "Required", COLOR_ACCENT, toastClick("Safe disable guide ready"));
+        addFeatureCard("Rollback Help", "Use clear rollback steps instead of hidden risky changes.", "Safe", COLOR_SUCCESS, toastClick("Rollback help ready"));
+        addFeatureCard("Device-by-device testing", "OPPO, OnePlus, and realme ROMs vary. Mark features Working only after a real test.", "Required", COLOR_ACCENT, toastClick("Testing rule ready"));
     }
 
     private void renderSettingsPage() {
         addSectionTitle("Free mode", "Normal customer tools stay free and easy to use");
         addSwitchRow("Free Mode Enabled", "Show free-first labels across the app", "free_mode", true);
         addSwitchRow("Hide paid labels", "Avoid premium lock wording", "hide_paid_labels", true);
-        addSwitchRow("Show status badges", "Display Safe, Needs test, Experimental, or Not supported", "status_badges", true);
+        addSwitchRow("Show status badges", "Display Safe, Needs test, Root, Experimental, or Not supported", "status_badges", true);
+
+        addDivider();
+        addSectionTitle("Rootd safety", "Keep system file work recoverable");
+        addSwitchRow("Systemless-only mode", "Do not apply direct system partition writes", "systemless_only", true);
+        addSwitchRow("Show Rootd warnings", "Show risk labels before advanced module or overlay testing", "rootd_warnings", true);
+        addSwitchRow("Device-by-device labels", "Keep Android 16/17 and OEM ROM features marked until tested", "device_labels", true);
 
         addDivider();
         addSectionTitle("Liquid glass style", "Transparent layer effect without startup lag");
@@ -352,18 +367,12 @@ public class MainActivity extends Activity {
     private void addLiquidHeroCard() {
         LinearLayout card = card(true);
         card.setPadding(dp(22), dp(22), dp(22), dp(22));
-        card.addView(badge("Free Liquid Glass", COLOR_SUCCESS));
+        card.addView(badge("Android 15/16/17", COLOR_SUCCESS));
         TextView title = text("Sliding App Model", 28, COLOR_TEXT, true);
         title.setPadding(0, dp(14), 0, dp(6));
         card.addView(title);
-        card.addView(text("Transparent liquid-glass dashboard for OPPO, OnePlus, and realme customization. Built for free customer tools, smooth startup, clean layers, and reliable support.", 16, COLOR_MUTED, false));
-        card.addView(cardButton("Open Theme Layers", true, new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = TAB_THEME;
-                render();
-            }
-        }));
+        card.addView(text("Transparent liquid-glass dashboard for OPPO, OnePlus, and realme customization. Built for free tools, Rootd diagnostics, safe systemless module work, and reliable support.", 16, COLOR_MUTED, false));
+        card.addView(cardButton("Open Rootd Health", true, tabClick(TAB_ROOTD)));
         root.addView(card, cardParams());
     }
 
@@ -372,10 +381,6 @@ public class MainActivity extends Activity {
         card.addView(cardTitle("Free-first policy"));
         card.addView(cardBody("No forced payment screen. No fake premium locks. No confusing trial labels. Optional support can stay separate from core customer tools."));
         root.addView(card, cardParams());
-    }
-
-    private void addDeviceCard() {
-        addPlainCard(BatteryOptimizationAdvisor.supportReport(this));
     }
 
     private void addSelectedImagePreview() {
@@ -564,7 +569,7 @@ public class MainActivity extends Activity {
     private void addSlidingNavigation(LinearLayout app) {
         LinearLayout dock = new LinearLayout(this);
         dock.setOrientation(LinearLayout.VERTICAL);
-        dock.setPadding(dp(10), dp(8), dp(10), dp(8));
+        dock.setPadding(dp(8), dp(8), dp(8), dp(8));
         dock.setBackgroundColor(COLOR_NAV_BG);
 
         LinearLayout arrows = new LinearLayout(this);
@@ -577,8 +582,9 @@ public class MainActivity extends Activity {
             }
         });
         addNavItem(arrows, TAB_DASHBOARD, "⌂", "Home");
-        addNavItem(arrows, TAB_THEME, "◈", "Layers");
+        addNavItem(arrows, TAB_THEME, "◈", "Theme");
         addNavItem(arrows, TAB_TOOLS, "⚙", "Speed");
+        addNavItem(arrows, TAB_ROOTD, "#", "Root");
         addNavItem(arrows, TAB_SUPPORT, "▣", "Help");
         addNavItem(arrows, TAB_SETTINGS, "●", "More");
         addSliderButton(arrows, "›", new View.OnClickListener() {
@@ -605,17 +611,11 @@ public class MainActivity extends Activity {
         item.setGravity(Gravity.CENTER);
         item.setPadding(dp(3), dp(3), dp(3), dp(3));
         item.setBackground(selected ? rounded(COLOR_CARD_SOFT, dp(28), COLOR_ACCENT_GLOW) : null);
-        item.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                currentTab = tab;
-                render();
-            }
-        });
+        item.setOnClickListener(tabClick(tab));
 
-        TextView iconView = text(icon, 22, selected ? COLOR_ACCENT : COLOR_MUTED, true);
+        TextView iconView = text(icon, 20, selected ? COLOR_ACCENT : COLOR_MUTED, true);
         iconView.setGravity(Gravity.CENTER);
-        TextView labelView = text(label, 11, selected ? COLOR_TEXT : COLOR_MUTED, true);
+        TextView labelView = text(label, 10, selected ? COLOR_TEXT : COLOR_MUTED, true);
         labelView.setGravity(Gravity.CENTER);
         item.addView(iconView);
         item.addView(labelView);
@@ -626,12 +626,12 @@ public class MainActivity extends Activity {
     }
 
     private void addSliderButton(LinearLayout nav, String label, View.OnClickListener listener) {
-        TextView button = text(label, 26, COLOR_ACCENT, true);
+        TextView button = text(label, 24, COLOR_ACCENT, true);
         button.setGravity(Gravity.CENTER);
         button.setBackground(rounded(COLOR_CARD, dp(24), COLOR_BORDER));
         button.setOnClickListener(listener);
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(34), dp(54));
-        params.setMargins(dp(2), dp(10), dp(2), dp(10));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(dp(30), dp(54));
+        params.setMargins(dp(1), dp(10), dp(1), dp(10));
         nav.addView(button, params);
     }
 
@@ -678,6 +678,16 @@ public class MainActivity extends Activity {
     private void previousPage() {
         currentTab = (currentTab - 1 + TAB_COUNT) % TAB_COUNT;
         render();
+    }
+
+    private View.OnClickListener tabClick(final int tab) {
+        return new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                currentTab = tab;
+                render();
+            }
+        };
     }
 
     private View.OnClickListener refreshClick() {
@@ -782,13 +792,14 @@ public class MainActivity extends Activity {
     }
 
     private void copyReport() {
+        copyText("ColorOS Themes Rock Support Report", completeSupportReport());
+    }
+
+    private void copyText(String label, String value) {
         ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
         if (clipboard != null) {
-            clipboard.setPrimaryClip(ClipData.newPlainText(
-                    "ColorOS Themes Rock Support Report",
-                    BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this)
-            ));
-            toast("Support report copied");
+            clipboard.setPrimaryClip(ClipData.newPlainText(label, value));
+            toast("Report copied");
         }
     }
 
@@ -796,12 +807,19 @@ public class MainActivity extends Activity {
         Intent shareIntent = new Intent(Intent.ACTION_SEND);
         shareIntent.setType("text/plain");
         shareIntent.putExtra(Intent.EXTRA_SUBJECT, "ColorOS Themes Rock Support Report");
-        shareIntent.putExtra(Intent.EXTRA_TEXT, BatteryOptimizationAdvisor.supportReport(this) + "\n" + CustomizationManager.report(this));
+        shareIntent.putExtra(Intent.EXTRA_TEXT, completeSupportReport());
         try {
             startActivity(Intent.createChooser(shareIntent, "Share report"));
         } catch (ActivityNotFoundException failure) {
             toast("No share app found");
         }
+    }
+
+    private String completeSupportReport() {
+        return BatteryOptimizationAdvisor.supportReport(this)
+                + "\n" + DeviceCompatibility.supportReport(this)
+                + "\n" + DeviceCompatibility.rootdChecklist(this)
+                + "\n" + CustomizationManager.report(this);
     }
 
     private TextView text(String value, int sp, int color, boolean bold) {

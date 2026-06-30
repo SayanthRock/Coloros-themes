@@ -2,8 +2,18 @@
   "schema": 1,
   "project": "ColorOS Themes Rock",
   "channel": "beta",
-  "version": "v0.5.4-beta",
-  "versionCode": 9,
+  "version": "v0.6.0-beta",
+  "versionCode": 12,
   "status": "needs-testing",
-  "downloadUrl": ""
+  "systemlessOnly": true,
+  "androidSupport": {
+    "android15": "supported-target",
+    "android16": "forward-compatible-device-test-required",
+    "android17": "preview-safe-device-test-required"
+  },
+  "downloadUrl": "",
+  "changelog": [
+    "Beta channel for Rootd diagnostics and Android 15/16/17 labels.",
+    "Use for OPPO, OnePlus, and realme device testing before stable sharing."
+  ]
 }

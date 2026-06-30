@@ -1,11 +1,11 @@
 {
-  "version": "0.5.4",
+  "version": "0.6.0",
   "project": "ColorOS Themes Rock",
   "product_model": "free_first",
   "architecture": "professional_modular_hook_overlay",
   "ui_style": "sliding_liquid_glass",
   "startup_mode": "fast_lightweight",
-  "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, and clear customer warnings.",
+  "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, systemless-only root handling, and clear customer warnings.",
   "free_mode": {
     "enabled": true,
     "label": "Free Mode",
@@ -16,14 +16,32 @@
   },
   "navigation": {
     "model": "sliding_pages",
-    "pages": ["Home", "Theme Layers", "Performance", "Support", "More"],
+    "pages": ["Home", "Theme Layers", "Performance", "Rootd Health", "Support", "More"],
     "swipe_enabled": true,
     "bottom_slider_enabled": true
+  },
+  "android_support": {
+    "android_15": {"sdk": 35, "status": "supported_target", "risk": "low"},
+    "android_16": {"sdk": 36, "status": "forward_compatible_needs_device_test", "risk": "medium"},
+    "android_17": {"sdk": 37, "status": "preview_safe_needs_device_test", "risk": "medium"},
+    "newer_android": {"status": "safe_mode_until_verified", "risk": "medium"}
+  },
+  "rootd": {
+    "enabled": true,
+    "mode": "systemless_only",
+    "direct_system_writes_enabled": false,
+    "detect_root_managers": ["Magisk", "KernelSU", "APatch"],
+    "detect_lsposed_manager": true,
+    "safe_disable_supported": true,
+    "support_report_enabled": true,
+    "mount_targets": ["system_ext/media/themeInner"],
+    "overlay_targets": ["android", "com.android.systemui", "com.android.settings"]
   },
   "modules": {
     "theme_engine": {"enabled": true, "mode": "owned_assets_overlay", "risk": "low"},
     "ui_tweaks": {"enabled": false, "mode": "optional_ui_only_after_test", "risk": "medium"},
     "system_helper": {"enabled": true, "mode": "settings_shortcuts_and_reports", "risk": "low"},
+    "rootd_health": {"enabled": true, "mode": "read_only_diagnostics_and_systemless_policy", "risk": "low"},
     "ota_guard": {"enabled": true, "mode": "warn_and_disable_before_updates", "risk": "low"},
     "log_export": {"enabled": true, "mode": "customer_support_report", "risk": "low"},
     "customer_overlay_targets": {"enabled": true, "mode": "preview_status_and_support_report", "risk": "medium"}
@@ -42,6 +60,7 @@
     {"area": "settings_ui", "strategy": "status_preview_shortcuts_and_device_testing", "risk": "medium"},
     {"area": "android_framework", "strategy": "preview_first_and_tested_overlay_only", "risk": "high"},
     {"area": "theme_app", "strategy": "owned_assets_and_customer_guidance", "risk": "low"},
+    {"area": "rootd_system_files", "strategy": "systemless_module_mounts_only_no_direct_partition_writes", "risk": "high"},
     {"area": "ota_app", "strategy": "warn_customer_and_do_not_change_update_integrity", "risk": "high"},
     {"area": "battery_app", "strategy": "guidance_and_labels_only", "risk": "medium"},
     {"area": "wallpaper_picker", "strategy": "standard_wallpaper_api_and_owned_assets", "risk": "low"}
@@ -51,6 +70,11 @@
     {"id": "professional_modularity", "name": "Professional Modular Architecture", "status": "ready", "risk": "low"},
     {"id": "hook_overlay_architecture", "name": "Hook and Overlay Architecture", "status": "ready", "risk": "medium"},
     {"id": "device_profile", "name": "Device Profile Detection", "status": "ready", "risk": "low"},
+    {"id": "android_15_support", "name": "Android 15 support label", "status": "supported_target", "risk": "low"},
+    {"id": "android_16_support", "name": "Android 16 support label", "status": "forward_compatible_needs_device_test", "risk": "medium"},
+    {"id": "android_17_support", "name": "Android 17 support label", "status": "preview_safe_needs_device_test", "risk": "medium"},
+    {"id": "rootd_health", "name": "Rootd System Health", "status": "ready", "risk": "low"},
+    {"id": "systemless_only", "name": "Systemless-only Rootd policy", "status": "required", "risk": "low"},
     {"id": "device_validation", "name": "Device Validation", "status": "ready", "risk": "low"},
     {"id": "safe_disable", "name": "Safe Disable Mode", "status": "required", "risk": "low"},
     {"id": "ota_safe_mode", "name": "OTA Safe Mode", "status": "required", "risk": "low"},
@@ -79,5 +103,5 @@
     {"id": "backup_restore", "name": "Backup and restore", "status": "required_before_risky_changes", "risk": "low"},
     {"id": "support_report", "name": "Customer support report", "status": "safe", "risk": "low"}
   ],
-  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens", "unsafe_file_replacement", "ota_integrity_changes"]
+  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens", "unsafe_file_replacement", "ota_integrity_changes", "direct_system_partition_writes"]
 }

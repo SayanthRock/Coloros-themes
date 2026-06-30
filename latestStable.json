@@ -3,8 +3,8 @@
   "project": "ColorOS Themes Rock",
   "packageId": "coloros_themes_rock",
   "channel": "stable",
-  "version": "v0.5.4",
-  "versionCode": 9,
+  "version": "v0.6.0",
+  "versionCode": 12,
   "status": "starter-support",
   "releaseLevel": "Stable",
   "recommendedForCustomers": true,
@@ -15,12 +15,19 @@
     "OnePlus OxygenOS / ColorOS based builds",
     "realme UI"
   ],
+  "androidSupport": {
+    "android15": "supported-target",
+    "android16": "forward-compatible-device-test-required",
+    "android17": "preview-safe-device-test-required"
+  },
   "featureLabelsRequired": true,
-  "safetyMessage": "Use only features marked Working for your device. Advanced or untested features must show clear labels.",
+  "systemlessOnly": true,
+  "safetyMessage": "Use only features marked Working for your device. Advanced or untested features must show clear labels and must stay systemless.",
   "downloadUrl": "",
   "changelog": [
-    "Customer-safe release metadata added.",
-    "Stable channel reserved for tested customer builds.",
-    "Root, LSPosed, scope, and rollback warnings required before advanced features."
+    "Added Android 15/16/17 support labels.",
+    "Added Rootd system-health diagnostics in the helper APK.",
+    "Added systemless-only policy for system-file-related theme work.",
+    "Improved support reports, safe defaults, and rollback metadata."
   ]
 }
