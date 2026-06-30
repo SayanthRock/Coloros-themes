@@ -142,9 +142,32 @@ public final class DeviceCompatibility {
     }
 
     public static String mountTargetSummary() {
-        return "Theme mount target: /system_ext/media/themeInner\n"
-                + "Overlay targets: android, com.android.systemui, com.android.settings\n"
+        return "Theme mount targets:\n"
+                + "- /system_ext/media/themeInner\n"
+                + "- /system_ext/media/themeInner/com.oplus.eyeprotect\n"
+                + "Overlay targets:\n"
+                + "- android\n"
+                + "- com.android.systemui\n"
+                + "- com.android.settings\n"
+                + "- com.oplus.uxdesign\n"
+                + "- com.oplus.battery\n"
+                + "- com.android.launcher\n"
+                + "- com.oplus.notificationmanager\n"
+                + "- com.oplus.ota\n"
+                + "- com.android.wallpaper.livepicker\n"
                 + "Mode: status-first, safe-disable ready, rollback documented";
+    }
+
+    public static String customerPackageSummary() {
+        return "Customer package options\n"
+                + "com.oplus.uxdesign: colors, typography, surfaces, UX tokens - Needs testing\n"
+                + "com.oplus.battery: battery cards and guidance - Safe guidance\n"
+                + "colors.xml: owned color token template - Template ready\n"
+                + "com.android.launcher: home screen, icons, wallpaper preview - Needs testing\n"
+                + "com.oplus.eyeprotect: themeInner eye comfort assets - Needs testing\n"
+                + "com.oplus.notificationmanager: notification controls and permission guidance - Safe guidance\n"
+                + "com.oplus.ota: update warnings and safe-disable guidance only - Safe guidance\n"
+                + "com.android.wallpaper.livepicker: live wallpaper picker shortcut - Safe shortcut";
     }
 
     public static String rootdChecklist(Context context) {
@@ -156,6 +179,7 @@ public final class DeviceCompatibility {
         builder.append("Android status: ").append(androidSupportStatus()).append('\n');
         builder.append(moduleSafetyPolicy()).append('\n');
         builder.append(mountTargetSummary()).append('\n');
+        builder.append(customerPackageSummary()).append('\n');
         return builder.toString();
     }
 
