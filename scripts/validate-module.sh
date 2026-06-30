@@ -75,7 +75,7 @@ grep -q "rootd" customer-options/options.json || error_exit "Rootd options missi
 grep -q "android_17" customer-options/options.json || error_exit "Android 17 option missing"
 grep -q "ROOTD_SYSTEMLESS_ONLY" customer-options/safe-defaults.conf || error_exit "Rootd safe default missing"
 grep -q "UNSAFE_SYSTEM_WRITES=false" customize.sh || error_exit "Unsafe system write policy missing"
-grep -q "direct system" docs/ROOTD_SYSTEM_FILE_SUPPORT.md || error_exit "Rootd guide missing direct system policy"
+grep -qi "systemless" docs/ROOTD_SYSTEM_FILE_SUPPORT.md || error_exit "Rootd guide missing systemless policy"
 
 check_shell "customize.sh"
 check_shell "post-fs-data.sh"
