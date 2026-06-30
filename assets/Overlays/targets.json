@@ -1,5 +1,5 @@
 {
-  "version": "0.5.4",
+  "version": "0.6.1",
   "project": "ColorOS Themes Rock",
   "rootd_customer_mode": "safe_first",
   "runtime_apply_default": false,
@@ -11,6 +11,14 @@
     "LSPosed scope required",
     "Not available"
   ],
+  "customer_option_policy": {
+    "free_first": true,
+    "preview_first": true,
+    "status_first": true,
+    "systemless_only": true,
+    "direct_partition_writes": false,
+    "working_label_requires_real_device_test": true
+  },
   "package_targets": [
     {
       "id": "android_framework",
@@ -19,17 +27,8 @@
       "area": "framework_visual_resources",
       "default_status": "Needs testing",
       "risk": "high",
-      "safe_customer_actions": [
-        "view_target_status",
-        "preview_owned_assets",
-        "export_support_report"
-      ],
-      "advanced_requirements": [
-        "root_status_checked",
-        "rollback_ready",
-        "device_profile_matched",
-        "compiled_overlay_tested"
-      ],
+      "safe_customer_actions": ["view_target_status", "preview_owned_assets", "export_support_report"],
+      "advanced_requirements": ["root_status_checked", "rollback_ready", "device_profile_matched", "compiled_overlay_tested"],
       "apply_policy": "disabled_until_tested_overlay_exists"
     },
     {
@@ -39,19 +38,8 @@
       "area": "status_bar_quick_settings_notifications_lock_surface",
       "default_status": "Needs testing",
       "risk": "high",
-      "safe_customer_actions": [
-        "view_target_status",
-        "preview_owned_assets",
-        "check_lsposed_scope",
-        "export_support_report"
-      ],
-      "advanced_requirements": [
-        "root_status_checked",
-        "lsposed_scope_checked",
-        "rollback_ready",
-        "device_profile_matched",
-        "compiled_overlay_tested"
-      ],
+      "safe_customer_actions": ["view_target_status", "preview_owned_assets", "check_lsposed_scope", "export_support_report"],
+      "advanced_requirements": ["root_status_checked", "lsposed_scope_checked", "rollback_ready", "device_profile_matched", "compiled_overlay_tested"],
       "apply_policy": "disabled_until_tested_overlay_exists"
     },
     {
@@ -61,33 +49,121 @@
       "area": "settings_cards_about_phone_support_diagnostics",
       "default_status": "Needs testing",
       "risk": "medium",
-      "safe_customer_actions": [
-        "view_target_status",
-        "preview_owned_assets",
-        "open_settings_shortcuts",
-        "export_support_report"
-      ],
-      "advanced_requirements": [
-        "root_status_checked",
-        "lsposed_scope_checked_if_hooks_enabled",
-        "rollback_ready",
-        "device_profile_matched",
-        "compiled_overlay_tested"
-      ],
+      "safe_customer_actions": ["view_target_status", "preview_owned_assets", "open_settings_shortcuts", "export_support_report"],
+      "advanced_requirements": ["root_status_checked", "lsposed_scope_checked_if_hooks_enabled", "rollback_ready", "device_profile_matched", "compiled_overlay_tested"],
       "apply_policy": "disabled_until_tested_overlay_exists"
+    },
+    {
+      "id": "oplus_uxdesign",
+      "package": "com.oplus.uxdesign",
+      "customer_name": "OPlus UX Design",
+      "area": "colors_typography_cards_surfaces_motion_tokens",
+      "default_status": "Needs testing",
+      "risk": "medium",
+      "safe_customer_actions": ["preview_colors_xml", "view_design_tokens", "export_support_report"],
+      "advanced_requirements": ["owned_colors_xml", "device_profile_matched", "rollback_ready", "tested_on_same_rom"],
+      "apply_policy": "preview_only_until_tested_theme_or_overlay_exists"
+    },
+    {
+      "id": "oplus_battery",
+      "package": "com.oplus.battery",
+      "customer_name": "OPlus Battery",
+      "area": "battery_cards_power_saver_labels_diagnostics",
+      "default_status": "Safe guidance",
+      "risk": "medium",
+      "safe_customer_actions": ["open_battery_settings", "view_battery_guidance", "export_support_report"],
+      "advanced_requirements": ["no_fake_booster_claims", "device_profile_matched", "tested_on_same_rom"],
+      "apply_policy": "guidance_only_no_forced_battery_changes"
+    },
+    {
+      "id": "colors_xml",
+      "package": "colors.xml",
+      "customer_name": "Theme colors.xml",
+      "area": "theme_color_tokens_accent_surface_background_text",
+      "default_status": "Template ready",
+      "risk": "low",
+      "safe_customer_actions": ["edit_owned_color_tokens", "preview_palette", "export_template"],
+      "advanced_requirements": ["owned_assets_only", "valid_xml", "contrast_checked", "tested_before_release"],
+      "apply_policy": "template_and_preview_first"
+    },
+    {
+      "id": "android_launcher",
+      "package": "com.android.launcher",
+      "customer_name": "Android Launcher",
+      "area": "home_screen_icons_wallpaper_preview_launcher_cards",
+      "default_status": "Needs testing",
+      "risk": "medium",
+      "safe_customer_actions": ["open_home_settings", "preview_icon_assets", "export_support_report"],
+      "advanced_requirements": ["launcher_package_verified", "device_profile_matched", "rollback_ready", "tested_on_same_rom"],
+      "apply_policy": "preview_first_launcher_behavior_varies"
+    },
+    {
+      "id": "oplus_eyeprotect_themeinner",
+      "package": "com.oplus.eyeprotect",
+      "customer_name": "OPlus Eye Comfort",
+      "area": "eye_protection_theme_inner_assets",
+      "module_path": "system_ext/media/themeInner/com.oplus.eyeprotect",
+      "default_status": "Needs testing",
+      "risk": "medium",
+      "safe_customer_actions": ["view_target_status", "preview_owned_assets", "export_support_report"],
+      "advanced_requirements": ["systemless_module_path", "device_profile_matched", "rollback_ready", "tested_on_same_rom"],
+      "apply_policy": "systemless_preview_only_until_device_tested"
+    },
+    {
+      "id": "oplus_notification_manager",
+      "package": "com.oplus.notificationmanager",
+      "customer_name": "OPlus Notification Manager",
+      "area": "notification_controls_cards_badges_permission_guidance",
+      "default_status": "Safe guidance",
+      "risk": "medium",
+      "safe_customer_actions": ["open_notification_settings", "view_permission_guidance", "export_support_report"],
+      "advanced_requirements": ["no_hidden_policy_changes", "device_profile_matched", "tested_on_same_rom"],
+      "apply_policy": "settings_shortcuts_and_guidance_only"
+    },
+    {
+      "id": "oplus_ota",
+      "package": "com.oplus.ota",
+      "customer_name": "OPlus OTA",
+      "area": "ota_labels_update_warnings_safe_disable_guidance",
+      "default_status": "Safe guidance",
+      "risk": "high",
+      "safe_customer_actions": ["show_update_warning", "safe_disable_before_update", "export_support_report"],
+      "advanced_requirements": ["do_not_modify_update_integrity", "rollback_ready", "device_profile_matched"],
+      "apply_policy": "warnings_only_never_modify_ota_integrity"
+    },
+    {
+      "id": "android_wallpaper_livepicker",
+      "package": "com.android.wallpaper.livepicker",
+      "customer_name": "Live Wallpaper Picker",
+      "area": "live_wallpaper_picker_shortcuts_preview",
+      "default_status": "Safe shortcut",
+      "risk": "low",
+      "safe_customer_actions": ["open_live_wallpaper_picker", "preview_wallpaper_assets", "export_support_report"],
+      "advanced_requirements": ["wallpaper_component_verified", "device_profile_matched", "tested_on_same_rom"],
+      "apply_policy": "public_intent_shortcut_when_available"
     }
   ],
   "folders": {
     "android": "assets/Overlays/android",
     "com.android.systemui": "assets/Overlays/systemui",
     "com.android.settings": "assets/Overlays/settings",
+    "com.oplus.uxdesign": "assets/Overlays/oplus/uxdesign",
+    "com.oplus.battery": "assets/Overlays/oplus/battery",
+    "colors.xml": "assets/Overlays/templates/colors.xml",
+    "com.android.launcher": "assets/Overlays/launcher",
+    "com.oplus.eyeprotect": "system_ext/media/themeInner/com.oplus.eyeprotect",
+    "com.oplus.notificationmanager": "assets/Overlays/oplus/notificationmanager",
+    "com.oplus.ota": "assets/Overlays/oplus/ota",
+    "com.android.wallpaper.livepicker": "assets/Overlays/wallpaper/livepicker",
     "templates": "assets/Overlays/templates"
   },
   "blocked_actions": [
     "fake_working_status",
     "untested_customer_apply",
     "forced_ads_or_paid_gate",
-    "irreversible_change_without_rollback"
+    "irreversible_change_without_rollback",
+    "direct_system_partition_write",
+    "ota_integrity_change"
   ],
   "diagnostics": {
     "status_output": "/data/local/tmp/coloros-themes-rock/rootd-status.txt",
@@ -97,7 +173,8 @@
       "lsposed_scope_status",
       "package_presence",
       "overlay_readiness",
-      "rollback_readiness"
+      "rollback_readiness",
+      "colors_xml_validity"
     ]
   }
 }
