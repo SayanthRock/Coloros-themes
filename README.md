@@ -11,10 +11,21 @@ This project is for legal customization using assets that you created, own, or h
 - A systemless overlay target for `/system_ext/media/themeInner/`.
 - A clean customization structure for wallpapers, icons, fonts, sounds, previews, customer support, and rollback notes.
 - A Rootd customer foundation for status-first package targets: `android`, `com.android.systemui`, and `com.android.settings`.
-- Customer overlay assets under `assets/Overlays/` for safe previews, presets, templates, support reports, and future tested overlay APK work.
-- A ColorOS Customizer helper APK for customer-facing wallpaper, device report, support, permission status, root status, LSPosed status, and safe toggles.
+- A ColorOS Customizer helper APK for wallpaper, device reports, Android 15/16/17 labels, Rootd system-health reports, permission status, root-manager visibility, LSPosed manager visibility, and safe toggles.
 - GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
 - Release-channel metadata for Stable, Beta, and Nightly customer update checks.
+
+## Current release line
+
+| Area | Status |
+|---|---|
+| Module version | `v0.6.0` |
+| Helper APK version | `0.6.0` / versionCode `12` |
+| Android 15 | Supported modern target |
+| Android 16 | Forward-compatible, device testing required |
+| Android 17 | Preview/future-safe, device testing required |
+| OPPO / OnePlus / realme | Status-first support |
+| Rootd/system file work | Systemless-only policy |
 
 ## Supported targets
 
@@ -23,11 +34,25 @@ This project is for legal customization using assets that you created, own, or h
 | OPPO | ColorOS | Starter support |
 | OnePlus | OxygenOS / ColorOS based builds | Starter support |
 | realme | realme UI | Starter support |
-| Android 15 | Modern supported target | Planned testing |
-| Android 16 | Modern supported target | Planned testing |
-| Android 17 | Latest target | Device-by-device testing required |
+| Android 15 | SDK 35 | Supported target |
+| Android 16 | SDK 36 | Forward-compatible testing |
+| Android 17 | SDK 37 | Device-by-device testing required |
 
-Read the full compatibility plan in [`docs/compatibility.md`](docs/compatibility.md).
+Read the compatibility plan in [`docs/compatibility.md`](docs/compatibility.md) and the Android support policy in [`docs/ANDROID_15_16_17_SUPPORT.md`](docs/ANDROID_15_16_17_SUPPORT.md).
+
+## Rootd systemless support
+
+The project now uses a strict systemless-only policy for system-file-related theme work.
+
+| Area | Policy |
+|---|---|
+| Theme mount target | `system_ext/media/themeInner` inside the module package |
+| Direct `/system` writes from APK | Not allowed |
+| Direct `/vendor`, `/product`, `/system_ext` writes from APK | Not allowed |
+| Rollback | Safe-disable file and uninstall marker |
+| Reports | `/data/local/tmp/coloros-themes-rock/` |
+
+Read [`docs/ROOTD_SYSTEM_FILE_SUPPORT.md`](docs/ROOTD_SYSTEM_FILE_SUPPORT.md) for the systemless Rootd support guide.
 
 ## Customer feature labels
 
@@ -84,13 +109,6 @@ Use these only when sharing rights are clear.
 │   ├── options.json
 │   └── safe-defaults.conf
 ├── assets/Overlays/
-│   ├── README.md
-│   ├── targets.json
-│   ├── customer-overlay-preset.json
-│   ├── android/
-│   ├── systemui/
-│   ├── settings/
-│   └── templates/
 ├── scripts/
 │   ├── package.sh
 │   ├── validate-module.sh
@@ -100,8 +118,8 @@ Use these only when sharing rights are clear.
 │   ├── compatibility.md
 │   ├── permissions.md
 │   ├── safety.md
-│   ├── THEME_MODULE_BUILDER.md
-│   ├── DEFAULT_THEME_CUSTOMER_GUIDE.md
+│   ├── ANDROID_15_16_17_SUPPORT.md
+│   ├── ROOTD_SYSTEM_FILE_SUPPORT.md
 │   ├── ROOTD_CUSTOMER_FOUNDATION.md
 │   ├── UI_DESIGN_SYSTEM.md
 │   ├── LAG_FIX_GUIDE.md
@@ -133,18 +151,8 @@ bash scripts/package.sh
 Output:
 
 ```text
-dist/ColorOS-Themes-Rock-v0.5.4.zip
+dist/ColorOS-Themes-Rock-v0.6.0.zip
 ```
-
-## Build from GitHub Actions
-
-1. Open **Actions**.
-2. Select **Build Theme Module**.
-3. Tap **Run workflow**.
-4. Enter a version like `v0.5.4`.
-5. Keep release publishing enabled to upload the module ZIP to a public GitHub Release.
-
-The workflow also runs on pushes that change module, theme, script, docs, overlay asset, release metadata, or workflow files.
 
 ## Build ColorOS Customizer APK
 
@@ -175,8 +183,6 @@ APK and combined release automation is handled by:
 | Beta | `latestBeta.json` | Broader testing before stable. |
 | Nightly | `latestNightly.json` | Experimental development builds. |
 
-These files can be used later by the APK update screen, GitHub release automation, or a simple in-app update checker.
-
 ## Customer customization matrix
 
 | Area | Supported approach | Safety status |
@@ -192,6 +198,7 @@ These files can be used later by the APK update screen, GitHub release automatio
 | Settings UI | Settings shortcuts, support screen, and tested overlay workflow | Needs testing |
 | Android framework | Framework visual preview and tested overlay workflow | Needs testing |
 | Battery/performance | Diagnostics, shortcuts, lag-fix guide | Safe, no fake booster claims |
+| Rootd system files | Systemless-only module path and support reports | Safe by default, needs device testing for advanced overlays |
 | Rollback | Uninstall script and customer guide | Documented |
 
 ## Install module ZIP
