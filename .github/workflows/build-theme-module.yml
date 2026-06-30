@@ -16,6 +16,7 @@ on:
       - 'customer-options/**'
       - 'assets/**'
       - 'docs/**'
+      - 'lsposed-helper/**'
       - 'latestStable.json'
       - 'latestBeta.json'
       - 'latestNightly.json'
@@ -37,6 +38,7 @@ on:
       - 'customer-options/**'
       - 'assets/**'
       - 'docs/**'
+      - 'lsposed-helper/**'
       - 'latestStable.json'
       - 'latestBeta.json'
       - 'latestNightly.json'
@@ -44,7 +46,7 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Module version, example: v0.5.4'
+        description: 'Module version, example: v0.6.0'
         required: false
         default: ''
       publish:
@@ -135,6 +137,7 @@ jobs:
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
+          Android target policy: Android 15 supported, Android 16/17 device testing required
           INFO
           (cd release/module && sha256sum * > SHA256SUMS.txt)
 
