@@ -67,6 +67,10 @@
         </activity>
 
         <activity
+            android:name=".RootdSystemCustomizerActivity"
+            android:exported="false" />
+
+        <activity
             android:name=".MainActivity"
             android:exported="false" />
 
