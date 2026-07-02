@@ -1,11 +1,11 @@
 {
-  "version": "0.6.1",
+  "version": "0.7.0",
   "project": "ColorOS Themes Rock",
   "product_model": "free_first",
   "architecture": "professional_modular_hook_overlay",
-  "ui_style": "sliding_liquid_glass",
+  "ui_style": "sliding_liquid_glass_customer_center",
   "startup_mode": "fast_lightweight",
-  "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, systemless-only root handling, customer package labels, and clear warnings.",
+  "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, systemless-only root handling, customer package labels, public settings shortcuts, and clear warnings.",
   "free_mode": {
     "enabled": true,
     "label": "Free Mode",
@@ -15,8 +15,10 @@
     "donation_optional": true
   },
   "navigation": {
-    "model": "sliding_pages",
-    "pages": ["Home", "Theme Layers", "Performance", "Rootd Health", "Support", "More"],
+    "model": "customer_center_plus_advanced_dashboard",
+    "launcher": "CustomerCustomizationActivity",
+    "advanced_dashboard": "MainActivity",
+    "pages": ["Customization Center", "Customer Options", "System Settings", "Rootd Health", "Support", "Advanced Dashboard"],
     "swipe_enabled": true,
     "bottom_slider_enabled": true
   },
@@ -38,6 +40,12 @@
     "overlay_targets": ["android", "com.android.systemui", "com.android.settings", "com.oplus.uxdesign", "com.oplus.battery", "com.android.launcher", "com.oplus.eyeprotect", "com.oplus.notificationmanager", "com.oplus.ota", "com.android.wallpaper.livepicker"]
   },
   "customer_package_options": [
+    {"id": "wallpaper", "package": "android.wallpaper", "customer_name": "Wallpaper and Lock Screen", "status": "safe_shortcut", "risk": "low", "customer_actions": ["open_wallpaper_settings", "select_owned_image", "support_report"]},
+    {"id": "icons", "package": "com.android.launcher", "customer_name": "Icons and Launcher", "status": "needs_testing", "risk": "medium", "customer_actions": ["open_home_settings", "preview_icons", "support_report"]},
+    {"id": "fonts", "package": "com.oplus.uxdesign", "customer_name": "System Fonts", "status": "needs_testing", "risk": "medium", "customer_actions": ["preview_owned_fonts", "open_settings", "support_report"]},
+    {"id": "sounds", "package": "android.media", "customer_name": "Ringtones and UI Sounds", "status": "safe_shortcut", "risk": "low", "customer_actions": ["open_sound_settings", "preview_owned_sounds", "support_report"]},
+    {"id": "system_ui", "package": "com.android.systemui", "customer_name": "System UI", "status": "needs_testing", "risk": "high", "customer_actions": ["view_target_status", "check_lsposed_scope", "support_report"]},
+    {"id": "settings_ui", "package": "com.android.settings", "customer_name": "Settings UI", "status": "needs_testing", "risk": "medium", "customer_actions": ["open_settings_shortcuts", "preview_labels", "support_report"]},
     {"id": "oplus_uxdesign", "package": "com.oplus.uxdesign", "customer_name": "OPlus UX Design", "status": "needs_testing", "risk": "medium", "customer_actions": ["preview_colors_xml", "view_design_tokens", "support_report"]},
     {"id": "oplus_battery", "package": "com.oplus.battery", "customer_name": "OPlus Battery", "status": "safe_guidance", "risk": "medium", "customer_actions": ["open_battery_settings", "view_guidance", "support_report"]},
     {"id": "colors_xml", "package": "colors.xml", "customer_name": "Theme colors.xml", "status": "template_ready", "risk": "low", "customer_actions": ["edit_owned_tokens", "preview_palette", "validate_xml"]},
@@ -47,7 +55,18 @@
     {"id": "oplus_ota", "package": "com.oplus.ota", "customer_name": "OPlus OTA", "status": "safe_guidance_only", "risk": "high", "customer_actions": ["show_update_warning", "safe_disable_before_update", "support_report"]},
     {"id": "android_wallpaper_livepicker", "package": "com.android.wallpaper.livepicker", "customer_name": "Live Wallpaper Picker", "status": "safe_shortcut", "risk": "low", "customer_actions": ["open_picker", "preview_wallpaper_assets", "support_report"]}
   ],
+  "settings_shortcuts": [
+    "android.settings.SETTINGS",
+    "android.settings.WALLPAPER_SETTINGS",
+    "android.settings.DISPLAY_SETTINGS",
+    "android.settings.HOME_SETTINGS",
+    "android.settings.NOTIFICATION_SETTINGS",
+    "android.settings.BATTERY_SAVER_SETTINGS",
+    "android.settings.APPLICATION_SETTINGS",
+    "android.settings.APPLICATION_DEVELOPMENT_SETTINGS"
+  ],
   "modules": {
+    "customer_customization_center": {"enabled": true, "mode": "toggle_preferences_shortcuts_reports", "risk": "low"},
     "theme_engine": {"enabled": true, "mode": "owned_assets_overlay", "risk": "low"},
     "ui_tweaks": {"enabled": false, "mode": "optional_ui_only_after_test", "risk": "medium"},
     "system_helper": {"enabled": true, "mode": "settings_shortcuts_and_reports", "risk": "low"},
@@ -67,6 +86,7 @@
     "unsupported_devices_default_to": "needs_device_test"
   },
   "package_strategy": [
+    {"area": "customer_options", "strategy": "store_preferences_open_safe_settings_and_export_reports", "risk": "low"},
     {"area": "system_ui", "strategy": "ui_only_after_device_testing", "risk": "medium"},
     {"area": "settings_ui", "strategy": "status_preview_shortcuts_and_device_testing", "risk": "medium"},
     {"area": "android_framework", "strategy": "preview_first_and_tested_overlay_only", "risk": "high"},
@@ -77,16 +97,12 @@
     {"area": "wallpaper_picker", "strategy": "standard_wallpaper_api_and_owned_assets", "risk": "low"}
   ],
   "items": [
+    {"id": "customer_customization_center", "name": "Customer Customization Center", "status": "ready", "risk": "low"},
     {"id": "free_mode", "name": "Free Mode", "status": "enabled", "risk": "low"},
     {"id": "customer_package_options", "name": "Customer package options", "status": "ready", "risk": "medium"},
-    {"id": "oplus_uxdesign", "name": "com.oplus.uxdesign", "status": "needs_testing", "risk": "medium"},
-    {"id": "oplus_battery", "name": "com.oplus.battery", "status": "safe_guidance", "risk": "medium"},
-    {"id": "colors_xml", "name": "colors.xml", "status": "template_ready", "risk": "low"},
-    {"id": "android_launcher", "name": "com.android.launcher", "status": "needs_testing", "risk": "medium"},
-    {"id": "oplus_eyeprotect", "name": "com.oplus.eyeprotect themeInner", "status": "needs_testing", "risk": "medium"},
-    {"id": "oplus_notificationmanager", "name": "com.oplus.notificationmanager", "status": "safe_guidance", "risk": "medium"},
-    {"id": "oplus_ota", "name": "com.oplus.ota", "status": "safe_guidance_only", "risk": "high"},
-    {"id": "android_wallpaper_livepicker", "name": "com.android.wallpaper.livepicker", "status": "safe_shortcut", "risk": "low"},
+    {"id": "settings_shortcuts", "name": "System settings shortcuts", "status": "ready", "risk": "low"},
+    {"id": "system_fonts", "name": "System fonts", "status": "needs_testing", "risk": "medium"},
+    {"id": "system_sounds", "name": "System sounds", "status": "safe_shortcut", "risk": "low"},
     {"id": "rootd_health", "name": "Rootd System Health", "status": "ready", "risk": "low"},
     {"id": "systemless_only", "name": "Systemless-only Rootd policy", "status": "required", "risk": "low"},
     {"id": "default_theme", "name": "Default Rock Premium Theme", "status": "starter_ready", "risk": "low"},
