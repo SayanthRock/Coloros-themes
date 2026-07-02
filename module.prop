@@ -1,6 +1,6 @@
 id=coloros_themes_rock
 name=ColorOS Themes Rock
-version=v0.7.0
-versionCode=14
+version=v0.8.0
+versionCode=15
 author=Sayanth Rock
-description=Free-first ColorOS/realme UI/OxygenOS customization module with Android 15/16/17 readiness labels, customer customization center, Rootd systemless safety diagnostics, OPPO/OnePlus/realme device validation, customer package options, colors token support, safe-disable support, wallpaper controls, system settings shortcuts, overlay target reports, logs, backup planning, rollback support, and customer-safe theme tooling.
+description=Free-first ColorOS/realme UI/OxygenOS customization module with Android 15/16/17 readiness labels, Rootd System Customizer launcher, customer customization center, systemless safety diagnostics, OPPO/OnePlus/realme device validation, package target scans, Rootd profiles, safe-disable support, rollback support, wallpaper controls, system settings shortcuts, overlay target reports, logs, backup planning, and customer-safe theme tooling.
