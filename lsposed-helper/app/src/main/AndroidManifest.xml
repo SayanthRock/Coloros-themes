@@ -21,7 +21,6 @@
         <package android:name="me.bmax.apatch" />
         <package android:name="org.lsposed.manager" />
         <package android:name="org.lsposed.manager.debug" />
-        <package android:name="android" />
         <package android:name="com.android.systemui" />
         <package android:name="com.android.settings" />
         <package android:name="com.android.launcher" />
