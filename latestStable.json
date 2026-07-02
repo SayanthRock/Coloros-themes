@@ -3,11 +3,11 @@
   "project": "ColorOS Themes Rock",
   "packageId": "coloros_themes_rock",
   "channel": "stable",
-  "version": "v0.7.0",
-  "versionCode": 14,
-  "helperApkVersion": "0.7.0",
-  "helperApkVersionCode": 13,
-  "status": "customer-center-ready",
+  "version": "v0.8.0",
+  "versionCode": 15,
+  "helperApkVersion": "0.8.0",
+  "helperApkVersionCode": 14,
+  "status": "rootd-system-customizer-ready",
   "releaseLevel": "Stable",
   "recommendedForCustomers": true,
   "requiresRoot": false,
@@ -25,13 +25,13 @@
   },
   "featureLabelsRequired": true,
   "systemlessOnly": true,
-  "safetyMessage": "Use public settings shortcuts and customer-safe options first. Advanced or untested features must show clear labels and must stay systemless.",
+  "safetyMessage": "Rootd System Customizer is the launcher. Use package scans, public settings shortcuts, reports, safe-disable, and systemless profiles first. Advanced features must stay labelled until tested on the exact phone and ROM.",
   "downloadUrl": "",
   "changelog": [
-    "Added Customer Customization Center as the launcher activity.",
-    "Added customer toggles for wallpaper, icons, fonts, sounds, System UI, Settings UI, OPlus UX, battery, notifications, OTA guard, Rootd systemless mode, and LSPosed preview.",
-    "Added public system settings shortcuts and customer support report export.",
-    "Expanded package visibility metadata for OPPO, OnePlus, realme, Android, SystemUI, Settings, Launcher, OPlus, OTA, and wallpaper targets.",
-    "Kept direct system partition writes blocked and advanced overlay work systemless-only."
+    "Added Rootd System Customizer as the launcher activity.",
+    "Added Rootd profiles for systemless mode, overlay staging, device matching, safe-disable, rollback, LSPosed scope check, report export, and blocked direct partition changes.",
+    "Added system target scan cards for Android Framework, System UI, Settings UI, Launcher, OPlus UX, Battery, Eye Comfort, Notification Manager, OTA, Live Wallpaper Picker, LSPosed, Magisk, KernelSU, and APatch.",
+    "Added copy/share Rootd system report actions.",
+    "Kept customer customization center and advanced dashboard available inside the app."
   ]
 }
