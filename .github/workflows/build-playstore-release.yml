@@ -12,14 +12,14 @@ on:
   workflow_dispatch:
     inputs:
       version:
-        description: 'Release tag, example: v0.4.1'
+        description: 'Release tag, example: v0.8.0'
         required: false
         default: ''
       publish:
-        description: 'Publish GitHub Release'
+        description: 'Publish GitHub Release after the release gate is cleared'
         required: true
         type: boolean
-        default: true
+        default: false
 
 concurrency:
   group: build-app-bundle-release-${{ github.ref }}
@@ -80,13 +80,15 @@ jobs:
           echo "artifact_name=${APP_NAME}-${VERSION}-bundle-release" >> "$GITHUB_OUTPUT"
           if [[ "${{ github.event_name }}" == "workflow_dispatch" ]]; then
             echo "should_publish=${{ inputs.publish }}" >> "$GITHUB_OUTPUT"
-          else
+          elif [[ "$GITHUB_REF" == refs/tags/* ]]; then
             echo "should_publish=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "should_publish=false" >> "$GITHUB_OUTPUT"
           fi
 
       - name: Build debug APK and release bundle
         working-directory: lsposed-helper
-        run: gradle :app:assembleDebug :app:bundleRelease --no-daemon --stacktrace
+        run: gradle :app:assembleDebug :app:bundleRelease --no-daemon --stacktrace --warning-mode all
 
       - name: Collect outputs
         run: |
@@ -99,6 +101,7 @@ jobs:
           Commit: ${GITHUB_SHA}
           Workflow: ${GITHUB_WORKFLOW}
           Run ID: ${GITHUB_RUN_ID}
+          Publish: ${{ steps.meta.outputs.should_publish }}
           Outputs: debug APK for direct testing, release AAB for marketplace upload after final signing/checks.
           INFO
           (cd release/app && sha256sum * > SHA256SUMS-APP.txt)
@@ -138,10 +141,11 @@ jobs:
           - SHA256SUMS-APP.txt
 
           ## Release checklist
+          - Confirm release gate issue #38 is cleared
           - Test on at least one OPPO, OnePlus, or realme phone
-          - Confirm no-root warning works correctly
-          - Confirm Permission Center status cards work correctly
-          - Confirm wallpaper and settings shortcuts work correctly
+          - Confirm Rootd System Customizer opens correctly
+          - Confirm customer customization screen opens correctly
+          - Confirm support reports can be copied or shared
           - Upload the AAB to the app marketplace after policy review
           INFO
 
