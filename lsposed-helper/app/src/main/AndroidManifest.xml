@@ -21,13 +21,23 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
-    <!-- Package visibility for read-only Rootd/LSPosed diagnostics on Android 11+. -->
+    <!-- Package visibility for read-only Rootd/LSPosed and OEM target diagnostics on Android 11+. -->
     <queries>
         <package android:name="com.topjohnwu.magisk" />
         <package android:name="me.weishu.kernelsu" />
         <package android:name="me.bmax.apatch" />
         <package android:name="org.lsposed.manager" />
         <package android:name="org.lsposed.manager.debug" />
+        <package android:name="android" />
+        <package android:name="com.android.systemui" />
+        <package android:name="com.android.settings" />
+        <package android:name="com.android.launcher" />
+        <package android:name="com.oplus.uxdesign" />
+        <package android:name="com.oplus.battery" />
+        <package android:name="com.oplus.eyeprotect" />
+        <package android:name="com.oplus.notificationmanager" />
+        <package android:name="com.oplus.ota" />
+        <package android:name="com.android.wallpaper.livepicker" />
     </queries>
 
     <application
@@ -48,13 +58,17 @@
             android:value="82" />
 
         <activity
-            android:name=".MainActivity"
+            android:name=".CustomerCustomizationActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
+        <activity
+            android:name=".MainActivity"
+            android:exported="false" />
 
         <activity
             android:name=".PermissionCenterActivity"
