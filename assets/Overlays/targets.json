@@ -1,14 +1,17 @@
 {
-  "version": "0.6.1",
+  "version": "0.7.0",
   "project": "ColorOS Themes Rock",
   "rootd_customer_mode": "safe_first",
   "runtime_apply_default": false,
+  "launcher_activity": "CustomerCustomizationActivity",
   "status_labels": [
     "Working",
     "Limited",
     "Needs testing",
     "Root required",
     "LSPosed scope required",
+    "Safe shortcut",
+    "Safe guidance",
     "Not available"
   ],
   "customer_option_policy": {
@@ -17,9 +20,21 @@
     "status_first": true,
     "systemless_only": true,
     "direct_partition_writes": false,
+    "settings_shortcuts_allowed": true,
     "working_label_requires_real_device_test": true
   },
   "package_targets": [
+    {
+      "id": "wallpaper_lock_screen",
+      "package": "android.wallpaper",
+      "customer_name": "Wallpaper and Lock Screen",
+      "area": "wallpaper_picker_home_lock_screen",
+      "default_status": "Safe shortcut",
+      "risk": "low",
+      "safe_customer_actions": ["open_wallpaper_settings", "select_owned_image", "export_support_report"],
+      "advanced_requirements": ["owned_assets_only", "device_wallpaper_api_available"],
+      "apply_policy": "standard_wallpaper_settings_or_wallpaper_api"
+    },
     {
       "id": "android_framework",
       "package": "android",
@@ -51,7 +66,29 @@
       "risk": "medium",
       "safe_customer_actions": ["view_target_status", "preview_owned_assets", "open_settings_shortcuts", "export_support_report"],
       "advanced_requirements": ["root_status_checked", "lsposed_scope_checked_if_hooks_enabled", "rollback_ready", "device_profile_matched", "compiled_overlay_tested"],
-      "apply_policy": "disabled_until_tested_overlay_exists"
+      "apply_policy": "settings_shortcuts_and_preview_until_tested_overlay_exists"
+    },
+    {
+      "id": "system_fonts",
+      "package": "com.oplus.uxdesign",
+      "customer_name": "System Fonts",
+      "area": "theme_owned_fonts_and_typography_tokens",
+      "default_status": "Needs testing",
+      "risk": "medium",
+      "safe_customer_actions": ["preview_owned_fonts", "open_settings_shortcuts", "export_support_report"],
+      "advanced_requirements": ["owned_font_assets", "device_profile_matched", "rollback_ready", "tested_on_same_rom"],
+      "apply_policy": "preview_first_theme_package_only_when_assets_are_owned"
+    },
+    {
+      "id": "system_sounds",
+      "package": "android.media",
+      "customer_name": "Ringtones and UI Sounds",
+      "area": "ringtone_notification_alarm_and_ui_sound_assets",
+      "default_status": "Safe shortcut",
+      "risk": "low",
+      "safe_customer_actions": ["open_sound_settings", "preview_owned_sounds", "export_support_report"],
+      "advanced_requirements": ["owned_sound_assets", "device_sound_settings_available"],
+      "apply_policy": "standard_sound_settings_or_owned_theme_assets"
     },
     {
       "id": "oplus_uxdesign",
@@ -143,6 +180,15 @@
       "apply_policy": "public_intent_shortcut_when_available"
     }
   ],
+  "settings_shortcuts": {
+    "wallpaper": "android.settings.WALLPAPER_SETTINGS",
+    "display_refresh_rate": "android.settings.DISPLAY_SETTINGS",
+    "home_launcher": "android.settings.HOME_SETTINGS",
+    "notifications": "android.settings.NOTIFICATION_SETTINGS",
+    "battery": "android.settings.BATTERY_SAVER_SETTINGS",
+    "apps": "android.settings.APPLICATION_SETTINGS",
+    "developer_animations": "android.settings.APPLICATION_DEVELOPMENT_SETTINGS"
+  },
   "folders": {
     "android": "assets/Overlays/android",
     "com.android.systemui": "assets/Overlays/systemui",
@@ -155,6 +201,8 @@
     "com.oplus.notificationmanager": "assets/Overlays/oplus/notificationmanager",
     "com.oplus.ota": "assets/Overlays/oplus/ota",
     "com.android.wallpaper.livepicker": "assets/Overlays/wallpaper/livepicker",
+    "fonts": "assets/Overlays/fonts",
+    "sounds": "assets/Overlays/sounds",
     "templates": "assets/Overlays/templates"
   },
   "blocked_actions": [
@@ -174,7 +222,8 @@
       "package_presence",
       "overlay_readiness",
       "rollback_readiness",
-      "colors_xml_validity"
+      "colors_xml_validity",
+      "customer_option_selection"
     ]
   }
 }
