@@ -3,12 +3,15 @@
   "project": "ColorOS Themes Rock",
   "packageId": "coloros_themes_rock",
   "channel": "stable",
-  "version": "v0.6.0",
-  "versionCode": 12,
-  "status": "starter-support",
+  "version": "v0.7.0",
+  "versionCode": 14,
+  "helperApkVersion": "0.7.0",
+  "helperApkVersionCode": 13,
+  "status": "customer-center-ready",
   "releaseLevel": "Stable",
   "recommendedForCustomers": true,
-  "requiresRoot": true,
+  "requiresRoot": false,
+  "requiresRootForAdvancedSystemlessModule": true,
   "requiresLsposedForHooks": true,
   "supportedFamilies": [
     "OPPO ColorOS",
@@ -22,12 +25,13 @@
   },
   "featureLabelsRequired": true,
   "systemlessOnly": true,
-  "safetyMessage": "Use only features marked Working for your device. Advanced or untested features must show clear labels and must stay systemless.",
+  "safetyMessage": "Use public settings shortcuts and customer-safe options first. Advanced or untested features must show clear labels and must stay systemless.",
   "downloadUrl": "",
   "changelog": [
-    "Added Android 15/16/17 support labels.",
-    "Added Rootd system-health diagnostics in the helper APK.",
-    "Added systemless-only policy for system-file-related theme work.",
-    "Improved support reports, safe defaults, and rollback metadata."
+    "Added Customer Customization Center as the launcher activity.",
+    "Added customer toggles for wallpaper, icons, fonts, sounds, System UI, Settings UI, OPlus UX, battery, notifications, OTA guard, Rootd systemless mode, and LSPosed preview.",
+    "Added public system settings shortcuts and customer support report export.",
+    "Expanded package visibility metadata for OPPO, OnePlus, realme, Android, SystemUI, Settings, Launcher, OPlus, OTA, and wallpaper targets.",
+    "Kept direct system partition writes blocked and advanced overlay work systemless-only."
   ]
 }
