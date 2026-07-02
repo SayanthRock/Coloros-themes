@@ -3,10 +3,10 @@
   "project": "ColorOS Themes Rock",
   "packageId": "coloros_themes_rock",
   "channel": "nightly",
-  "version": "v0.7.0-nightly",
-  "versionCode": 14,
-  "helperApkVersion": "0.7.0",
-  "helperApkVersionCode": 13,
+  "version": "v0.8.0-nightly",
+  "versionCode": 15,
+  "helperApkVersion": "0.8.0",
+  "helperApkVersionCode": 14,
   "status": "experimental",
   "releaseLevel": "Nightly",
   "recommendedForCustomers": false,
@@ -25,9 +25,9 @@
   "safetyMessage": "Nightly builds are experimental. Use for development and testing only.",
   "downloadUrl": "",
   "changelog": [
-    "Nightly channel updated for v0.7.0.",
-    "Adds Customer Customization Center launcher activity.",
-    "Adds customer option toggles, system settings shortcuts, package detection labels, and support report export.",
+    "Nightly channel updated for v0.8.0.",
+    "Adds Rootd System Customizer launcher activity.",
+    "Adds Rootd profiles, target scan cards, package detection labels, and support report export.",
     "Not recommended for normal customer installs."
   ]
 }
