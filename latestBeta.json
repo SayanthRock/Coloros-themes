@@ -2,11 +2,11 @@
   "schema": 1,
   "project": "ColorOS Themes Rock",
   "channel": "beta",
-  "version": "v0.7.0-beta",
-  "versionCode": 14,
-  "helperApkVersion": "0.7.0",
-  "helperApkVersionCode": 13,
-  "status": "needs-testing",
+  "version": "v0.8.0-beta",
+  "versionCode": 15,
+  "helperApkVersion": "0.8.0",
+  "helperApkVersionCode": 14,
+  "status": "rootd-testing",
   "systemlessOnly": true,
   "androidSupport": {
     "android15": "supported-target",
@@ -15,7 +15,7 @@
   },
   "downloadUrl": "",
   "changelog": [
-    "Beta channel for Customer Customization Center testing.",
-    "Test customer toggles, settings shortcuts, reports, Rootd diagnostics, and package detection on OPPO, OnePlus, and realme devices before stable sharing."
+    "Beta channel for the Rootd System Customizer screen.",
+    "Test Rootd profiles, target scans, reports, recovery labels, LSPosed status, and customer options on OPPO, OnePlus, and realme devices before stable sharing."
   ]
 }
