@@ -1,19 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android">
 
-    <!-- Wallpaper customization -->
     <uses-permission android:name="android.permission.SET_WALLPAPER" />
-
-    <!-- Android 13+ runtime permissions shown by the system permission UI -->
     <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
     <uses-permission android:name="android.permission.READ_MEDIA_IMAGES" />
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
-
-    <!-- Android 14+ partial photo/video access compatibility -->
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
 
-    <!-- Legacy storage access for Android 12L and older only -->
     <uses-permission
         android:name="android.permission.READ_EXTERNAL_STORAGE"
         android:maxSdkVersion="32" />
@@ -21,7 +15,6 @@
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         android:maxSdkVersion="28" />
 
-    <!-- Package visibility for read-only Rootd/LSPosed and OEM target diagnostics on Android 11+. -->
     <queries>
         <package android:name="com.topjohnwu.magisk" />
         <package android:name="me.weishu.kernelsu" />
@@ -58,7 +51,7 @@
             android:value="82" />
 
         <activity
-            android:name=".CustomerCustomizationActivity"
+            android:name=".RootdSystemCustomizerActivity"
             android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -67,7 +60,7 @@
         </activity>
 
         <activity
-            android:name=".RootdSystemCustomizerActivity"
+            android:name=".CustomerCustomizationActivity"
             android:exported="false" />
 
         <activity
