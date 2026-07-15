@@ -6,6 +6,8 @@
     <string name="section_status">Status</string>
     <string name="section_tools">Tools</string>
     <string name="section_tools_subtitle">Open managers, refresh broken scopes, and copy support details.</string>
+    <string name="section_problem_solver">Root Setup Problem Solver</string>
+    <string name="section_problem_solver_subtitle">Guided root setup, refresh, optimization, rollback, and issue reports.</string>
     <string name="section_tweaks">Tweaks</string>
     <string name="section_tweaks_subtitle">Each toggle clearly shows whether it needs System UI or app scope access.</string>
     <string name="section_updates">Updates</string>
@@ -17,6 +19,10 @@
     <string name="action_refresh_scope">Refresh affected scope</string>
     <string name="action_open_permissions">Open permission center</string>
     <string name="action_check_updates">Check updates</string>
+    <string name="action_root_setup_plan">Root setup plan</string>
+    <string name="action_fix_current_matters">Fix current matters</string>
+    <string name="action_optimize_refresh">Optimize and refresh</string>
+    <string name="action_copy_solver_report">Copy solver report</string>
     <string name="message_no_root_manager">No supported root manager found</string>
     <string name="message_no_lsposed">No LSPosed-compatible manager found</string>
     <string name="message_saved">Saved</string>

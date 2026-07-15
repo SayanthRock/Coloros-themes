@@ -66,6 +66,7 @@ public class ToolboxActivity extends Activity {
         addHero();
         addStatusCard();
         addActionRow();
+        addProblemSolver();
         addTweaks();
         addUpdateCard();
 
@@ -113,11 +114,7 @@ public class ToolboxActivity extends Activity {
             @Override
             public void onClick(View view) {
                 ScopeRefreshAdvisor.markRefreshRequested(ToolboxActivity.this, "manual");
-                new AlertDialog.Builder(ToolboxActivity.this)
-                        .setTitle(getString(R.string.action_refresh_scope))
-                        .setMessage(ScopeRefreshAdvisor.refreshChecklist(ToolboxActivity.this))
-                        .setPositiveButton(android.R.string.ok, null)
-                        .show();
+                showMessage(getString(R.string.action_refresh_scope), ScopeRefreshAdvisor.refreshChecklist(ToolboxActivity.this));
             }
         }), cardParams());
         root.addView(button(getString(R.string.action_open_permissions), false, new View.OnClickListener() {
@@ -126,6 +123,40 @@ public class ToolboxActivity extends Activity {
                 startActivity(new Intent(ToolboxActivity.this, PermissionCenterActivity.class));
             }
         }), cardParams());
+    }
+
+    private void addProblemSolver() {
+        section(getString(R.string.section_problem_solver), getString(R.string.section_problem_solver_subtitle));
+        LinearLayout card = card(false);
+        card.addView(cardTitle(getString(R.string.section_problem_solver)));
+        card.addView(cardBody(ProblemSolver.healthSummary(this)));
+        card.addView(button(getString(R.string.action_root_setup_plan), true, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                showMessage(getString(R.string.action_root_setup_plan), ProblemSolver.rootSetupPlan(ToolboxActivity.this));
+            }
+        }));
+        card.addView(button(getString(R.string.action_fix_current_matters), false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ScopeRefreshAdvisor.markRefreshRequested(ToolboxActivity.this, "fix-current-matters");
+                showMessage(getString(R.string.action_fix_current_matters), ProblemSolver.fixAllChecklist(ToolboxActivity.this));
+            }
+        }));
+        card.addView(button(getString(R.string.action_optimize_refresh), false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                ScopeRefreshAdvisor.markRefreshRequested(ToolboxActivity.this, "optimize-refresh");
+                showMessage(getString(R.string.action_optimize_refresh), ProblemSolver.optimizationPlan(ToolboxActivity.this));
+            }
+        }));
+        card.addView(button(getString(R.string.action_copy_solver_report), false, new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                copy(getString(R.string.action_copy_solver_report), ProblemSolver.fullReport(ToolboxActivity.this));
+            }
+        }));
+        root.addView(card, cardParams());
     }
 
     private void addTweaks() {
@@ -152,11 +183,7 @@ public class ToolboxActivity extends Activity {
                         new Handler(Looper.getMainLooper()).post(new Runnable() {
                             @Override
                             public void run() {
-                                new AlertDialog.Builder(ToolboxActivity.this)
-                                        .setTitle(getString(R.string.action_check_updates))
-                                        .setMessage(report)
-                                        .setPositiveButton(android.R.string.ok, null)
-                                        .show();
+                                showMessage(getString(R.string.action_check_updates), report);
                             }
                         });
                     }
@@ -230,7 +257,18 @@ public class ToolboxActivity extends Activity {
     }
 
     private String buildSupportReport() {
-        return RootSetupAssistant.supportSummary(this) + ScopeRefreshAdvisor.refreshChecklist(this) + "\n\n" + ToolboxPrefs.featureReport(this);
+        return RootSetupAssistant.supportSummary(this)
+                + ScopeRefreshAdvisor.refreshChecklist(this)
+                + "\n\n" + ProblemSolver.fullReport(this)
+                + "\n\n" + ToolboxPrefs.featureReport(this);
+    }
+
+    private void showMessage(String title, String message) {
+        new AlertDialog.Builder(this)
+                .setTitle(title)
+                .setMessage(message)
+                .setPositiveButton(android.R.string.ok, null)
+                .show();
     }
 
     private void copy(String label, String value) {
