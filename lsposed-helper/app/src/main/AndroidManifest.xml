@@ -44,7 +44,7 @@
             android:value="true" />
         <meta-data
             android:name="xposeddescription"
-            android:value="Free-first Android 15/16/17 ColorOS customization, Rootd diagnostics, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
+            android:value="Safe and Unlimited Device Customization. Everything on this device should be editable and everything should be fine." />
         <meta-data
             android:name="xposedminversion"
             android:value="82" />
