@@ -168,7 +168,7 @@ public class CustomerCustomizationActivity extends Activity {
         addButton("Notification settings", false, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_NOTIFICATION_SETTINGS));
+                openSettings(new Intent(Settings.ACTION_APP_NOTIFICATION_SETTINGS));
             }
         });
         addButton("Battery settings", false, new View.OnClickListener() {

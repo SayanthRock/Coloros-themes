@@ -1,0 +1,43 @@
+{
+    "logs": [
+        {
+            "outputFile": "com.sayanthrock.colorosthemes.lsposed.app-debug-4:/values_values.arsc.flat",
+            "map": [
+                {
+                    "source": "/app/lsposed-helper/app/src/main/res/values/strings.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "55",
+                        "endOffsets": "106"
+                    },
+                    "to": {
+                        "startLines": "5",
+                        "startColumns": "4",
+                        "startOffsets": "201",
+                        "endColumns": "55",
+                        "endOffsets": "252"
+                    }
+                },
+                {
+                    "source": "/app/lsposed-helper/app/src/main/res/values/colors.xml",
+                    "from": {
+                        "startLines": "3,2,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "105,55,151",
+                        "endColumns": "45,49,49",
+                        "endOffsets": "146,100,196"
+                    },
+                    "to": {
+                        "startLines": "2,3,4",
+                        "startColumns": "4,4,4",
+                        "startOffsets": "55,101,151",
+                        "endColumns": "45,49,49",
+                        "endOffsets": "96,146,196"
+                    }
+                }
+            ]
+        }
+    ]
+}

@@ -1,0 +1,7 @@
+com.sayanthrock.colorosthemes.lsposed.app-pngs-0 /app/lsposed-helper/app/build/generated/res/pngs/debug
+com.sayanthrock.colorosthemes.lsposed.app-resValues-1 /app/lsposed-helper/app/build/generated/res/resValues/debug
+com.sayanthrock.colorosthemes.lsposed.app-packageDebugResources-2 /app/lsposed-helper/app/build/intermediates/incremental/debug/packageDebugResources/merged.dir
+com.sayanthrock.colorosthemes.lsposed.app-packageDebugResources-3 /app/lsposed-helper/app/build/intermediates/incremental/debug/packageDebugResources/stripped.dir
+com.sayanthrock.colorosthemes.lsposed.app-debug-4 /app/lsposed-helper/app/build/intermediates/merged_res/debug/mergeDebugResources
+com.sayanthrock.colorosthemes.lsposed.app-debug-5 /app/lsposed-helper/app/src/debug/res
+com.sayanthrock.colorosthemes.lsposed.app-main-6 /app/lsposed-helper/app/src/main/res

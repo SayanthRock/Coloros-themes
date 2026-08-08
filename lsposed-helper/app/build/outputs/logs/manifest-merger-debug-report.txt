@@ -1,0 +1,183 @@
+-- Merging decision tree log ---
+manifest
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:2:1-74:12
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:2:1-74:12
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:2:1-74:12
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:2:1-74:12
+	package
+		INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+	android:versionName
+		INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+	android:versionCode
+		INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+	xmlns:android
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:2:11-69
+uses-permission#android.permission.SET_WALLPAPER
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:4:5-72
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:4:22-69
+uses-permission#android.permission.POST_NOTIFICATIONS
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:5:5-77
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:5:22-74
+uses-permission#android.permission.READ_MEDIA_IMAGES
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:6:5-76
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:6:22-73
+uses-permission#android.permission.READ_MEDIA_VIDEO
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:7:5-75
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:7:22-72
+uses-permission#android.permission.READ_MEDIA_AUDIO
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:8:5-75
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:8:22-72
+uses-permission#android.permission.READ_MEDIA_VISUAL_USER_SELECTED
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:9:5-90
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:9:22-87
+uses-permission#android.permission.READ_EXTERNAL_STORAGE
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:11:5-13:38
+	android:maxSdkVersion
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:13:9-35
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:12:9-64
+uses-permission#android.permission.WRITE_EXTERNAL_STORAGE
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:14:5-16:38
+	android:maxSdkVersion
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:16:9-35
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:15:9-65
+queries
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:18:5-33:15
+package#com.topjohnwu.magisk
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:19:9-56
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:19:18-53
+package#me.weishu.kernelsu
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:20:9-54
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:20:18-51
+package#me.bmax.apatch
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:21:9-50
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:21:18-47
+package#org.lsposed.manager
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:22:9-55
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:22:18-52
+package#org.lsposed.manager.debug
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:23:9-61
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:23:18-58
+package#com.android.systemui
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:24:9-56
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:24:18-53
+package#com.android.settings
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:25:9-56
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:25:18-53
+package#com.android.launcher
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:26:9-56
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:26:18-53
+package#com.oplus.uxdesign
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:27:9-54
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:27:18-51
+package#com.oplus.battery
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:28:9-53
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:28:18-50
+package#com.oplus.eyeprotect
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:29:9-56
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:29:18-53
+package#com.oplus.notificationmanager
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:30:9-65
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:30:18-62
+package#com.oplus.ota
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:31:9-49
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:31:18-46
+package#com.android.wallpaper.livepicker
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:32:9-68
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:32:18-65
+application
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:35:5-72:19
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:35:5-72:19
+	android:extractNativeLibs
+		INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+	android:supportsRtl
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:39:9-35
+	android:label
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:38:9-41
+	android:icon
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:37:9-43
+	android:allowBackup
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:36:9-36
+	android:theme
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:40:9-66
+meta-data#xposedmodule
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:42:9-44:36
+	android:value
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:44:13-33
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:43:13-40
+meta-data#xposeddescription
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:45:9-47:148
+	android:value
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:47:13-145
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:46:13-45
+meta-data#xposedminversion
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:48:9-50:34
+	android:value
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:50:13-31
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:49:13-44
+activity#com.sayanthrock.colorosthemes.lsposed.RootdSystemCustomizerActivity
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:52:9-59:20
+	android:exported
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:54:13-36
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:53:13-58
+intent-filter#action:name:android.intent.action.MAIN+category:name:android.intent.category.LAUNCHER
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:55:13-58:29
+action#android.intent.action.MAIN
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:56:17-69
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:56:25-66
+category#android.intent.category.LAUNCHER
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:57:17-77
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:57:27-74
+activity#com.sayanthrock.colorosthemes.lsposed.CustomerCustomizationActivity
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:61:9-63:40
+	android:exported
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:63:13-37
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:62:13-58
+activity#com.sayanthrock.colorosthemes.lsposed.MainActivity
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:65:9-67:40
+	android:exported
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:67:13-37
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:66:13-41
+activity#com.sayanthrock.colorosthemes.lsposed.PermissionCenterActivity
+ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:69:9-71:40
+	android:exported
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:71:13-37
+	android:name
+		ADDED from /app/lsposed-helper/app/src/main/AndroidManifest.xml:70:13-53
+uses-sdk
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml reason: use-sdk injection requested
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+	android:targetSdkVersion
+		INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml
+	android:minSdkVersion
+		INJECTED from /app/lsposed-helper/app/src/main/AndroidManifest.xml

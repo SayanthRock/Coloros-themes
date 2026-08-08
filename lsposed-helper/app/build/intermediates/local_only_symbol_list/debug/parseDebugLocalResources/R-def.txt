@@ -1,0 +1,11 @@
+R_DEF: Internal format may change without notice
+local
+color icon_accent
+color icon_background
+color icon_foreground
+drawable ic_launcher_background
+drawable ic_launcher_foreground
+drawable ic_launcher_monochrome
+mipmap ic_launcher
+string app_name
+xml module_xposed_scope
