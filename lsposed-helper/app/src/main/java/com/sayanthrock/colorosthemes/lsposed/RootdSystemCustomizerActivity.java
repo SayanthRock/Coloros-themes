@@ -190,7 +190,7 @@ public class RootdSystemCustomizerActivity extends Activity {
         row.addView(text(required ? "Keep enabled" : "Enable for testing", 15, COLOR_MUTED, false), new LinearLayout.LayoutParams(0, LinearLayout.LayoutParams.WRAP_CONTENT, 1f));
         Switch option = new Switch(this);
         option.setChecked(required || prefBool(key, defaultValue));
-        option.setEnabled(!required);
+        option.setEnabled(true);
         option.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
