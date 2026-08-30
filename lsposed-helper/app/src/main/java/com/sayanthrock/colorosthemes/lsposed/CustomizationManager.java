@@ -12,12 +12,11 @@ import java.io.IOException;
 import java.io.InputStream;
 
 /**
- * Single state/lifecycle store for customer options.
+ * Single state/lifecycle store for customer options and verified theme targets.
  *
  * Options use the same customer-facing lifecycle:
  * disabled -> configure -> preview -> apply -> applied -> reset.
- * Unsupported/high-risk targets never perform an unsafe write; they remain
- * status/guidance based until an exact device implementation is verified.
+ * Target selection is registry-backed; arbitrary filesystem paths are rejected.
  */
 public final class CustomizationManager {
 
@@ -43,11 +42,8 @@ public final class CustomizationManager {
 
     public static void setOptionEnabled(Context context, String optionId, boolean enabled) {
         prefs(context).edit().putBoolean(KEY_OPTION_ENABLED_PREFIX + optionId, enabled).apply();
-        if (!enabled) {
-            setOptionState(context, optionId, OptionState.DISABLED);
-        } else if (getOptionState(context, optionId) == OptionState.DISABLED) {
-            setOptionState(context, optionId, OptionState.READY);
-        }
+        if (!enabled) setOptionState(context, optionId, OptionState.DISABLED);
+        else if (getOptionState(context, optionId) == OptionState.DISABLED) setOptionState(context, optionId, OptionState.READY);
     }
 
     public static boolean isOptionEnabled(Context context, String optionId) {
@@ -61,11 +57,8 @@ public final class CustomizationManager {
     public static OptionState getOptionState(Context context, String optionId) {
         if (!isOptionEnabled(context, optionId)) return OptionState.DISABLED;
         String value = prefs(context).getString(KEY_OPTION_STATE_PREFIX + optionId, OptionState.READY.name());
-        try {
-            return OptionState.valueOf(value);
-        } catch (IllegalArgumentException ignored) {
-            return OptionState.READY;
-        }
+        try { return OptionState.valueOf(value); }
+        catch (IllegalArgumentException ignored) { return OptionState.READY; }
     }
 
     public static void configureOption(Context context, String optionId) {
@@ -76,7 +69,6 @@ public final class CustomizationManager {
         if (isOptionEnabled(context, optionId)) setOptionState(context, optionId, OptionState.PREVIEW);
     }
 
-    /** Marks a safe, verified operation as applied. No filesystem write is done here. */
     public static void markApplied(Context context, String optionId) {
         if (isOptionEnabled(context, optionId)) setOptionState(context, optionId, OptionState.APPLIED);
     }
@@ -98,6 +90,36 @@ public final class CustomizationManager {
         }
     }
 
+    /** Selects only a verified repository-managed target. */
+    public static boolean selectThemeTarget(Context context, String targetId) {
+        return ThemeTargetRegistry.select(context, targetId);
+    }
+
+    public static ThemeTargetRegistry.Target selectedThemeTarget(Context context) {
+        return ThemeTargetRegistry.selected(context);
+    }
+
+    public static String selectedThemeTargetLabel(Context context) {
+        return ThemeTargetRegistry.selectedLabel(context);
+    }
+
+    public static String selectedThemeTargetPackage(Context context) {
+        return ThemeTargetRegistry.selectedPackage(context);
+    }
+
+    public static String selectedThemeTargetPath(Context context) {
+        return ThemeTargetRegistry.selectedRelativePath(context);
+    }
+
+    /** Returns true only for registry targets; rejects absolute or arbitrary paths. */
+    public static boolean isVerifiedThemeTarget(String targetId) {
+        return ThemeTargetRegistry.isAllowed(targetId);
+    }
+
+    public static String themeTargetStatus(Context context) {
+        return ThemeTargetRegistry.status(context);
+    }
+
     public static void saveImageUri(Context context, Uri uri) {
         prefs(context).edit().putString(KEY_IMAGE_URI, uri == null ? "" : uri.toString()).apply();
     }
@@ -116,7 +138,6 @@ public final class CustomizationManager {
         String value = name == null || name.trim().isEmpty() ? DEFAULT_OTA_NAME : name.trim();
         prefs(context).edit().putString(KEY_OTA_NAME, value).apply();
     }
-
     public static String otaName(Context context) { return prefs(context).getString(KEY_OTA_NAME, DEFAULT_OTA_NAME); }
     public static void setOtaBrandingEnabled(Context context, boolean enabled) { prefs(context).edit().putBoolean(KEY_OTA_BRANDING, enabled).apply(); }
     public static boolean otaBrandingEnabled(Context context) { return prefs(context).getBoolean(KEY_OTA_BRANDING, false); }
@@ -175,6 +196,7 @@ public final class CustomizationManager {
         StringBuilder builder = new StringBuilder();
         builder.append("Customization Center\n");
         builder.append("Selected image: ").append(selectedImageLabel(context)).append('\n');
+        builder.append("Theme Store target: ").append(themeTargetStatus(context)).append('\n');
         builder.append("About phone label: ").append(aboutPhoneName(context)).append('\n');
         builder.append("OTA name: ").append(otaName(context)).append('\n');
         builder.append("OTA name toggle: ").append(otaBrandingEnabled(context)).append('\n');
