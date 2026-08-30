@@ -1,7 +1,6 @@
 package com.sayanthrock.colorosthemes.lsposed;
 
 import android.app.Activity;
-import android.graphics.Color;
 import android.graphics.Typeface;
 import android.graphics.drawable.GradientDrawable;
 import android.os.Bundle;
@@ -17,7 +16,6 @@ public final class ThemeTargetSelectionActivity extends Activity {
     private static final int CARD = 0xFF1A1A1D;
     private static final int TEXT = 0xFFF5F2EA;
     private static final int MUTED = 0xFFB9B1A3;
-    private static final int ACCENT = 0xFFE2B884;
     private static final int SUCCESS = 0xFF8FD694;
 
     @Override
@@ -54,7 +52,11 @@ public final class ThemeTargetSelectionActivity extends Activity {
     }
 
     private void addTarget(LinearLayout root, final ThemeTargetRegistry.Target target) {
-        TextView item = text(target.label + "\n" + target.relativePath + "\n" + target.capability + " • " + (target.verified ? "Verified" : "Needs device test")), 16, TEXT, false);
+        String status = target.verified ? "Verified" : "Needs device test";
+        String value = target.label + "\n"
+                + target.relativePath + "\n"
+                + target.capability + " • " + status;
+        TextView item = text(value, 16, TEXT, false);
         item.setPadding(dp(16), dp(16), dp(16), dp(16));
         item.setGravity(Gravity.CENTER_VERTICAL);
         item.setBackground(round(CARD, 18));
