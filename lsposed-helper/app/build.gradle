@@ -39,3 +39,9 @@ android {
         }
     }
 }
+
+dependencies {
+    // Compile against the legacy Xposed API used by the LSPosed hook sources.
+    // The API is not packaged into the helper APK itself.
+    compileOnly 'de.robv.android.xposed:api:82'
+}
