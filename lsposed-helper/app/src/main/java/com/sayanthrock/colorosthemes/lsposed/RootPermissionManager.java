@@ -40,7 +40,7 @@ public final class RootPermissionManager {
 
     /**
      * True only when a root shell actually returns uid=0.
-     * The command is read-only and has a short timeout.
+     * The command is read-only.
      */
     public static boolean canExecuteRoot() {
         String[] commands = new String[] {"/system/bin/su", "su"};
@@ -61,18 +61,13 @@ public final class RootPermissionManager {
                     Thread.currentThread().interrupt();
                 }
             } finally {
-                if (process != null) {
-                    process.destroy();
-                }
+                if (process != null) process.destroy();
             }
         }
         return false;
     }
 
     public static String rootProvider() {
-        if (hasProperty("ro.boot.verifiedbootstate", "orange")) {
-            // Orange verified-boot state is only a hint; do not claim a manager.
-        }
         if (new File("/data/adb/magisk/magisk").exists()) return "Magisk";
         if (new File("/data/adb/ksu/bin/ksud").exists()) return "KernelSU";
         if (new File("/data/adb/ap/bin/apd").exists()) return "APatch";
@@ -94,9 +89,7 @@ public final class RootPermissionManager {
         return Settings.Secure.getInt(context.getContentResolver(), Settings.Secure.INSTALL_NON_MARKET_APPS, 0) == 1;
     }
 
-    /**
-     * Rootd is considered ready only when root is both detected and executable.
-     */
+    /** Rootd is ready only when root is detected and executable. */
     public static boolean isRootdReady() {
         return isRootDetected() && canExecuteRoot();
     }
@@ -133,10 +126,7 @@ public final class RootPermissionManager {
     }
 
     private static boolean hasRootProviderProperty() {
-        return hasProperty("ro.magisk.version", null)
-                || hasProperty("ro.boot.verifiedbootstate", "orange")
-                || new File("/data/adb/ksu/bin/ksud").exists()
-                || new File("/data/adb/ap/bin/apd").exists();
+        return hasProperty("ro.magisk.version", null);
     }
 
     private static boolean hasProperty(String key, String expected) {
