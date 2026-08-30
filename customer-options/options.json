@@ -1,69 +1,30 @@
 {
-  "version": "0.8.0",
+  "version": "0.8.1",
   "project": "ColorOS Themes Rock",
   "product_model": "free_first",
   "architecture": "professional_modular_hook_overlay",
   "ui_style": "sliding_liquid_glass_customer_center",
   "startup_mode": "fast_lightweight",
   "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, systemless-only root handling, customer package labels, public settings shortcuts, and clear warnings.",
-  "default_theme": {
-    "id": "default_theme",
-    "name": "Default Rock Premium",
-    "enabled": true,
-    "customer_actions": ["enable", "configure", "preview", "apply", "reset", "status"],
-    "mode": "owned_assets_overlay",
-    "safe": true
+  "default_theme": {"id":"default_theme","name":"Default Rock Premium","enabled":true,"customer_actions":["enable","configure","preview","apply","reset","status"],"mode":"owned_assets_overlay","safe":true},
+  "overlay_assets": {"id":"overlay_assets","enabled":true,"mode":"owned_assets_only","systemless_only":true,"customer_actions":["enable","configure","preview","apply","reset","status"]},
+  "option_lifecycle": {"flow":["enable","configure","preview","apply","reset","status"],"opening_configure_changes_device":false,"opening_preview_changes_device":false,"direct_system_partition_writes":false,"unsupported_devices_default_to":"needs_device_test","apply_requires_verified_implementation":true,"reset_restores_option_state":true,"status_values":["ready","configured","preview","applied","needs_device_test","unsupported","disabled"]},
+  "theme_store_targets": {
+    "package": "com.oplus.themestore",
+    "selection_mode": "verified_registry_only",
+    "arbitrary_paths_allowed": false,
+    "default_target": "theme_store_overlay",
+    "targets": [
+      {"id":"theme_store_overlay","label":"Theme Store overlay","relative_path":"system_ext/media/themeInner","capability":"owned_assets_overlay","verified":true},
+      {"id":"theme_store_colors","label":"Theme Store colors.xml","relative_path":"system_ext/media/themeInner/colors.xml","capability":"owned_asset_file","verified":true},
+      {"id":"theme_store_assets","label":"Theme Store assets","relative_path":"system_ext/media/themeInner/assets","capability":"owned_asset_directory","verified":true}
+    ],
+    "apply_policy":"Only selected verified targets may be passed to the customization layer; no direct /system, /system_ext, /vendor, or /product writes from the APK."
   },
-  "overlay_assets": {
-    "id": "overlay_assets",
-    "enabled": true,
-    "mode": "owned_assets_only",
-    "systemless_only": true,
-    "customer_actions": ["enable", "configure", "preview", "apply", "reset", "status"]
-  },
-  "option_lifecycle": {
-    "flow": ["enable", "configure", "preview", "apply", "reset", "status"],
-    "opening_configure_changes_device": false,
-    "opening_preview_changes_device": false,
-    "direct_system_partition_writes": false,
-    "unsupported_devices_default_to": "needs_device_test",
-    "apply_requires_verified_implementation": true,
-    "reset_restores_option_state": true,
-    "status_values": ["ready", "configured", "preview", "applied", "needs_device_test", "unsupported", "disabled"]
-  },
-  "free_mode": {
-    "enabled": true,
-    "label": "Free Mode",
-    "summary": "All customer options are available without paid gates.",
-    "paid_features_enabled": false,
-    "forced_ads_enabled": false,
-    "donation_optional": true
-  },
-  "navigation": {
-    "model": "customer_center_plus_advanced_dashboard",
-    "launcher": "CustomerCustomizationActivity",
-    "advanced_dashboard": "MainActivity",
-    "pages": ["Customization Center", "Customer Options", "System Settings", "Rootd Health", "Support", "Advanced Dashboard"],
-    "swipe_enabled": true,
-    "bottom_slider_enabled": true
-  },
-  "android_support": {
-    "android_15": {"sdk": 35, "status": "supported_target", "risk": "low"},
-    "android_16": {"sdk": 36, "status": "forward_compatible_needs_device_test", "risk": "medium"},
-    "android_17": {"sdk": 37, "status": "preview_safe_needs_device_test", "risk": "medium"},
-    "newer_android": {"status": "safe_mode_until_verified", "risk": "medium"}
-  },
-  "rootd": {
-    "enabled": true,
-    "mode": "systemless_only",
-    "direct_system_writes_enabled": false,
-    "detect_root_managers": ["Magisk", "KernelSU", "APatch"],
-    "detect_lsposed_manager": true,
-    "safe_disable_supported": true,
-    "support_report_enabled": true,
-    "mount_targets": ["system_ext/media/themeInner", "system_ext/media/themeInner/com.oplus.eyeprotect"],
-    "overlay_targets": ["android", "com.android.systemui", "com.android.settings", "com.oplus.uxdesign", "com.oplus.battery", "com.android.launcher", "com.oplus.eyeprotect", "com.oplus.notificationmanager", "com.oplus.ota", "com.android.wallpaper.livepicker"]
-  },
+  "free_mode": {"enabled":true,"label":"Free Mode","summary":"All customer options are available without paid gates.","paid_features_enabled":false,"forced_ads_enabled":false,"donation_optional":true},
+  "navigation": {"model":"customer_center_plus_advanced_dashboard","launcher":"CustomerCustomizationActivity","advanced_dashboard":"MainActivity","pages":["Customization Center","Customer Options","System Settings","Rootd Health","Support","Advanced Dashboard"],"swipe_enabled":true,"bottom_slider_enabled":true},
+  "android_support": {"android_15":{"sdk":35,"status":"supported_target","risk":"low"},"android_16":{"sdk":36,"status":"forward_compatible_needs_device_test","risk":"medium"},"android_17":{"sdk":37,"status":"preview_safe_needs_device_test","risk":"medium"},"newer_android":{"status":"safe_mode_until_verified","risk":"medium"}},
+  "rootd": {"enabled":true,"mode":"systemless_only","direct_system_writes_enabled":false,"detect_root_managers":["Magisk","KernelSU","APatch"],"detect_lsposed_manager":true,"safe_disable_supported":true,"support_report_enabled":true,"mount_targets":["system_ext/media/themeInner","system_ext/media/themeInner/com.oplus.eyeprotect"],"overlay_targets":["android","com.android.systemui","com.android.settings","com.oplus.themestore","com.oplus.uxdesign","com.oplus.battery","com.android.launcher","com.oplus.eyeprotect","com.oplus.notificationmanager","com.oplus.ota","com.android.wallpaper.livepicker"]},
   "customer_package_options": [
     {"id":"wallpaper","package":"android.wallpaper","customer_name":"Wallpaper and Lock Screen","risk":"low","capability":"apply","actions":["enable","configure","preview","apply","reset","status"]},
     {"id":"icons","package":"com.android.launcher","customer_name":"Icons and Launcher","risk":"medium","capability":"preview","actions":["enable","configure","preview","apply","reset","status"]},
@@ -80,46 +41,9 @@
     {"id":"oplus_ota","package":"com.oplus.ota","customer_name":"OPlus OTA","risk":"high","capability":"protected","actions":["enable","configure","preview","apply","reset","status"],"apply_policy":"blocked_until_verified; never modify OTA integrity or update files"},
     {"id":"android_wallpaper_livepicker","package":"com.android.wallpaper.livepicker","customer_name":"Live Wallpaper Picker","risk":"low","capability":"shortcut","actions":["enable","configure","preview","apply","reset","status"]}
   ],
-  "settings_shortcuts": [
-    "android.settings.SETTINGS",
-    "android.settings.WALLPAPER_SETTINGS",
-    "android.settings.DISPLAY_SETTINGS",
-    "android.settings.HOME_SETTINGS",
-    "android.settings.APP_NOTIFICATION_SETTINGS",
-    "android.settings.BATTERY_SAVER_SETTINGS",
-    "android.settings.APPLICATION_SETTINGS",
-    "android.settings.APPLICATION_DEVELOPMENT_SETTINGS"
-  ],
-  "modules": {
-    "customer_customization_center": {"enabled": true, "mode": "unified_option_lifecycle", "risk": "low"},
-    "theme_engine": {"enabled": true, "mode": "owned_assets_overlay", "risk": "low"},
-    "ui_tweaks": {"enabled": false, "mode": "optional_ui_only_after_test", "risk": "medium"},
-    "system_helper": {"enabled": true, "mode": "settings_shortcuts_and_reports", "risk": "low"},
-    "rootd_health": {"enabled": true, "mode": "read_only_diagnostics_and_systemless_policy", "risk": "low"},
-    "customer_package_options": {"enabled": true, "mode": "unified_lifecycle_with_capability_gates", "risk": "medium"},
-    "ota_guard": {"enabled": true, "mode": "warn_and_disable_before_updates", "risk": "low"},
-    "log_export": {"enabled": true, "mode": "customer_support_report", "risk": "low"},
-    "customer_overlay_targets": {"enabled": true, "mode": "preview_status_and_support_report", "risk": "medium"}
-  },
-  "hook_overlay": {
-    "enabled": true,
-    "default_mode": "safe",
-    "hook_mode": "optional_ui_only",
-    "overlay_mode": "owned_assets_only",
-    "device_profile_required": true,
-    "safe_disable_supported": true,
-    "unsupported_devices_default_to": "needs_device_test"
-  },
-  "package_strategy": [
-    {"area":"customer_options","strategy":"one lifecycle UI; capability-gated safe operations; persistent state and reports","risk":"low"},
-    {"area":"system_ui","strategy":"preview first and apply only after exact device testing","risk":"medium"},
-    {"area":"settings_ui","strategy":"status preview shortcuts and device testing","risk":"medium"},
-    {"area":"android_framework","strategy":"preview first and tested overlay only","risk":"high"},
-    {"area":"theme_app","strategy":"owned assets and customer guidance","risk":"low"},
-    {"area":"rootd_system_files","strategy":"systemless module mounts only; no direct partition writes","risk":"high"},
-    {"area":"oplus_ota","strategy":"warnings and safe disable only; no update integrity changes","risk":"high"},
-    {"area":"oplus_battery","strategy":"guidance and labels only until verified","risk":"medium"},
-    {"area":"wallpaper_picker","strategy":"standard Wallpaper API and owned assets","risk":"low"}
-  ],
-  "removed_items": ["troll_or_demo_options", "fake_premium_locks", "forced_payment_screens", "unsafe_file_replacement", "ota_integrity_changes", "direct_system_partition_writes"]
+  "settings_shortcuts":["android.settings.SETTINGS","android.settings.WALLPAPER_SETTINGS","android.settings.DISPLAY_SETTINGS","android.settings.HOME_SETTINGS","android.settings.APP_NOTIFICATION_SETTINGS","android.settings.BATTERY_SAVER_SETTINGS","android.settings.APPLICATION_SETTINGS","android.settings.APPLICATION_DEVELOPMENT_SETTINGS"],
+  "modules": {"customer_customization_center":{"enabled":true,"mode":"unified_option_lifecycle","risk":"low"},"theme_engine":{"enabled":true,"mode":"owned_assets_overlay","risk":"low"},"ui_tweaks":{"enabled":false,"mode":"optional_ui_only_after_test","risk":"medium"},"system_helper":{"enabled":true,"mode":"settings_shortcuts_and_reports","risk":"low"},"rootd_health":{"enabled":true,"mode":"read_only_diagnostics_and_systemless_policy","risk":"low"},"customer_package_options":{"enabled":true,"mode":"unified_lifecycle_with_capability_gates","risk":"medium"},"ota_guard":{"enabled":true,"mode":"warn_and_disable_before_updates","risk":"low"},"log_export":{"enabled":true,"mode":"customer_support_report","risk":"low"},"customer_overlay_targets":{"enabled":true,"mode":"verified_registry_selection_and_support_report","risk":"medium"}},
+  "hook_overlay": {"enabled":true,"default_mode":"safe","hook_mode":"optional_ui_only","overlay_mode":"owned_assets_only","device_profile_required":true,"safe_disable_supported":true,"unsupported_devices_default_to":"needs_device_test"},
+  "package_strategy": [{"area":"customer_options","strategy":"one lifecycle UI; capability-gated safe operations; persistent state and reports","risk":"low"},{"area":"theme_store","strategy":"verified target registry; selectable owned files; no arbitrary filesystem paths","risk":"medium"},{"area":"system_ui","strategy":"preview first and apply only after exact device testing","risk":"medium"},{"area":"settings_ui","strategy":"status preview shortcuts and device testing","risk":"medium"},{"area":"android_framework","strategy":"preview first and tested overlay only","risk":"high"},{"area":"theme_app","strategy":"owned assets and customer guidance","risk":"low"},{"area":"rootd_system_files","strategy":"systemless module mounts only; no direct partition writes","risk":"high"},{"area":"oplus_ota","strategy":"warnings and safe disable only; no update integrity changes","risk":"high"},{"area":"oplus_battery","strategy":"guidance and labels only until verified","risk":"medium"},{"area":"wallpaper_picker","strategy":"standard Wallpaper API and owned assets","risk":"low"}],
+  "removed_items":["troll_or_demo_options","fake_premium_locks","forced_payment_screens","unsafe_file_replacement","ota_integrity_changes","direct_system_partition_writes","arbitrary_customer_filesystem_paths"]
 }
