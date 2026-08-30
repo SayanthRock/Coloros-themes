@@ -9,6 +9,7 @@ import java.io.BufferedReader;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Read-only Rootd capability and permission helper.
@@ -40,7 +41,7 @@ public final class RootPermissionManager {
 
     /**
      * True only when a root shell actually returns uid=0.
-     * The command is read-only.
+     * The command is read-only and is bounded to avoid blocking the UI forever.
      */
     public static boolean canExecuteRoot() {
         String[] commands = new String[] {"/system/bin/su", "su"};
@@ -52,16 +53,14 @@ public final class RootPermissionManager {
                         .start();
                 BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
                 String output = reader.readLine();
-                int exitCode = process.waitFor();
-                if (exitCode == 0 && output != null && "0".equals(output.trim())) {
+                boolean finished = process.waitFor(750, TimeUnit.MILLISECONDS);
+                if (finished && process.exitValue() == 0 && output != null && "0".equals(output.trim())) {
                     return true;
                 }
             } catch (IOException | InterruptedException ignored) {
-                if (ignored instanceof InterruptedException) {
-                    Thread.currentThread().interrupt();
-                }
+                if (ignored instanceof InterruptedException) Thread.currentThread().interrupt();
             } finally {
-                if (process != null) process.destroy();
+                if (process != null) process.destroyForcibly();
             }
         }
         return false;
@@ -136,8 +135,8 @@ public final class RootPermissionManager {
                     .start();
             BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
             String value = reader.readLine();
-            int exitCode = process.waitFor();
-            if (exitCode != 0 || value == null || value.trim().isEmpty()) return false;
+            boolean finished = process.waitFor(500, TimeUnit.MILLISECONDS);
+            if (!finished || process.exitValue() != 0 || value == null || value.trim().isEmpty()) return false;
             return expected == null || expected.equalsIgnoreCase(value.trim());
         } catch (IOException | InterruptedException ignored) {
             if (ignored instanceof InterruptedException) Thread.currentThread().interrupt();
