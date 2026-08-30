@@ -6,6 +6,21 @@
   "ui_style": "sliding_liquid_glass_customer_center",
   "startup_mode": "fast_lightweight",
   "safety_rule": "Use modular components, reversible settings, owned assets, tested UI-only behavior, device validation, OTA-safe policy, systemless-only root handling, customer package labels, public settings shortcuts, and clear warnings.",
+  "default_theme": {
+    "id": "default_theme",
+    "name": "Default Rock Premium",
+    "enabled": true,
+    "customer_actions": ["enable", "configure", "preview", "apply", "reset", "status"],
+    "mode": "owned_assets_overlay",
+    "safe": true
+  },
+  "overlay_assets": {
+    "id": "overlay_assets",
+    "enabled": true,
+    "mode": "owned_assets_only",
+    "systemless_only": true,
+    "customer_actions": ["enable", "configure", "preview", "apply", "reset", "status"]
+  },
   "option_lifecycle": {
     "flow": ["enable", "configure", "preview", "apply", "reset", "status"],
     "opening_configure_changes_device": false,
