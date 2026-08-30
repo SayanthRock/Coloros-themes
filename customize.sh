@@ -40,21 +40,11 @@ esac
 
 ANDROID_TRACK="legacy"
 case "$API" in
-  35)
-    ANDROID_TRACK="android_15_supported"
-    ;;
-  36)
-    ANDROID_TRACK="android_16_forward_compatible"
-    ;;
-  37)
-    ANDROID_TRACK="android_17_testing_required"
-    ;;
-  3[8-9]|[4-9][0-9])
-    ANDROID_TRACK="future_android_safe_mode"
-    ;;
-  3[1-4])
-    ANDROID_TRACK="modern_fallback"
-    ;;
+  35) ANDROID_TRACK="android_15_supported" ;;
+  36) ANDROID_TRACK="android_16_forward_compatible" ;;
+  37) ANDROID_TRACK="android_17_testing_required" ;;
+  3[8-9]|[4-9][0-9]) ANDROID_TRACK="future_android_safe_mode" ;;
+  3[1-4]) ANDROID_TRACK="modern_fallback" ;;
 esac
 
 if [ "$SUPPORTED_BRAND" != "true" ]; then
@@ -100,10 +90,12 @@ set_perm_recursive "$MODPATH" 0 0 0755 0644
 set_perm "$MODPATH/customize.sh" 0 0 0755
 set_perm "$MODPATH/post-fs-data.sh" 0 0 0755
 set_perm "$MODPATH/service.sh" 0 0 0755
+set_perm "$MODPATH/rootd.sh" 0 0 0755
 set_perm "$MODPATH/uninstall.sh" 0 0 0755
 set_perm "$PROFILE_FILE" 0 0 0644
 set_perm "$SETTINGS_FILE" 0 0 0644
 
 ui_print "Device profile saved: $ANDROID_TRACK"
+ui_print "Rootd health engine installed."
 ui_print "Systemless-only safety policy is active."
 ui_print "Install complete. Reboot and test on one OPPO/OnePlus/realme device before sharing."

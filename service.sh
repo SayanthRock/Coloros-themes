@@ -1,11 +1,13 @@
 #!/system/bin/sh
 # ColorOS Themes Rock late-boot service.
-# Safe rule: apply only small, reversible settings. Do not replace real system files here.
+# Rootd policy: apply only reversible settings and owned systemless assets.
+# Never replace real system files or write directly to system partitions.
 
 MODDIR=${0%/*}
 CONFIG="$MODDIR/config/settings.conf"
 PROFILE="$MODDIR/config/device-profile.conf"
 SAFE_DISABLE_FILE="$MODDIR/disable"
+ROOTD="$MODDIR/rootd.sh"
 LOG_DIR="/data/local/tmp/coloros-themes-rock"
 LOG_FILE="$LOG_DIR/service.log"
 ROOTD_REPORT="$LOG_DIR/rootd-system-health.txt"
@@ -60,11 +62,23 @@ log_msg "Model: $(getprop ro.product.model)"
 log_msg "Android: $(getprop ro.build.version.release) / SDK $(getprop ro.build.version.sdk)"
 log_msg "OPlus version: $(getprop ro.build.version.oplus)"
 
-write_rootd_report
-
 if [ -f "$SAFE_DISABLE_FILE" ]; then
   log_msg "Safe-disable flag detected. Service exiting without applying options."
+  write_rootd_report
   exit 0
+fi
+
+if [ ! -x "$ROOTD" ]; then
+  log_msg "Rootd safety engine is missing or not executable. Refusing runtime changes."
+  write_rootd_report
+  exit 1
+fi
+
+# Validate the immutable Rootd policy and module target before changing settings.
+if ! "$ROOTD" validate >/dev/null 2>&1; then
+  log_msg "Rootd validation failed. Refusing runtime changes."
+  write_rootd_report
+  exit 1
 fi
 
 if [ -f "$PROFILE" ]; then
@@ -75,7 +89,6 @@ else
   log_msg "No device profile found. Continuing with safe defaults only."
 fi
 
-# Defaults. The module stays conservative unless the user enables options.
 REFRESH_RATE="auto"
 ANIMATION_SCALE="default"
 BATTERY_MODE="balanced"
@@ -91,7 +104,7 @@ else
 fi
 
 if [ "$ROOTD_SYSTEMLESS_ONLY" != "true" ]; then
-  log_msg "Unsafe direct system mode requested but blocked by service policy."
+  log_msg "Unsafe direct system mode requested but blocked by Rootd policy."
   ROOTD_SYSTEMLESS_ONLY="true"
 fi
 
@@ -101,12 +114,8 @@ case "$REFRESH_RATE" in
     settings put system min_refresh_rate "$REFRESH_RATE" 2>/dev/null
     log_msg "Applied refresh rate: $REFRESH_RATE"
     ;;
-  auto|default|"")
-    log_msg "Refresh rate left as device default"
-    ;;
-  *)
-    log_msg "Skipped invalid refresh rate value: $REFRESH_RATE"
-    ;;
+  auto|default|"") log_msg "Refresh rate left as device default" ;;
+  *) log_msg "Skipped invalid refresh rate value: $REFRESH_RATE" ;;
 esac
 
 case "$ANIMATION_SCALE" in
@@ -122,12 +131,8 @@ case "$ANIMATION_SCALE" in
     settings put global animator_duration_scale 0 2>/dev/null
     log_msg "Disabled animation scale"
     ;;
-  default|normal|"")
-    log_msg "Animation scale left as device default"
-    ;;
-  *)
-    log_msg "Skipped invalid animation scale value: $ANIMATION_SCALE"
-    ;;
+  default|normal|"") log_msg "Animation scale left as device default" ;;
+  *) log_msg "Skipped invalid animation scale value: $ANIMATION_SCALE" ;;
 esac
 
 case "$BATTERY_MODE" in
@@ -135,12 +140,8 @@ case "$BATTERY_MODE" in
     settings put global low_power 1 2>/dev/null
     log_msg "Requested battery saver mode"
     ;;
-  balanced|performance|default|"")
-    log_msg "Battery mode left as user/device controlled: $BATTERY_MODE"
-    ;;
-  *)
-    log_msg "Skipped invalid battery mode value: $BATTERY_MODE"
-    ;;
+  balanced|performance|default|"") log_msg "Battery mode left as user/device controlled: $BATTERY_MODE" ;;
+  *) log_msg "Skipped invalid battery mode value: $BATTERY_MODE" ;;
 esac
 
 write_rootd_report
