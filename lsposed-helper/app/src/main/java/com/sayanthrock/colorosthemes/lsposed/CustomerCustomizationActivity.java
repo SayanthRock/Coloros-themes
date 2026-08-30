@@ -168,7 +168,7 @@ public class CustomerCustomizationActivity extends Activity {
         addButton("Notification settings", false, new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                openSettings(new Intent(Settings.ACTION_NOTIFICATION_SETTINGS));
+                openSettings(new Intent("android.settings.APP_NOTIFICATION_SETTINGS"));
             }
         });
         addButton("Battery settings", false, new View.OnClickListener() {
@@ -398,35 +398,28 @@ public class CustomerCustomizationActivity extends Activity {
     }
 
     private LinearLayout.LayoutParams cardParams() {
-        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-        params.setMargins(0, 0, 0, dp(16));
+        LinearLayout.LayoutParams params = new LinearLayout.LayoutParams(-1, -2);
+        params.setMargins(0, 0, 0, dp(12));
         return params;
     }
 
     private LinearLayout.LayoutParams matchWrap() {
-        return new LinearLayout.LayoutParams(
-                LinearLayout.LayoutParams.MATCH_PARENT,
-                LinearLayout.LayoutParams.WRAP_CONTENT
-        );
-    }
-
-    private boolean prefBool(String key, boolean defaultValue) {
-        SharedPreferences prefs = getSharedPreferences(PREFS, Context.MODE_PRIVATE);
-        return prefs.getBoolean(key, defaultValue);
-    }
-
-    private void saveBool(String key, boolean value) {
-        getSharedPreferences(PREFS, Context.MODE_PRIVATE).edit().putBoolean(key, value).apply();
-    }
-
-    private void toast(String value) {
-        Toast.makeText(this, value, Toast.LENGTH_SHORT).show();
+        return new LinearLayout.LayoutParams(-1, -2);
     }
 
     private int dp(int value) {
-        return (int) (value * getResources().getDisplayMetrics().density + 0.5f);
+        return Math.round(value * getResources().getDisplayMetrics().density);
+    }
+
+    private boolean prefBool(String key, boolean defaultValue) {
+        return getSharedPreferences(PREFS, MODE_PRIVATE).getBoolean(key, defaultValue);
+    }
+
+    private void saveBool(String key, boolean value) {
+        getSharedPreferences(PREFS, MODE_PRIVATE).edit().putBoolean(key, value).apply();
+    }
+
+    private void toast(String message) {
+        Toast.makeText(this, message, Toast.LENGTH_SHORT).show();
     }
 }
