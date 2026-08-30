@@ -7,13 +7,8 @@
     <uses-permission android:name="android.permission.READ_MEDIA_VIDEO" />
     <uses-permission android:name="android.permission.READ_MEDIA_AUDIO" />
     <uses-permission android:name="android.permission.READ_MEDIA_VISUAL_USER_SELECTED" />
-
-    <uses-permission
-        android:name="android.permission.READ_EXTERNAL_STORAGE"
-        android:maxSdkVersion="32" />
-    <uses-permission
-        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
-        android:maxSdkVersion="28" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32" />
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="28" />
 
     <queries>
         <package android:name="com.topjohnwu.magisk" />
@@ -24,6 +19,7 @@
         <package android:name="com.android.systemui" />
         <package android:name="com.android.settings" />
         <package android:name="com.android.launcher" />
+        <package android:name="com.oplus.themestore" />
         <package android:name="com.oplus.uxdesign" />
         <package android:name="com.oplus.battery" />
         <package android:name="com.oplus.eyeprotect" />
@@ -39,36 +35,19 @@
         android:supportsRtl="true"
         android:theme="@android:style/Theme.Material.NoActionBar">
 
-        <meta-data
-            android:name="xposedmodule"
-            android:value="true" />
-        <meta-data
-            android:name="xposeddescription"
-            android:value="Free-first Android 15/16/17 ColorOS customization, Rootd diagnostics, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
-        <meta-data
-            android:name="xposedminversion"
-            android:value="82" />
+        <meta-data android:name="xposedmodule" android:value="true" />
+        <meta-data android:name="xposeddescription" android:value="Free-first Android 15/16/17 ColorOS customization, Rootd diagnostics, wallpaper, theme, and support helper for tested OPPO, OnePlus, and realme devices" />
+        <meta-data android:name="xposedminversion" android:value="82" />
 
-        <activity
-            android:name=".RootdSystemCustomizerActivity"
-            android:exported="true">
+        <activity android:name=".RootdSystemCustomizerActivity" android:exported="true">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-
-        <activity
-            android:name=".CustomerCustomizationActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".MainActivity"
-            android:exported="false" />
-
-        <activity
-            android:name=".PermissionCenterActivity"
-            android:exported="false" />
+        <activity android:name=".CustomerCustomizationActivity" android:exported="false" />
+        <activity android:name=".ThemeTargetSelectionActivity" android:exported="false" />
+        <activity android:name=".MainActivity" android:exported="false" />
+        <activity android:name=".PermissionCenterActivity" android:exported="false" />
     </application>
-
 </manifest>
