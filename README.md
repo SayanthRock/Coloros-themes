@@ -1,98 +1,162 @@
 # ColorOS Themes Rock
 
-Customer-safe theme module and **ColorOS Customizer APK** starter for **OPPO, OnePlus, and realme** devices running ColorOS, OxygenOS, or realme UI.
+> **Modern, customer-safe theme customization for ColorOS, OxygenOS, and realme UI.**
+>
+> A free-first toolkit for theme packages, systemless overlays, visual customization, diagnostics, rollback, and a ColorOS Customizer companion APK.
 
-This project is for legal customization using assets that you created, own, or have permission to share.
+[![Android 15](https://img.shields.io/badge/Android-15%2B-3ddc84?style=flat-square&logo=android&logoColor=white)](docs/ANDROID_15_16_17_SUPPORT.md)
+[![Systemless](https://img.shields.io/badge/Root-Systemless-e2b884?style=flat-square)](docs/ROOTD_SYSTEM_FILE_SUPPORT.md)
+[![License](https://img.shields.io/badge/License-GPL--compatible%20reference-blue?style=flat-square)](docs/safety.md)
 
-## What this project builds
+---
 
-- A flashable Magisk, KernelSU, or APatch-style theme module ZIP.
-- A safe theme inspection pipeline for ColorOS, OPlus, and realme `.theme` files.
-- A systemless overlay target for `/system_ext/media/themeInner/`.
-- A clean customization structure for wallpapers, icons, fonts, sounds, previews, customer support, and rollback notes.
-- A Rootd customer foundation for status-first package targets: `android`, `com.android.systemui`, and `com.android.settings`.
-- A ColorOS Customizer helper APK for wallpaper, device reports, Android 15/16/17 labels, Rootd system-health reports, permission status, root-manager visibility, LSPosed manager visibility, and safe toggles.
-- GitHub Actions workflows for APK builds, module ZIP builds, artifacts, checksums, provenance, and optional GitHub Releases.
-- Release-channel metadata for Stable, Beta, and Nightly customer update checks.
+## ✦ 2026 Design Direction
 
-## Current release line
+ColorOS Themes Rock is moving toward a **free-first, liquid-glass-inspired customer experience**: premium-looking without hiding essential tools, clear about compatibility, and safe by default.
 
-| Area | Status |
+### Design principles
+
+- **Liquid Glass** — layered translucent surfaces, soft borders, rounded cards, and subtle depth.
+- **Dark premium UI** — `#0f0f10` foundation with warm Desert Sand accents.
+- **Fast first** — lightweight startup screens and minimal motion.
+- **Status first** — every customer-facing feature explains whether it is safe, ready, limited, or needs testing.
+- **Free first** — no forced payment screens, fake trials, troll options, or fake performance claims.
+- **Rollback always** — advanced customization must have a clear recovery path.
+- **Systemless only** — APK-driven system-file changes never write directly into `/system`, `/vendor`, `/product`, or `/system_ext`.
+
+See [`docs/UI_DESIGN_SYSTEM.md`](docs/UI_DESIGN_SYSTEM.md) for the complete visual and interaction specification.
+
+---
+
+## 🚀 What this project provides
+
+| Capability | Purpose |
 |---|---|
-| Module version | `v0.6.0` |
-| Helper APK version | `0.6.0` / versionCode `12` |
-| Android 15 | Supported modern target |
-| Android 16 | Forward-compatible, device testing required |
-| Android 17 | Preview/future-safe, device testing required |
-| OPPO / OnePlus / realme | Status-first support |
-| Rootd/system file work | Systemless-only policy |
+| **Theme modules** | Flashable Magisk, KernelSU, or APatch-style ZIP packages |
+| **Theme inspection** | Safely inspect ZIP-based ColorOS/OPlus/realme `.theme` packages |
+| **Systemless overlays** | Target `system_ext/media/themeInner/` from the module package |
+| **Theme layers** | Wallpapers, icons, fonts, sounds, previews, and supported UI resources |
+| **ColorOS Customizer** | Companion APK for customization, reports, permissions, and support |
+| **Rootd foundation** | Status-first system-file support with safe defaults |
+| **LSPosed visibility** | Show manager/scope status without pretending unsupported features work |
+| **Diagnostics** | Device reports, permission status, health information, and troubleshooting |
+| **Rollback** | Safe-disable and uninstall markers plus documented recovery guidance |
+| **Release channels** | Stable, Beta, and Nightly metadata for customer update checks |
+| **CI automation** | APK/module builds, checksums, provenance, artifacts, and optional Releases |
 
-## Supported targets
+---
 
-| Brand | Android skin | Status |
-|---|---|---|
+## 📱 Supported platforms
+
+| Platform | Target | Status |
+|---|---:|---|
 | OPPO | ColorOS | Starter support |
-| OnePlus | OxygenOS / ColorOS based builds | Starter support |
+| OnePlus | OxygenOS / ColorOS-based builds | Starter support |
 | realme | realme UI | Starter support |
-| Android 15 | SDK 35 | Supported target |
-| Android 16 | SDK 36 | Forward-compatible testing |
-| Android 17 | SDK 37 | Device-by-device testing required |
+| Android | 15 / SDK 35 | Supported modern target |
+| Android | 16 / SDK 36 | Forward-compatible; device testing required |
+| Android | 17 / SDK 37 | Preview/future-safe; device-by-device testing required |
 
-Read the compatibility plan in [`docs/compatibility.md`](docs/compatibility.md) and the Android support policy in [`docs/ANDROID_15_16_17_SUPPORT.md`](docs/ANDROID_15_16_17_SUPPORT.md).
+Compatibility is intentionally **device- and ROM-aware**. A feature is not presented as universally supported simply because its UI exists.
 
-## Rootd systemless support
+Read [`docs/compatibility.md`](docs/compatibility.md) and [`docs/ANDROID_15_16_17_SUPPORT.md`](docs/ANDROID_15_16_17_SUPPORT.md).
 
-The project now uses a strict systemless-only policy for system-file-related theme work.
+---
+
+## 📦 Current release line
+
+| Component | Version / status |
+|---|---|
+| Theme module | `v0.6.0` |
+| Helper APK | `0.6.0` · versionCode `12` |
+| Android 15 | Supported modern target |
+| Android 16 | Forward-compatible · device testing required |
+| Android 17 | Preview/future-safe · device testing required |
+| Rootd system-file work | Systemless-only |
+
+---
+
+## 🧩 Customer experience
+
+The companion app follows a five-page sliding model:
+
+**Home → Theme Layers → Performance → Support → More**
+
+### Theme Layers
+
+Customization is organized into clear layers rather than one overloaded settings screen:
+
+- **Base** — background, glass surfaces, spacing, and visual foundation
+- **Wallpaper** — home and lock-screen wallpaper actions
+- **Icon** — launcher-supported icon options
+- **Lock** — lock-screen guidance and supported actions
+- **Status** — compatibility and feature state
+- **Support** — reports, backup, restore, and rollback help
+
+### Feature status
+
+Every customer-facing feature should communicate its real state:
+
+| Status | Meaning |
+|---|---|
+| 🟢 **Safe** | Can be used normally |
+| **Ready** | UI and guidance are available |
+| **Fast** | Optimized for startup/smooth use |
+| 🟡 **Needs test** | Depends on device, ROM, or Android version |
+| **Needs permission** | Requires additional user approval |
+| **Required** | Important safety/support step |
+| 🔴 **Not supported** | Do not offer an apply action |
+
+The older compatibility labels remain documented for technical/reporting contexts: **Working, Limited, Needs testing, Not available, Root required, LSPosed scope required**.
+
+---
+
+## 🛡️ Systemless Rootd support
+
+System-file-related customization follows a strict systemless-only policy.
 
 | Area | Policy |
 |---|---|
 | Theme mount target | `system_ext/media/themeInner` inside the module package |
-| Direct `/system` writes from APK | Not allowed |
-| Direct `/vendor`, `/product`, `/system_ext` writes from APK | Not allowed |
-| Rollback | Safe-disable file and uninstall marker |
+| APK direct `/system` writes | **Not allowed** |
+| APK direct `/vendor` writes | **Not allowed** |
+| APK direct `/product` writes | **Not allowed** |
+| APK direct `/system_ext` writes | **Not allowed** |
+| Rollback | Safe-disable file + uninstall marker |
 | Reports | `/data/local/tmp/coloros-themes-rock/` |
 
-Read [`docs/ROOTD_SYSTEM_FILE_SUPPORT.md`](docs/ROOTD_SYSTEM_FILE_SUPPORT.md) for the systemless Rootd support guide.
+Read [`docs/ROOTD_SYSTEM_FILE_SUPPORT.md`](docs/ROOTD_SYSTEM_FILE_SUPPORT.md) and [`docs/ROOTD_CUSTOMER_FOUNDATION.md`](docs/ROOTD_CUSTOMER_FOUNDATION.md).
 
-## Customer feature labels
+---
 
-Every feature shown in the APK should use a clear status label.
+## 🎨 Theme and overlay targets
 
-| Label | Meaning |
-|---|---|
-| Working | Tested on a real matching device. |
-| Limited | Works only on specific ROMs, Android versions, or device models. |
-| Needs testing | Built but not verified enough for normal customers. |
-| Not available | Unsupported on the current device or ROM. |
-| Root required | Needs Magisk, KernelSU, APatch, or equivalent root access. |
-| LSPosed scope required | Needs LSPosed/Xposed scope for the target package. |
+The Rootd customer layer currently maps these package targets:
 
-Free customer tools should stay visible. Advanced or untested items must show clear labels so customers know what works, what needs testing, and what is not available on their device.
-
-## Rootd customer overlay targets
-
-The Rootd customer layer is status-first and safe by default.
-
-| Target package | Customer area | Default status | Folder |
+| Target | Customer area | Default state | Package folder |
 |---|---|---|---|
 | `android` | Framework visual resources | Needs testing | `assets/Overlays/android/` |
-| `com.android.systemui` | Status bar, quick settings, notifications, lock surface previews | Needs testing | `assets/Overlays/systemui/` |
-| `com.android.settings` | Settings cards, About phone, support and diagnostics previews | Needs testing | `assets/Overlays/settings/` |
+| `com.android.systemui` | Status bar, quick settings, notifications, lock-surface previews | Needs testing | `assets/Overlays/systemui/` |
+| `com.android.settings` | Settings cards, About phone, support/diagnostics previews | Needs testing | `assets/Overlays/settings/` |
 
-The package target map is stored in [`assets/Overlays/targets.json`](assets/Overlays/targets.json). Customer-safe defaults are stored in [`customer-options/safe-defaults.conf`](customer-options/safe-defaults.conf).
+The authoritative package map is [`assets/Overlays/targets.json`](assets/Overlays/targets.json), with customer-safe defaults in [`customer-options/safe-defaults.conf`](customer-options/safe-defaults.conf).
 
-## Uploaded theme package metadata
+---
 
-The uploaded packages were inspected as ZIP-based theme archives with `themeInfo.xml` metadata.
+## 🔍 Inspected theme packages
 
-| File | Detected theme root | Main contents | Resolution from metadata |
+Uploaded packages were inspected as ZIP-based theme archives containing `themeInfo.xml` metadata.
+
+| Package | Detected root | Main contents | Metadata resolution |
 |---|---|---|---|
-| `aquatic_design.theme` | `OplusSmartPhoneThemeInfo` | launcher, icons, picture, wallpaper | 2400x1080 |
-| `1-Simplicity.theme` | `OppoSmartPhoneThemeInfo` | OPPO launcher, wallpaper, previews | 2340x1080 |
+| `aquatic_design.theme` | `OplusSmartPhoneThemeInfo` | launcher, icons, picture, wallpaper | 2400×1080 |
+| `1-Simplicity.theme` | `OppoSmartPhoneThemeInfo` | OPPO launcher, wallpaper, previews | 2340×1080 |
 
-Use these only when sharing rights are clear.
+Only redistribute packages and assets when you have the required rights.
 
-## Folder structure
+---
+
+## 📁 Project structure
 
 ```text
 .
@@ -133,7 +197,9 @@ Use these only when sharing rights are clear.
     └── publish-github-release.yml
 ```
 
-## Build Theme Module
+---
+
+## 🛠️ Build the theme module
 
 Inspect a theme package:
 
@@ -141,51 +207,49 @@ Inspect a theme package:
 python3 scripts/inspect-theme-package.py /path/to/theme.theme --pretty
 ```
 
-Validate and build:
+Validate and package:
 
 ```bash
 bash scripts/validate-module.sh
 bash scripts/package.sh
 ```
 
-Output:
+Expected output:
 
 ```text
 dist/ColorOS-Themes-Rock-v0.6.0.zip
 ```
 
-## Build ColorOS Customizer APK
-
-Manual local build:
+## 📲 Build the ColorOS Customizer APK
 
 ```bash
 cd lsposed-helper
 gradle :app:assembleDebug --no-daemon --stacktrace
 ```
 
-Output:
+APK output:
 
 ```text
 lsposed-helper/app/build/outputs/apk/debug/app-debug.apk
 ```
 
-APK and combined release automation is handled by:
+Combined release automation is provided by `.github/workflows/publish-github-release.yml`.
 
-```text
-.github/workflows/publish-github-release.yml
-```
+---
 
-## Release channels
+## 📡 Release channels
 
-| Channel | File | Intended use |
+| Channel | Metadata | Purpose |
 |---|---|---|
-| Stable | `latestStable.json` | Tested public customer builds. |
-| Beta | `latestBeta.json` | Broader testing before stable. |
-| Nightly | `latestNightly.json` | Experimental development builds. |
+| **Stable** | `latestStable.json` | Tested public customer builds |
+| **Beta** | `latestBeta.json` | Wider pre-release testing |
+| **Nightly** | `latestNightly.json` | Experimental development builds |
 
-## Customer customization matrix
+---
 
-| Area | Supported approach | Safety status |
+## 🧪 Customer customization matrix
+
+| Area | Supported approach | Status |
 |---|---|---|
 | Wallpaper | User-selected image or owned theme package | Safe |
 | Home screen | Wallpaper API or OEM theme package | Device testing required |
@@ -194,27 +258,62 @@ APK and combined release automation is handled by:
 | Fonts | Owned font/theme asset | Device testing required |
 | Sounds | Owned ringtone/UI sound asset | Device testing required |
 | Preview images | Catalog previews and screenshots | Ready |
-| System UI | Status-first target preview and tested overlay workflow | Needs testing |
-| Settings UI | Settings shortcuts, support screen, and tested overlay workflow | Needs testing |
-| Android framework | Framework visual preview and tested overlay workflow | Needs testing |
-| Battery/performance | Diagnostics, shortcuts, lag-fix guide | Safe, no fake booster claims |
-| Rootd system files | Systemless-only module path and support reports | Safe by default, needs device testing for advanced overlays |
-| Rollback | Uninstall script and customer guide | Documented |
+| System UI | Tested overlay workflow and status-first preview | Needs testing |
+| Settings UI | Settings shortcuts/support + tested overlay workflow | Needs testing |
+| Android framework | Framework visual preview + tested overlay workflow | Needs testing |
+| Battery/performance | Diagnostics and troubleshooting guidance | Safe; no fake booster claims |
+| Rootd system files | Systemless-only module path + support reports | Safe by default; advanced overlays need testing |
+| Rollback | Uninstall script + customer guide | Documented |
 
-## Install module ZIP
+---
 
-1. Download the latest module ZIP artifact or GitHub Release asset.
-2. Open Magisk, KernelSU, or APatch.
+## 📥 Install a module ZIP
+
+1. Download a module ZIP from a trusted artifact or GitHub Release.
+2. Open **Magisk**, **KernelSU**, or **APatch**.
 3. Flash the module ZIP.
 4. Reboot.
-5. Test on one device before sharing with customers.
+5. Test on one matching device before wider distribution.
+6. If something fails, use the documented rollback/recovery path before attempting further changes.
 
-## Safety rule
+---
 
-Only distribute themes, wallpapers, fonts, icons, sounds, previews, and UI files that you created, own, or have permission to share.
+## ⚠️ Safety & distribution
 
-Read the safety guide in [`docs/safety.md`](docs/safety.md) and the Android permission guide in [`docs/permissions.md`](docs/permissions.md).
+Only distribute themes, wallpapers, fonts, icons, sounds, previews, and UI resources that you **created, own, or have permission to share**.
 
-## GPL reference rule
+- Do not claim a feature works on devices where it has not been tested.
+- Do not make fake battery, RAM, thermal, or performance-boost claims.
+- Do not perform direct system partition writes from the APK.
+- Keep rollback and recovery guidance available for advanced customization.
 
-Oxygen Customizer is useful as an open-source reference for structure, release channels, LSPosed/root flow, and customer warning style. Do not copy GPL-3.0 source code into this project unless the project license and distribution method are GPL-compatible.
+See [`docs/safety.md`](docs/safety.md) and [`docs/permissions.md`](docs/permissions.md).
+
+---
+
+## 📚 Documentation
+
+- [Compatibility](docs/compatibility.md)
+- [Android 15 / 16 / 17 support](docs/ANDROID_15_16_17_SUPPORT.md)
+- [UI Design System](docs/UI_DESIGN_SYSTEM.md)
+- [Rootd System File Support](docs/ROOTD_SYSTEM_FILE_SUPPORT.md)
+- [Rootd Customer Foundation](docs/ROOTD_CUSTOMER_FOUNDATION.md)
+- [Permissions](docs/permissions.md)
+- [Safety](docs/safety.md)
+- [Lag Fix Guide](docs/LAG_FIX_GUIDE.md)
+- [Problem Solver Matrix](docs/PROBLEM_SOLVER_MATRIX.md)
+
+---
+
+## 📜 GPL reference rule
+
+Oxygen Customizer may be used as an open-source reference for structure, release channels, LSPosed/root flows, and customer-warning patterns. Do **not** copy GPL-3.0 source code into this project unless the project's license and distribution method are GPL-compatible.
+
+---
+
+<div align="center">
+
+**ColorOS Themes Rock · 2026**  
+*Customize safely. Know what works. Keep a rollback path.*
+
+</div>
