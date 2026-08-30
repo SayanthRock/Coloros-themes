@@ -23,10 +23,10 @@ public class PermissionCenterActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         render();
-        if (!RootPermissionManager.isRootDetected()) {
+        if (!RootPermissionManager.isRootdReady()) {
             new AlertDialog.Builder(this)
-                    .setTitle("No Root permission")
-                    .setMessage("Root permission is not detected, some functions will not be available!")
+                    .setTitle("Rootd safe mode")
+                    .setMessage(RootPermissionManager.rootStatusMessage())
                     .setPositiveButton("OK", null)
                     .show();
         }
@@ -42,7 +42,7 @@ public class PermissionCenterActivity extends Activity {
 
         topBar();
         rootStatus();
-        section("Recommended", "Select recommended apps?");
+        section("Recommended", "Use standard Android settings for customer-controlled actions.");
         simpleCard("Theme Store", "Recommended for applying owned theme packages");
         simpleCard("Files", "Recommended for local theme and wallpaper files");
         simpleCard("Settings", "Recommended for display, battery, wallpaper, and app settings");
@@ -52,16 +52,18 @@ public class PermissionCenterActivity extends Activity {
         section("Permissions", "Open Android settings and allow manually.");
         simpleCard("Allow access to manage all files", RootPermissionManager.canManageAllFiles() ? "Already allowed" : "Open Android settings to allow access");
         simpleCard("Allow from this source", RootPermissionManager.canInstallUnknownApps(this) ? "Already allowed" : "Open Android settings to allow installs");
-        simpleCard("OK", "Confirm and refresh permission status");
-
-        section("Advanced customer options", "Locked options stay disabled when root is not detected.");
-        boolean rootReady = RootPermissionManager.isRootDetected();
-        simpleCard("Theme advanced mode", rootReady ? "Available after customer confirmation" : "Locked: root permission is not available");
-        simpleCard("Backup before apply", rootReady ? "Backup step enabled" : "Locked: root permission is not available");
-        simpleCard("Rollback mode", "Keep uninstall and rollback notes enabled");
-        simpleCard("Safe compatibility mode", "Disable unsupported options automatically");
-
         simpleCard("Permission report", RootPermissionManager.permissionReport(this));
+
+        section("Rootd", "Capability detection is read-only. No automatic root acquisition or direct system writes.");
+        boolean rootReady = RootPermissionManager.isRootdReady();
+        simpleCard("Rootd capability", rootReady ? "Ready: executable root verified" : "Safe mode: executable root not verified");
+        simpleCard("Root provider", RootPermissionManager.rootProvider());
+        simpleCard("Systemless policy", "Required — direct system/partition writes are blocked");
+        simpleCard("Advanced theme mode", rootReady ? "Available after customer confirmation and device validation" : "Locked until executable root is verified");
+        simpleCard("Backup before apply", rootReady ? "Available after customer confirmation" : "Locked until executable root is verified");
+        simpleCard("Rollback mode", "Always enabled; keep recovery path available");
+        simpleCard("Safe compatibility mode", "Automatically keep unsupported options disabled");
+
         setContentView(scroll);
     }
 
@@ -73,7 +75,7 @@ public class PermissionCenterActivity extends Activity {
         back.setGravity(Gravity.CENTER);
         back.setOnClickListener(v -> finish());
         bar.addView(back, new LinearLayout.LayoutParams(dp(54), dp(54)));
-        TextView title = text("Permission Center", 30, COLOR_TEXT);
+        TextView title = text("Rootd Center", 30, COLOR_TEXT);
         bar.addView(title, new LinearLayout.LayoutParams(0, dp(54), 1f));
         TextView refresh = text("↻", 30, 0xFF000000);
         refresh.setGravity(Gravity.CENTER);
@@ -83,10 +85,10 @@ public class PermissionCenterActivity extends Activity {
     }
 
     private void rootStatus() {
-        boolean ok = RootPermissionManager.isRootDetected();
+        boolean ok = RootPermissionManager.isRootdReady();
         LinearLayout card = card(ok ? COLOR_BLUE : COLOR_WARN, ok ? COLOR_BLUE : 0xFFFFB74D);
-        card.addView(text(ok ? "Root permission detected" : "No Root permission", 22, ok ? 0xFFFFFFFF : COLOR_TEXT));
-        card.addView(text(ok ? "Advanced functions are available after confirmation." : "Root permission is not detected, some functions will not be available!", 16, ok ? 0xFFE8F0FF : COLOR_MUTED));
+        card.addView(text(ok ? "Rootd ready" : "Rootd safe mode", 22, ok ? 0xFFFFFFFF : COLOR_TEXT));
+        card.addView(text(RootPermissionManager.rootStatusMessage(), 16, ok ? 0xFFE8F0FF : COLOR_MUTED));
         root.addView(card, cardParams());
     }
 
